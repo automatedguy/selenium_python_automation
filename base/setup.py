@@ -36,11 +36,13 @@ class BaseTest(unittest.TestCase):
         pass
 
         self.logger.info(SETTING_UP + self.BROWSER)
+        
         if self.BROWSER == CHROME:
             self.driver = webdriver.Chrome(PATH("../resources/chromedriver"))
 
         elif self.BROWSER == FIREFOX:
             self.driver = webdriver.Firefox()
+
         else:
             self.logger(VALID_BROWSERS + CHROME + ' - ' + FIREFOX)
 

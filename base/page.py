@@ -2,7 +2,7 @@
 
 import logging
 from selenium.webdriver.support.wait import WebDriverWait
-from constants import CLICKING
+from constants import CLICKING, WAITING_FOR_MSG
 from locators import LoginModalLocators
 
 
