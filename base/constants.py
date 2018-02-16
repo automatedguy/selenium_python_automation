@@ -10,3 +10,18 @@ APIDV_ALMUNDO_COM = 'https://apidv.almundo.com'
 ALMUNDO_COM = 'https://almundo.com'
 ST_ALMUNDO_COM = 'https://st.almundo.com'
 DV_ALMUNDO_COM = 'https://dv.almundo.com'
+
+# BROWSERS
+CHROME = 'Chrome'
+FIREFOX = 'Firefox'
+
+# COUNTRIES
+ARGENTINA = 'Argentina'
+COLOMBIA = 'Colombia'
+MEXICO = 'Mexico'
+BRASIL = 'Brasil'
+
+# MESSAGES
+VALID_BROWSERS = 'Please select a valid Browser admitted are: '
+SETTING_UP = 'Setting up browser: '
+TEARING_DOWN = 'Tearing down browser: '
