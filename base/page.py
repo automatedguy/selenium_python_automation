@@ -22,7 +22,36 @@ class BasePage(object):
     logger = logging.getLogger(__name__)
 
 
-class HomePage(BasePage):
+# Checkout class and sections
+
+
+class Checkout(BasePage):
+    """Checkout Page class"""
+
+    def __init__(self, driver):
+        super(Checkout, self).__init__(driver)
+        self.driver = driver
+
+
+class PassengerSection(Checkout):
+    """"Passenger Section"""
+
+    def __init__(self, driver):
+        super(PassengerSection, self).__init__(driver)
+        self.driver = driver
+
+
+class PaymentSection(Checkout):
+    """Payment Section"""
+
+    def __init__(self, driver):
+        super(PaymentSection, self).__init__(driver)
+        self.driver = driver
+
+
+# Home page and sections
+
+class Home(BasePage):
     """Home Page class"""
 
 
