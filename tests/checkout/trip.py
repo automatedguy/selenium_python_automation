@@ -4,9 +4,9 @@ from base.setup import CheckoutTest
 from base.setup import logger
 
 
-class FlightTest(CheckoutTest):
+class TripTest(CheckoutTest):
 
-    product_route = '?product=flights'
+    product_route = ''
 
     def test_no_parameter(self):
         pass
@@ -23,5 +23,5 @@ class FlightTest(CheckoutTest):
 
 
 if __name__ == '__main__':
-    suite = unittest.TestLoader().loadTestsFromTestCase(FlightTest)
+    suite = unittest.TestLoader().loadTestsFromTestCase(TripTest)
     unittest.TextTestRunner(verbosity=2).run(suite)
