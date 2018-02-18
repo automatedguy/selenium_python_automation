@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 BASE_URL = ALMUNDO_COM
 BROWSER = CHROME
 COUNTRY = ARGENTINA
-CART_ID = ''
+CART_ID = '5a89eaec24aa9a000b76f9f0'
 CHECKOUT_PARAMETER = '&sc=1'
 
 
