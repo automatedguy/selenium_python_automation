@@ -1,9 +1,7 @@
 import os
-import sys
 import logging
 import unittest
 from selenium import webdriver
-import page
 
 from base.constants import ALMUNDO_COM, CHROME, ARGENTINA, FIREFOX, VALID_BROWSERS, SETTING_UP, TEARING_DOWN
 
@@ -12,25 +10,32 @@ PATH = lambda p: os.path.abspath(
     os.path.join(os.path.dirname(__file__), p)
 )
 
+logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+BASE_URL = ALMUNDO_COM
+BROWSER = CHROME
+COUNTRY = ARGENTINA
+CART_ID = ''
+
+
+def get_country_domain():
+    country_domain = {
+        'Argentina': '.ar/',
+        'Colombia': '.co/',
+        'Mexico': '.mx/',
+        'Brasil': '.br/'
+    }
+    print
+    return country_domain.get(COUNTRY, "Invalid Country" + COUNTRY)
+
 
 class BaseTest(unittest.TestCase):
-    BASE_URL = ALMUNDO_COM
-    BROWSER = CHROME
-    COUNTRY = ARGENTINA
-    CART_ID = '5a89c9c124aa9a000bfec7fe'
 
-    logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
-    logger = logging.getLogger(__name__)
-
-    def get_country_domain(self):
-        country_domain = {
-            'Argentina': '.ar/',
-            'Colombia': '.co/',
-            'Mexico': '.mx/',
-            'Brasil': '.br/'
-        }
-        print
-        return country_domain.get(self.COUNTRY, "Invalid month")
+    base_url = BASE_URL
+    browser = BROWSER
+    country = COUNTRY
+    cart_id = CART_ID
 
     @classmethod
     def setUpClass(cls):
@@ -47,28 +52,25 @@ class BaseTest(unittest.TestCase):
     def setUp(self):
         pass
 
-        self.logger.info(SETTING_UP + self.BROWSER)
+        logger.info(SETTING_UP + self.browser)
 
-        if self.BROWSER == CHROME:
+        if self.browser == CHROME:
             self.driver = webdriver.Chrome(PATH("../resources/chromedriver"))
-
-        elif self.BROWSER == FIREFOX:
+        elif BROWSER == FIREFOX:
             self.driver = webdriver.Firefox()
-
         else:
-            self.logger(VALID_BROWSERS + CHROME + ' - ' + FIREFOX)
-
+            logger(VALID_BROWSERS + CHROME + ' - ' + FIREFOX)
         self.driver.maximize_window()
 
-        if self.CART_ID is not '':
-            self.BASE_URL = self.BASE_URL + self.get_country_domain()
+        if CART_ID is not '':
+            self.base_url = self.base_url + get_country_domain()
         else:
-            self.driver.get(self.BASE_URL)
+            self.driver.get(BASE_URL)
 
     def tearDown(self):
         pass
 
-        self.logger.info(TEARING_DOWN + self.BROWSER)
+        logger.info(TEARING_DOWN + BROWSER)
         self.driver.quit()
 
 

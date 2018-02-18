@@ -1,6 +1,7 @@
 import unittest
 
 from base.setup import BaseTest
+from base.setup import logger
 
 
 class FlightTest(BaseTest):
@@ -10,17 +11,14 @@ class FlightTest(BaseTest):
     def setUp(self):
         pass
 
-        self.logger.info("Wrapping up checkout URL...")
-        self.checkout_url = self.BASE_URL \
-                            + self.checkout_route \
-                            + self.CART_ID \
-                            + self.product_route
+        logger.info("Wrapping up checkout URL...")
+        self.checkout_url = self.base_url + self.checkout_route + self.cart_id + self.product_route
 
     def test_sheet_grid(self):
         pass
-        self.logger.info('Opening checkout URL: [' + self.checkout_url + ']')
+        logger.info('Opening checkout URL: [' + self.checkout_url + ']')
         self.driver.get(self.checkout_url)
-        self.logger.info('Just for the wait...')
+        logger.info('Just for the wait...')
 
 
 if __name__ == '__main__':

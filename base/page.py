@@ -1,9 +1,9 @@
 # coding=utf-8
 
-import logging
 from selenium.webdriver.support.wait import WebDriverWait
 from constants import CLICKING, WAITING_FOR_MSG
 from locators import LoginModalLocators
+from base.setup import logger
 
 
 class BasePage(object):
@@ -14,12 +14,9 @@ class BasePage(object):
 
     def wait_for_element(self, element, locator, description, obj):
         driver = element.driver
-        self.logger.info(WAITING_FOR_MSG + "[" + description + "] " + obj)
+        logger.info(WAITING_FOR_MSG + "[" + description + "] " + obj)
         WebDriverWait(driver, 100).until(lambda driver: driver.find_element_by_xpath(locator))
         return self.driver.find_element_by_xpath(locator)
-
-    logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
-    logger = logging.getLogger(__name__)
 
 
 # Checkout class and sections
@@ -63,5 +60,5 @@ class LoginModal(BasePage):
         self.driver = driver
 
     def click_close_login_modal(self):
-        self.logger.info(CLICKING + LoginModalLocators.CLOSE_BUTTON_DESC)
+        logger.info(CLICKING + LoginModalLocators.CLOSE_BUTTON_DESC)
         self.driver.find_element(*LoginModalLocators.CLOSE_BUTTON).click()
