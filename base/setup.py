@@ -17,7 +17,6 @@ logger = logging.getLogger(__name__)
 BASE_URL = ALMUNDO_COM
 BROWSER = CHROME
 COUNTRY = ARGENTINA
-CART_ID = '5a89eaec24aa9a000b76f9f0'
 CHECKOUT_PARAMETER = '&sc=1'
 
 
@@ -33,11 +32,9 @@ def get_country_domain():
 
 
 class BaseTest(unittest.TestCase):
-
     base_url = BASE_URL
     browser = BROWSER
     country = COUNTRY
-    cart_id = CART_ID
 
     @classmethod
     def setUpClass(cls):
@@ -63,11 +60,7 @@ class BaseTest(unittest.TestCase):
         else:
             logger(VALID_BROWSERS + CHROME + ' - ' + FIREFOX)
         self.driver.maximize_window()
-
-        if CART_ID is not '':
-            self.base_url = self.base_url + get_country_domain()
-        else:
-            self.driver.get(BASE_URL)
+        self.base_url = self.base_url + get_country_domain()
 
     def tearDown(self):
         pass
@@ -77,18 +70,23 @@ class BaseTest(unittest.TestCase):
 
 
 class CheckoutTest(BaseTest):
-
     def setUp(self):
         pass
 
         checkout_route = 'checkout/'
 
         logger.info("Wrapping up checkout URL.")
-        self.checkout_url = self.base_url + checkout_route + self.cart_id + self.product_route
+        self.domain_url = self.base_url + checkout_route
 
-    def open_checkout(self, checkout_parameter):
-        logger.info('Opening checkout URL: [' + self.checkout_url + checkout_parameter + ']')
-        self.driver.get(self.checkout_url + checkout_parameter)
+    def open_checkout(self, cart_id, checkout_parameter):
+
+        checkout_url = self.domain_url \
+                        + cart_id + self.product_route \
+                        + checkout_parameter
+
+        logger.info('Opening checkout URL: [' + checkout_url + ']')
+
+        self.driver.get(checkout_url)
 
 
 if __name__ == "__main__":

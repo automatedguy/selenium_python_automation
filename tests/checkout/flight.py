@@ -11,14 +11,14 @@ class FlightTest(CheckoutTest):
     def test_no_parameter(self):
         pass
         checkout_parameter = ''
-        self.open_checkout(checkout_parameter)
+        self.open_checkout('5a89eaec24aa9a000b76f9f0', checkout_parameter)
 
         logger.info('Just for the wait...')
 
     def test_sc_enabled(self):
         pass
         checkout_parameter = '&sc=1'
-        self.open_checkout(checkout_parameter)
+        self.open_checkout('5a89eaec24aa9a000b76f9f0', checkout_parameter)
 
         logger.info('Just for the wait...')
 
