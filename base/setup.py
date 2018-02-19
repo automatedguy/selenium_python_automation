@@ -1,6 +1,7 @@
 import os
 import logging
 import unittest
+import datetime
 from selenium import webdriver
 
 from base.constants import ALMUNDO_COM, CHROME, ARGENTINA, FIREFOX, VALID_BROWSERS, SETTING_UP, TEARING_DOWN
@@ -27,8 +28,43 @@ def get_country_domain():
         'Mexico': '.mx/',
         'Brasil': '.br/'
     }
-    print
     return country_domain.get(COUNTRY, "Invalid Country" + COUNTRY)
+
+
+def get_country_site():
+    country_site = {
+        'Argentina': 'ARG',
+        'Colombia': 'COL',
+        'Mexico': 'MEX',
+        'Brasil': 'BRA'
+    }
+    return country_site.get(COUNTRY, "Invalid Country" + COUNTRY)
+
+
+def get_country_currency():
+    country_site = {
+        'Argentina': 'ARS',
+        'Colombia': 'COL',
+        'Mexico': 'MXN',
+        'Brasil': 'BRS'
+    }
+    return country_site.get(COUNTRY, "Invalid Country" + COUNTRY)
+
+
+def get_country_language():
+    country_language = {
+        'Argentina': 'es',
+        'Colombia': 'es',
+        'Mexico': 'es',
+        'Brasil': 'pt'
+    }
+    return country_language.get(COUNTRY, "Invalid Country" + COUNTRY)
+
+
+def get_date(add_days):
+    time_now = datetime.datetime.now()
+    new_time = time_now + datetime.timedelta(add_days)
+    return new_time.strftime("%Y-%m-%d")
 
 
 class BaseTest(unittest.TestCase):
