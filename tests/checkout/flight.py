@@ -17,47 +17,37 @@ class FlightTest(CheckoutTest):
     children = '1'
     infants = '0'
 
+    def get_cart_id(self):
+        return get_flight_cart_id(self.origin, self.destination,
+                                  get_date(self.departure_date), get_date(self.return_date),
+                                  get_country_site(), get_country_language(),
+                                  self.adults, self.children, self.infants)
+
     def test_no_parameter(self):
         pass
         checkout_parameter = ''
-        self.open_checkout(get_flight_cart_id(self.origin, self.destination,
-                                              get_date(self.departure_date), get_date(self.return_date),
-                                              get_country_site(), get_country_language(),
-                                              self.adults, self.children, self.infants),
-                           checkout_parameter)
+        self.open_checkout(self.get_cart_id(), checkout_parameter)
 
         logger.info('Just for the wait...')
 
     def test_sc_enabled(self):
         pass
         checkout_parameter = SC_ENABLED
-        self.open_checkout(get_flight_cart_id(self.origin, self.destination,
-                                              get_date(self.departure_date), get_date(self.return_date),
-                                              get_country_site(), get_country_language(),
-                                              self.adults, self.children, self.infants),
-                           checkout_parameter)
+        self.open_checkout(self.get_cart_id(), checkout_parameter)
 
         logger.info('Just for the wait...')
 
     def test_sw_cpd(self):
         pass
         checkout_parameter = SW_CPD
-        self.open_checkout(get_flight_cart_id(self.origin, self.destination,
-                                              get_date(self.departure_date), get_date(self.return_date),
-                                              get_country_site(), get_country_language(),
-                                              self.adults, self.children, self.infants),
-                           checkout_parameter)
+        self.open_checkout(self.get_cart_id(), checkout_parameter)
 
         logger.info('Just for the wait...')
 
     def test_sw_cpds(self):
         pass
         checkout_parameter = SW_CPDS
-        self.open_checkout(get_flight_cart_id(self.origin, self.destination,
-                                              get_date(self.departure_date), get_date(self.return_date),
-                                              get_country_site(), get_country_language(),
-                                              self.adults, self.children, self.infants),
-                           checkout_parameter)
+        self.open_checkout(self.get_cart_id(), checkout_parameter)
 
         logger.info('Just for the wait...')
 
