@@ -3,6 +3,7 @@ import unittest
 from base.setup import CheckoutTest, get_country_site, get_country_language, get_date
 from base.setup import logger
 from constants import SC_ENABLED, SW_CPD, SW_CPDS
+from page import Checkout
 from services import get_flight_cart_id
 
 
@@ -24,6 +25,7 @@ class FlightTest(CheckoutTest):
                                   self.adults, self.children, self.infants)
 
     def test_no_parameter(self):
+        """ Load checkout without additional parameters"""
         pass
         checkout_parameter = ''
         self.open_checkout(self.get_cart_id(), checkout_parameter)
@@ -31,6 +33,7 @@ class FlightTest(CheckoutTest):
         logger.info('Just for the wait...')
 
     def test_sc_enabled(self):
+        """ Load checkout with &sc=1 """
         pass
         checkout_parameter = SC_ENABLED
         self.open_checkout(self.get_cart_id(), checkout_parameter)
@@ -38,6 +41,7 @@ class FlightTest(CheckoutTest):
         logger.info('Just for the wait...')
 
     def test_sw_cpd(self):
+        """ Load checkout with &sw=cpd """
         pass
         checkout_parameter = SW_CPD
         self.open_checkout(self.get_cart_id(), checkout_parameter)
@@ -45,6 +49,7 @@ class FlightTest(CheckoutTest):
         logger.info('Just for the wait...')
 
     def test_sw_cpds(self):
+        """ Load checkout with &sw=cpds """
         pass
         checkout_parameter = SW_CPDS
         self.open_checkout(self.get_cart_id(), checkout_parameter)

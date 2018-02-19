@@ -2,7 +2,7 @@
 
 from selenium.webdriver.support.wait import WebDriverWait
 from constants import CLICKING, WAITING_FOR_MSG
-from locators import LoginModalLocators
+from locators import LoginModalLct
 from base.setup import logger
 
 
@@ -28,6 +28,9 @@ class Checkout(BasePage):
     def __init__(self, driver):
         super(Checkout, self).__init__(driver)
         self.driver = driver
+
+    def populate_checkout_info(self):
+        """ This method will deal with the initial load """
 
 
 class PassengerSection(Checkout):
@@ -60,5 +63,5 @@ class LoginModal(BasePage):
         self.driver = driver
 
     def click_close_login_modal(self):
-        logger.info(CLICKING + LoginModalLocators.CLOSE_BUTTON_DESC)
-        self.driver.find_element(*LoginModalLocators.CLOSE_BUTTON).click()
+        logger.info(CLICKING + LoginModalLct.CLOSE_BUTTON_DESC)
+        self.driver.find_element(*LoginModalLct.CLOSE_BUTTON).click()
