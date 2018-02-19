@@ -6,9 +6,10 @@ from base.constants import ABS_ALMUNDO_IT, APIST_ALMUNDO_COM
 
 
 class Apikeys:
-    raw_channels_info = requests.get(ABS_ALMUNDO_IT)
-    json_channels_info = json.loads(raw_channels_info.text)
-    apikey_name = 'almundo-web'
+    def __init__(self):
+        raw_channels_info = requests.get(ABS_ALMUNDO_IT)
+        self.json_channels_info = json.loads(raw_channels_info.text)
+        self.apikey_name = 'almundo-web'
 
     def get_apikey(self):
         print('Looking for apikey corresponding to channel: [' + self.apikey_name + ']')
@@ -57,13 +58,13 @@ class HotelsAvailabilities:
 class HotelsDetails:
     def __init__(self, hotel_id, checkin, checkout, room, language, site):
         self.hotels_details_url = APIST_ALMUNDO_COM \
-                                    + '/api/hotels/v2/detail?' \
-                                    + 'hotelId=' + hotel_id \
-                                    + '&checkin=' + checkin \
-                                    + '&checkout=' + checkout \
-                                    + '&room=' + room \
-                                    + '&language=' + language \
-                                    + '&site=' + site
+                                  + '/api/hotels/v2/detail?' \
+                                  + 'hotelId=' + hotel_id \
+                                  + '&checkin=' + checkin \
+                                  + '&checkout=' + checkout \
+                                  + '&room=' + room \
+                                  + '&language=' + language \
+                                  + '&site=' + site
 
     def get_hotel_id(self, apikey):
         raw_hotel_details = requests.get(self.hotels_details_url, headers={'X-Apikey': apikey})
@@ -89,7 +90,7 @@ class FlightsClusters:
         raw_flights_clusters = requests.get(self.flights_clusters_url, headers={'X-Apikey': apikey})
         json_flights_clusters = json.loads(raw_flights_clusters.text)
         return str(json_flights_clusters['clusters'][0]['segments'][0]['choices'][0]['id']) \
-            + '*' + str(json_flights_clusters['clusters'][0]['segments'][1]['choices'][0]['id'])
+               + '*' + str(json_flights_clusters['clusters'][0]['segments'][1]['choices'][0]['id'])
 
 
 class Cart:
@@ -107,15 +108,22 @@ class Cart:
         return json_cart_book_id['cart_id']
 
 
-apikeys = Apikeys()
-channel_apikey = apikeys.get_apikey()
-print('X-apikey: [' + channel_apikey + ']')
+def get_flight_cart_id(origin, destination, departure_date, return_date, site, language, adults, children, infants):
+    apikeys = Apikeys()
+    channel_apikey = apikeys.get_apikey()
+    print('X-apikey: [' + channel_apikey + ']')
 
-# FLIGHTS THINGS
-flights_clusters = FlightsClusters('BUE', 'MIA', '2018-03-18', '2018-04-02', 'ARG', 'es', '2', '1', '0')
-product_id = flights_clusters.get_flight_id(channel_apikey)
-print('Flight ID: [' + product_id + ']')
+    flights_clusters = FlightsClusters(origin, destination, departure_date, return_date,
+                                       site, language,
+                                       adults, children, infants)
 
+    product_id = flights_clusters.get_flight_id(channel_apikey)
+    print('Flight ID: [' + product_id + ']')
+
+    cart = Cart(site, language)
+    cart_id = cart.get_cart_id(channel_apikey, product_id)
+
+    return cart_id
 
 # HOTEL THINGS
 # autocomplete = Autocomplete('MIA', 'CITY')
@@ -123,8 +131,3 @@ print('Flight ID: [' + product_id + ']')
 # print(location_entity_id)
 # hotels_availabilities = HotelsAvailabilities(location_entity_id, 'CITY', '2018-03-18', '2018-04-02', '2', 'es', 'ARG')
 # selected_hotel_id = hotels_availabilities.get_hotel_id(channel_apikey)
-
-
-cart = Cart('ARG', 'es')
-cart_id = cart.get_cart_id(channel_apikey, product_id)
-print('Cart ID: [' + cart_id + ']')

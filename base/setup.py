@@ -4,7 +4,8 @@ import unittest
 import datetime
 from selenium import webdriver
 
-from base.constants import ALMUNDO_COM, CHROME, ARGENTINA, FIREFOX, VALID_BROWSERS, SETTING_UP, TEARING_DOWN
+from base.constants import ALMUNDO_COM, CHROME, ARGENTINA, FIREFOX, VALID_BROWSERS, SETTING_UP, TEARING_DOWN, \
+    ST_ALMUNDO_COM
 
 # Returns abs path relative to this file and not cwd
 PATH = lambda p: os.path.abspath(
@@ -15,7 +16,7 @@ logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=lo
 logger = logging.getLogger(__name__)
 
 # Test parameters
-BASE_URL = ALMUNDO_COM
+BASE_URL = ST_ALMUNDO_COM
 BROWSER = CHROME
 COUNTRY = ARGENTINA
 CHECKOUT_PARAMETER = '&sc=1'
