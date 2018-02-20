@@ -60,15 +60,15 @@ class BaseTest(unittest.TestCase):
         logger.info(TEARING_DOWN + BROWSER)
         self.driver.quit()
 
-    def open_checkout(self, cart_id, checkout_parameter):
+    def open_checkout(self, cart_id, checkout_parameter, product_route):
         self.domain_url = self.base_url
         checkout_route = 'checkout/'
-        checkout_url = self.domain_url + checkout_route + cart_id + checkout_parameter
+        checkout_url = self.domain_url + checkout_route + cart_id + product_route + checkout_parameter
 
         logger.info('Opening checkout URL: [' + checkout_url + ']')
 
         self.driver.get(checkout_url)
-        return Checkout(self.driver)
+        return Checkout(self.driver, cart_id)
 
     def get_country_domain(self):
         country_domain = {
@@ -110,25 +110,6 @@ class BaseTest(unittest.TestCase):
         time_now = datetime.datetime.now()
         new_time = time_now + datetime.timedelta(add_days)
         return new_time.strftime("%Y-%m-%d")
-
-
-class CheckoutTest(BaseTest):
-    def setUp(self):
-        pass
-        checkout_route = 'checkout/'
-
-        logger.info("Wrapping up checkout URL.")
-        self.domain_url = self.base_url + checkout_route
-
-    def open_checkout(self, cart_id, checkout_parameter):
-        checkout_url = self.domain_url \
-                       + cart_id + self.product_route \
-                       + checkout_parameter
-
-        logger.info('Opening checkout URL: [' + checkout_url + ']')
-
-        self.driver.get(checkout_url)
-
 
 if __name__ == "__main__":
     unittest.main()

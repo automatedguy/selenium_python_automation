@@ -1,7 +1,10 @@
 import json
+import logging
 import requests
 from base.constants import *
-from base.setup import logger
+
+logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 class Apikeys:
@@ -95,13 +98,15 @@ class FlightsClusters:
 class InputDefinitions:
     def __init__(self, input_def_host, cart_id, country, language):
         self.input_def_url = input_def_host \
-                             + 'api/v3/cart/' + cart_id \
+                             + '/api/v3/cart/' + cart_id \
                              + '/input-definitions?site=' + country \
                              + '&language=' + language
 
     def get_input_definitions(self, apikey):
+        logger.info('Getting input definitions...')
         raw_input_definitions = requests.get(self.input_def_url, headers={'X-Apikey': apikey, 'Version': 'v3'})
         json_input_definitions = json.loads(raw_input_definitions.text)
+        logger.info("Input definitions retrieved!" + str(json_input_definitions))
         return json_input_definitions
 
 

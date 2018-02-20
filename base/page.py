@@ -4,6 +4,7 @@ from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.wait import WebDriverWait
 from constants import *
 from locators import *
+from services import InputDefinitions
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -28,12 +29,15 @@ class BasePage(object):
 class Checkout(BasePage):
     """Checkout Page class"""
 
-    def __init__(self, driver):
+    def __init__(self, driver, cart_id=''):
         super(Checkout, self).__init__(driver)
         self.driver = driver
+        self.cart_id = cart_id
 
-    def populate_checkout_info(self):
+    def populate_checkout_info(self, cart_id='', country='', language='', apikey=''):
         """ This method will deal with the initial load """
+        input_definitions = InputDefinitions(APIST_ALMUNDO_COM, cart_id, country, language)\
+            .get_input_definitions(apikey)
         PassengerSection(self.driver).populate_passengers()
 
 
