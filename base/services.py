@@ -1,8 +1,6 @@
 import json
-
 import requests
-
-from base.constants import ABS_ALMUNDO_IT, APIST_ALMUNDO_COM
+from base.constants import *
 
 
 class Apikeys:

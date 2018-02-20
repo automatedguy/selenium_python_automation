@@ -30,6 +30,7 @@ WAITING_FOR_MSG = 'Waiting for: '
 # ACTIONS
 CLICKING = 'Clicking '
 SELECTING = 'Selecting '
+FILLING = 'Filling '
 
 # CHECKOUT
 

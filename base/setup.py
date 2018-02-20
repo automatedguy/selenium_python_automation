@@ -4,8 +4,7 @@ import unittest
 import datetime
 from selenium import webdriver
 
-from base.constants import ALMUNDO_COM, CHROME, ARGENTINA, FIREFOX, VALID_BROWSERS, SETTING_UP, TEARING_DOWN, \
-    ST_ALMUNDO_COM
+from base.constants import *
 
 # Returns abs path relative to this file and not cwd
 PATH = lambda p: os.path.abspath(

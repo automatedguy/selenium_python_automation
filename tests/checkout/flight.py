@@ -26,15 +26,14 @@ class FlightTest(CheckoutTest):
 
     def test_no_parameter(self):
         """ Load checkout without additional parameters"""
-        pass
         checkout_parameter = ''
         self.open_checkout(self.get_cart_id(), checkout_parameter)
+        Checkout(self.driver).populate_checkout_info()
 
         logger.info('Just for the wait...')
 
     def test_sc_enabled(self):
         """ Load checkout with &sc=1 """
-        pass
         checkout_parameter = SC_ENABLED
         self.open_checkout(self.get_cart_id(), checkout_parameter)
 
@@ -42,7 +41,6 @@ class FlightTest(CheckoutTest):
 
     def test_sw_cpd(self):
         """ Load checkout with &sw=cpd """
-        pass
         checkout_parameter = SW_CPD
         self.open_checkout(self.get_cart_id(), checkout_parameter)
 

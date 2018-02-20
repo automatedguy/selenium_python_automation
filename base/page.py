@@ -1,8 +1,7 @@
 # coding=utf-8
-
 from selenium.webdriver.support.wait import WebDriverWait
-from constants import CLICKING, WAITING_FOR_MSG
-from locators import LoginModalLct
+from constants import *
+from locators import *
 from base.setup import logger
 
 
@@ -31,6 +30,7 @@ class Checkout(BasePage):
 
     def populate_checkout_info(self):
         """ This method will deal with the initial load """
+        PassengerSection(self.driver).populate_passengers()
 
 
 class PassengerSection(Checkout):
@@ -39,6 +39,11 @@ class PassengerSection(Checkout):
     def __init__(self, driver):
         super(PassengerSection, self).__init__(driver)
         self.driver = driver
+
+    def populate_passengers(self):
+        logger.info('Filling Passengers Info.')
+        logger.info(FILLING + PassengerSectionLct.NAME_INPUT_DESC)
+        self.driver.find_element(*PassengerSectionLct.NAME_INPUT).send_keys('Whatever')
 
 
 class PaymentSection(Checkout):
