@@ -1,6 +1,7 @@
 import json
 import requests
 from base.constants import *
+from setup import logger
 
 
 class Apikeys:
@@ -10,10 +11,10 @@ class Apikeys:
         self.apikey_name = 'almundo-web'
 
     def get_apikey(self):
-        print('Looking for apikey corresponding to channel: [' + self.apikey_name + ']')
+        logger.info('Looking for apikey corresponding to channel: [' + self.apikey_name + ']')
         for channel in self.json_channels_info:
             if channel['name'] == self.apikey_name:
-                print('Apikey found, awesome!')
+                logger.info('Apikey found, awesome!')
                 break
         return channel['value']
 
@@ -30,7 +31,7 @@ class Autocomplete:
         json_autocomplete_suggestions = json.loads(raw_autocomplete_suggestions.text)
         for entities in json_autocomplete_suggestions['suggestions'][0]['entities']:
             if location_name in entities['label']:
-                print('Location Found:' + entities['label'])
+                logger.info('Location Found:' + entities['label'])
                 break
         return entities['id']
 
@@ -82,7 +83,7 @@ class FlightsClusters:
                                     + '&children=' + children \
                                     + '&infants=' + infants
 
-        print('Flight Cluster URl: [' + self.flights_clusters_url + ']')
+        logger.info('Flight Cluster URl: [' + self.flights_clusters_url + ']')
 
     def get_flight_id(self, apikey):
         raw_flights_clusters = requests.get(self.flights_clusters_url, headers={'X-Apikey': apikey})
@@ -97,7 +98,7 @@ class Cart:
                         + '/api/v3/cart/' \
                         + '?site=' + site \
                         + '&language=' + language
-        print('Cart Book URL: [' + self.book_url + ']')
+        logger.info('Cart Book URL: [' + self.book_url + ']')
 
     def get_cart_id(self, apikey, flight_id):
         data = {"products": [{"type": "FLIGHT", "id": flight_id}]}
@@ -109,14 +110,14 @@ class Cart:
 def get_flight_cart_id(origin, destination, departure_date, return_date, site, language, adults, children, infants):
     apikeys = Apikeys()
     channel_apikey = apikeys.get_apikey()
-    print('X-apikey: [' + channel_apikey + ']')
+    logger.info('X-apikey: [' + channel_apikey + ']')
 
     flights_clusters = FlightsClusters(origin, destination, departure_date, return_date,
                                        site, language,
                                        adults, children, infants)
 
     product_id = flights_clusters.get_flight_id(channel_apikey)
-    print('Flight ID: [' + product_id + ']')
+    logger.info('Flight ID: [' + product_id + ']')
 
     cart = Cart(site, language)
     cart_id = cart.get_cart_id(channel_apikey, product_id)
@@ -126,6 +127,6 @@ def get_flight_cart_id(origin, destination, departure_date, return_date, site, l
 # HOTEL THINGS
 # autocomplete = Autocomplete('MIA', 'CITY')
 # location_entity_id = autocomplete.get_entity_id(channel_apikey, 'Miami')
-# print(location_entity_id)
+# logger.info(location_entity_id)
 # hotels_availabilities = HotelsAvailabilities(location_entity_id, 'CITY', '2018-03-18', '2018-04-02', '2', 'es', 'ARG')
 # selected_hotel_id = hotels_availabilities.get_hotel_id(channel_apikey)

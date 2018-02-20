@@ -10,8 +10,8 @@ class LoginModalLct(object):
 
 
 class PassengerSectionLct(object):
-    NAME_INPUT = (By.CSS_SELECTOR, '#first_name')
-    NAME_INPUT_DESC = 'Name: '
+    NAME = (By.CSS_SELECTOR, '#first_name')
+    NAME_DESC = 'Name: '
 
     LAST_NAME = (By.CSS_SELECTOR, '#last_name')
     LAST_NAME_DESC = 'Last Name: '
@@ -26,16 +26,16 @@ class PassengerSectionLct(object):
     DOCUMENT_EMISOR_DESC = 'Document Emisor: '
 
     BIRTHDAY = (By.CSS_SELECTOR, '#passengers-section passengers-form .container-day select')
-    BIRTHDAY_DESC = 'Birthday [Day]: '
+    BIRTHDAY_DESC = 'Birth date [Day]: '
 
     BIRTHMONTH = (By.CSS_SELECTOR, '#passengers-section passengers-form .container-month select')
-    BIRTHMONTH_DESC = 'Birthday [Month]: '
+    BIRTHMONTH_DESC = 'Birth date [Month]: '
 
     BIRTHYEAR = (By.CSS_SELECTOR, '#passengers-section passengers-form .container-year select')
-    BIRTHYEAR_DESC = 'Birthday [Year]: '
+    BIRTHYEAR_DESC = 'Birth date [Year]: '
 
     GENDER = (By.ID, 'gender')
     GENDER_DESC = 'Gender: '
 
-    NATIONALITY = (By.CSS_SELECTOR, 'nationality')
+    NATIONALITY = (By.ID, 'nationality')
     NATIONALITY_DESC = 'Nationality: '
