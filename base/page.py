@@ -1,4 +1,5 @@
 # coding=utf-8
+from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.wait import WebDriverWait
 from constants import *
 from locators import *
@@ -41,9 +42,23 @@ class PassengerSection(Checkout):
         self.driver = driver
 
     def populate_passengers(self):
-        logger.info('Filling Passengers Info.')
-        logger.info(FILLING + PassengerSectionLct.NAME_INPUT_DESC)
-        self.driver.find_element(*PassengerSectionLct.NAME_INPUT).send_keys('Whatever')
+
+        total_passengers = len(self.driver.find_elements(*PassengerSectionLct.NAME_INPUT))
+
+        Utils().print_separator()
+        logger.info("Filling Passengers info - Total Passengers: " + str(total_passengers))
+
+        for passenger in range(0, total_passengers):
+            logger.info('Filling Passenger N°: ' + str(passenger))
+
+            self.driver.find_elements(*PassengerSectionLct.NAME_INPUT)[passenger].send_keys('Whatever')
+
+            self.driver.find_elements(*PassengerSectionLct.LAST_NAME)[passenger].send_keys('Whatever')
+
+            Select(self.driver.find_elements(*PassengerSectionLct.DOCUMENT_TYPE)[passenger])\
+                .select_by_visible_text('Pasaporte')
+
+            Utils().print_separator()
 
 
 class PaymentSection(Checkout):
@@ -70,3 +85,9 @@ class LoginModal(BasePage):
     def click_close_login_modal(self):
         logger.info(CLICKING + LoginModalLct.CLOSE_BUTTON_DESC)
         self.driver.find_element(*LoginModalLct.CLOSE_BUTTON).click()
+
+
+class Utils:
+    @staticmethod
+    def print_separator():
+        logger.info('****************************************************')
