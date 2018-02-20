@@ -108,14 +108,12 @@ class BaseTest(unittest.TestCase):
 class CheckoutTest(BaseTest):
     def setUp(self):
         pass
-
         checkout_route = 'checkout/'
 
         logger.info("Wrapping up checkout URL.")
         self.domain_url = self.base_url + checkout_route
 
     def open_checkout(self, cart_id, checkout_parameter):
-
         checkout_url = self.domain_url \
                         + cart_id + self.product_route \
                         + checkout_parameter

@@ -92,6 +92,19 @@ class FlightsClusters:
                + '*' + str(json_flights_clusters['clusters'][0]['segments'][1]['choices'][0]['id'])
 
 
+class InputDefinitions:
+    def __init__(self, input_def_host, cart_id, country, language):
+        self.input_def_url = input_def_host \
+                             + 'api/v3/cart/' + cart_id \
+                             + '/input-definitions?site=' + country \
+                             + '&language=' + language
+
+    def get_input_definitions(self, apikey):
+        raw_input_definitions = requests.get(self.input_def_url, headers={'X-Apikey': apikey, 'Version': 'v3'})
+        json_input_definitions = json.loads(raw_input_definitions.text)
+        return json_input_definitions
+
+
 class Cart:
     def __init__(self, site, language):
         self.book_url = APIST_ALMUNDO_COM \

@@ -28,6 +28,7 @@ class FlightTest(CheckoutTest):
         """ Load checkout without additional parameters"""
         checkout_parameter = ''
         self.open_checkout(self.get_cart_id(), checkout_parameter)
+
         Checkout(self.driver).populate_checkout_info()
 
         logger.info('Just for the wait...')

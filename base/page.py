@@ -3,7 +3,8 @@ from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.wait import WebDriverWait
 from constants import *
 from locators import *
-from base.setup import logger
+from base.setup import logger, CheckoutTest
+from services import InputDefinitions
 
 
 class BasePage(object):
