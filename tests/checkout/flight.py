@@ -1,13 +1,11 @@
 import unittest
 
-from base.setup import CheckoutTest, get_country_site, get_country_language, get_date
-from base.setup import logger
+from base.setup import BaseTest, logger
 from constants import SC_ENABLED, SW_CPD, SW_CPDS
-from page import Checkout
-from services import get_flight_cart_id
+from base.services import get_flight_cart_id
 
 
-class FlightTest(CheckoutTest):
+class FlightTest(BaseTest):
     # Test parameters
     product_route = '?product=flights'
     origin = 'BUE'
@@ -20,16 +18,16 @@ class FlightTest(CheckoutTest):
 
     def get_cart_id(self):
         return get_flight_cart_id(self.origin, self.destination,
-                                  get_date(self.departure_date), get_date(self.return_date),
-                                  get_country_site(), get_country_language(),
+                                  self.get_date(self.departure_date), self.get_date(self.return_date),
+                                  self.get_country_site(), self.get_country_language(),
                                   self.adults, self.children, self.infants)
 
     def test_no_parameter(self):
         """ Load checkout without additional parameters"""
         checkout_parameter = ''
-        self.open_checkout(self.get_cart_id(), checkout_parameter)
 
-        Checkout(self.driver).populate_checkout_info()
+        checkout = self.open_checkout(self.get_cart_id(), checkout_parameter)
+        checkout.populate_checkout_info()
 
         logger.info('Just for the wait...')
 

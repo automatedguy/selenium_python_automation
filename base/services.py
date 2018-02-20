@@ -1,7 +1,7 @@
 import json
 import requests
 from base.constants import *
-from setup import logger
+from base.setup import logger
 
 
 class Apikeys:

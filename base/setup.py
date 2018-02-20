@@ -5,8 +5,10 @@ import datetime
 from selenium import webdriver
 
 from base.constants import *
+from base.page import Checkout
 
 # Returns abs path relative to this file and not cwd
+
 PATH = lambda p: os.path.abspath(
     os.path.join(os.path.dirname(__file__), p)
 )
@@ -19,52 +21,6 @@ BASE_URL = ST_ALMUNDO_COM
 BROWSER = CHROME
 COUNTRY = ARGENTINA
 CHECKOUT_PARAMETER = '&sc=1'
-
-
-def get_country_domain():
-    country_domain = {
-        'Argentina': '.ar/',
-        'Colombia': '.co/',
-        'Mexico': '.mx/',
-        'Brasil': '.br/'
-    }
-    return country_domain.get(COUNTRY, "Invalid Country" + COUNTRY)
-
-
-def get_country_site():
-    country_site = {
-        'Argentina': 'ARG',
-        'Colombia': 'COL',
-        'Mexico': 'MEX',
-        'Brasil': 'BRA'
-    }
-    return country_site.get(COUNTRY, "Invalid Country" + COUNTRY)
-
-
-def get_country_currency():
-    country_site = {
-        'Argentina': 'ARS',
-        'Colombia': 'COL',
-        'Mexico': 'MXN',
-        'Brasil': 'BRS'
-    }
-    return country_site.get(COUNTRY, "Invalid Country" + COUNTRY)
-
-
-def get_country_language():
-    country_language = {
-        'Argentina': 'es',
-        'Colombia': 'es',
-        'Mexico': 'es',
-        'Brasil': 'pt'
-    }
-    return country_language.get(COUNTRY, "Invalid Country" + COUNTRY)
-
-
-def get_date(add_days):
-    time_now = datetime.datetime.now()
-    new_time = time_now + datetime.timedelta(add_days)
-    return new_time.strftime("%Y-%m-%d")
 
 
 class BaseTest(unittest.TestCase):
@@ -96,13 +52,64 @@ class BaseTest(unittest.TestCase):
         else:
             logger(VALID_BROWSERS + CHROME + ' - ' + FIREFOX)
         self.driver.maximize_window()
-        self.base_url = self.base_url + get_country_domain()
+        self.base_url = self.base_url + self.get_country_domain()
 
     def tearDown(self):
         pass
 
         logger.info(TEARING_DOWN + BROWSER)
         self.driver.quit()
+
+    def open_checkout(self, cart_id, checkout_parameter):
+        self.domain_url = self.base_url
+        checkout_route = 'checkout/'
+        checkout_url = self.domain_url + checkout_route + cart_id + checkout_parameter
+
+        logger.info('Opening checkout URL: [' + checkout_url + ']')
+
+        self.driver.get(checkout_url)
+        return Checkout(self.driver)
+
+    def get_country_domain(self):
+        country_domain = {
+            'Argentina': '.ar/',
+            'Colombia': '.co/',
+            'Mexico': '.mx/',
+            'Brasil': '.br/'
+        }
+        return country_domain.get(COUNTRY, "Invalid Country" + COUNTRY)
+
+    def get_country_site(self):
+        country_site = {
+            'Argentina': 'ARG',
+            'Colombia': 'COL',
+            'Mexico': 'MEX',
+            'Brasil': 'BRA'
+        }
+        return country_site.get(COUNTRY, "Invalid Country" + COUNTRY)
+
+    def get_country_currency(self):
+        country_site = {
+            'Argentina': 'ARS',
+            'Colombia': 'COL',
+            'Mexico': 'MXN',
+            'Brasil': 'BRS'
+        }
+        return country_site.get(COUNTRY, "Invalid Country" + COUNTRY)
+
+    def get_country_language(self):
+        country_language = {
+            'Argentina': 'es',
+            'Colombia': 'es',
+            'Mexico': 'es',
+            'Brasil': 'pt'
+        }
+        return country_language.get(COUNTRY, "Invalid Country" + COUNTRY)
+
+    def get_date(self, add_days):
+        time_now = datetime.datetime.now()
+        new_time = time_now + datetime.timedelta(add_days)
+        return new_time.strftime("%Y-%m-%d")
 
 
 class CheckoutTest(BaseTest):
@@ -115,8 +122,8 @@ class CheckoutTest(BaseTest):
 
     def open_checkout(self, cart_id, checkout_parameter):
         checkout_url = self.domain_url \
-                        + cart_id + self.product_route \
-                        + checkout_parameter
+                       + cart_id + self.product_route \
+                       + checkout_parameter
 
         logger.info('Opening checkout URL: [' + checkout_url + ']')
 
