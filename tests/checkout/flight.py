@@ -16,17 +16,17 @@ class FlightTest(BaseTest):
     children = '1'
     infants = '0'
 
-    def get_cart_id(self):
-        return get_flight_cart_id(self.origin, self.destination,
-                                  self.get_date(self.departure_date), self.get_date(self.return_date),
-                                  self.get_country_site(), self.get_country_language(),
-                                  self.adults, self.children, self.infants)
+    def setUp(self):
+        self.cart_id = get_flight_cart_id(self.origin, self.destination,
+                                          self.get_date(self.departure_date), self.get_date(self.return_date),
+                                          self.get_country_site(), self.get_country_language(),
+                                          self.adults, self.children, self.infants)
 
     def test_no_parameter(self):
         """ Load checkout without additional parameters"""
         checkout_parameter = ''
 
-        checkout = self.open_checkout(self.get_cart_id(), checkout_parameter)
+        checkout = self.open_checkout(self.cart_id, checkout_parameter)
         checkout.populate_checkout_info()
 
         logger.info('Just for the wait...')

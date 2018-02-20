@@ -1,10 +1,10 @@
 import unittest
 
-from base.setup import CheckoutTest
+from base.setup import BaseTest
 from base.setup import logger
 
 
-class TripTest(CheckoutTest):
+class TripTest(BaseTest):
 
     product_route = ''
 
