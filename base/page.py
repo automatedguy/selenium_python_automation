@@ -36,9 +36,11 @@ class Checkout(BasePage):
 
     def populate_checkout_info(self, cart_id='', country='', language='', apikey=''):
         """ This method will deal with the initial load """
+
         input_definitions = InputDefinitions(APIST_ALMUNDO_COM, cart_id, country, language)\
             .get_input_definitions(apikey)
-        PassengerSection(self.driver).populate_passengers()
+
+        PassengerSection(self.driver).populate_passengers(input_definitions)
 
 
 class PassengerSection(Checkout):
@@ -117,7 +119,7 @@ class PassengerSection(Checkout):
         Select(self.driver.find_elements(*self.nationality_lct)[passenger_index])\
             .select_by_visible_text(passenger_nationality)
 
-    def populate_passengers(self):
+    def populate_passengers(self, input_definitions):
 
         total_passengers = len(self.driver.find_elements(*PassengerSectionLct.NAME))
 
@@ -128,15 +130,28 @@ class PassengerSection(Checkout):
         for passenger in range(0, total_passengers):
             logger.info('Filling Passenger N°: ' + str(passenger + 1))
 
-            self.set_name(passenger, 'Whatever')
-            self.set_last_name(passenger, 'Nevermind')
-            self.set_document_type(passenger, 'Pasaporte')
-            self.set_document_number(passenger, '23456543N')
-            self.select_birthday(passenger, '1')
-            self.select_birthmonth(passenger, 'Enero')
-            self.select_birthyear(passenger, '1990')
-            self.select_gender(passenger, 'Masculino')
-            self.select_nationality(passenger, 'Argentina')
+            if input_definitions['passengers'][passenger]['first_name']['required']:
+                self.set_name(passenger, 'Whatever')
+
+            if input_definitions['passengers'][passenger]['last_name']['required']:
+                self.set_last_name(passenger, 'Nevermind')
+
+            if input_definitions['passengers'][passenger]['document']['document_type']['required']:
+                self.set_document_type(passenger, 'Pasaporte')
+
+            if input_definitions['passengers'][passenger]['document']['number']['required']:
+                self.set_document_number(passenger, '23456543N')
+
+            if input_definitions['passengers'][passenger]['birthday']['required']:
+                self.select_birthday(passenger, '1')
+                self.select_birthmonth(passenger, 'Enero')
+                self.select_birthyear(passenger, '1990')
+
+            if input_definitions['passengers'][passenger]['gender']['required']:
+                self.select_gender(passenger, 'Masculino')
+
+            if input_definitions['passengers'][passenger]['nationality']['required']:
+                self.select_nationality(passenger, 'Argentina')
 
             Utils().print_separator()
 
