@@ -74,3 +74,44 @@ class BillingSectionLct(object):
 
     ENABLE_BILLING = (By.CSS_SELECTOR, 'billing-section div:nth-child(2) > input')
     ENABLE_BILLING_DESC = 'Enable billing radio button'
+
+
+class ContactSectionLct(object):
+    EMAIL = (By.CSS_SELECTOR, 'contact-form #email')
+    EMAIL_DESC = 'E-mail'
+
+    EMAIL_CONFIRMATION = (By.CSS_SELECTOR, 'contact-form #email_confirmation')
+    EMAIL_CONFIRMATION_DESC = 'E- mail confirmation: '
+
+    TELEPHONE_TYPE = (By.CSS_SELECTOR, 'contact-form #telephone_type')
+    TELEPHONE_TYPE_DESC = 'Telephone type: '
+
+    COUNTRY_CODE = (By.CSS_SELECTOR, 'contact-form #country_code')
+    COUNTRY_CODE_DESC = 'Country code: '
+
+    AREA_CODE = (By.CSS_SELECTOR, 'contact-form #area_code')
+    AREA_CODE_DESC = 'Area code: '
+
+    PHONE_NUMBER = (By.CSS_SELECTOR, 'contact-form #number')
+    PHONE_NUMBER_DESC = 'Phone number: '
+
+
+class EmergencyContactSection(object):
+    FIRST_NAME = (By.CSS_SELECTOR, 'emergency-contact-form #first_name')
+    FIRST_NAME_DESC = 'E-mail: '
+
+    LAST_NAME = (By.CSS_SELECTOR, 'emergency-contact-form #last_name')
+    LAST_NAME_DESC = 'E-mail confirmation: '
+
+    TELEPHONE_TYPE = (By.CSS_SELECTOR, 'emergency-contact-form #telephone_type')
+    TELEPHONE_TYPE_DESC = 'Telephone type: '
+
+    COUNTRY_CODE = (By.CSS_SELECTOR, 'emergency-contact-form #country_codel')
+    COUNTRY_CODE_DESC = 'Country code: '
+
+    AREA_CODE = (By.CSS_SELECTOR, 'emergency-contact-form #area_code')
+    AREA_CODE_DESC = 'Area code: '
+
+    PHONE_NUMBER = (By.CSS_SELECTOR, 'emergency-contact-form #number')
+    PHONE_NUMBER_DESC = 'Telephone number: '
+

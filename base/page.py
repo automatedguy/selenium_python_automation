@@ -245,8 +245,8 @@ class BillingSection(Checkout):
         self.driver.find_element(*self.__address_city_lct).send_keys(billing_address_city)
 
     def populate_billing_info(self, input_definitions):
+        logger.info("Populating Billing Info")
         Utils().print_separator()
-        logger.info("Filling Billing Info")
 
         if input_definitions['billings'][0]['fiscal_name']['required']:
             self.set_fiscal_name('Saraza')
