@@ -44,6 +44,7 @@ class Checkout(BasePage):
         # Populate the different sections
         PassengerSection(self.driver).populate_passengers_info(input_definitions)
         BillingSection(self.driver).populate_billing_info(input_definitions)
+        ContactSection(self.driver).populate_contact_info(input_definitions)
 
 
 class PassengerSection(Checkout):
@@ -274,6 +275,8 @@ class BillingSection(Checkout):
         if input_definitions['billings'][0]['address']['city']['required']:
             self.set_address_city('Buenos Aires')
 
+        Utils().print_separator()
+
 
 class ContactSection(Checkout):
     """ Contact Section """
@@ -281,6 +284,69 @@ class ContactSection(Checkout):
     def __init__(self, driver):
         super(ContactSection, self).__init__(driver)
         self.driver = driver
+
+    __email_lct = ContactSectionLct.EMAIL
+    __email_desc = ContactSectionLct.EMAIL_DESC
+
+    __email_confirmation_lct = ContactSectionLct.EMAIL_CONFIRMATION
+    __email_confirmation_desc = ContactSectionLct.EMAIL_CONFIRMATION_DESC
+
+    __telephone_type_lct = ContactSectionLct.TELEPHONE_TYPE
+    __telephone_type_desc = ContactSectionLct.TELEPHONE_TYPE_DESC
+
+    __country_code_lct = ContactSectionLct.COUNTRY_CODE
+    __country_code_desc = ContactSectionLct.COUNTRY_CODE_DESC
+
+    __area_code_lct = ContactSectionLct.AREA_CODE
+    __area_code_desc = ContactSectionLct.AREA_CODE_DESC
+
+    __phone_number_lct = ContactSectionLct.PHONE_NUMBER
+    __phone_number_desc = ContactSectionLct.PHONE_NUMBER_DESC
+
+    def set_email(self, contact_email):
+        logger.info(FILLING + self.__email_desc + contact_email)
+        self.driver.find_element(*self.__email_lct).send_keys(contact_email)
+
+    def set_email_confirmation(self, contact_email_confirmation):
+        logger.info(FILLING + self.__email_confirmation_desc + contact_email_confirmation)
+        self.driver.find_element(*self.__email_confirmation_lct).send_keys(contact_email_confirmation)
+
+    def select_telephone_type(self, contact_telephone_type):
+        logger.info(FILLING + self.__telephone_type_desc + contact_telephone_type)
+        self.driver.find_element(*self.__telephone_type_lct).send_keys(contact_telephone_type)
+
+    def set_country_code(self, contact_country_code):
+        logger.info(FILLING + self.__country_code_desc + contact_country_code)
+        self.driver.find_element(*self.__country_code_lct).send_keys(contact_country_code)
+
+    def set_area_code(self, contact_area_code):
+        logger.info(FILLING + self.__area_code_desc + contact_area_code)
+        self.driver.find_element(*self.__area_code_lct).send_keys(contact_area_code)
+
+    def set_phone_number(self, contact_phone_number):
+        logger.info(FILLING + self.__phone_number + contact_phone_number)
+        self.driver.find_element(*self.__phone_number).send_keys(contact_phone_number)
+
+    def populate_contact_info(self, input_definitions):
+        logger.info("Populating Contact Info")
+        Utils().print_separator()
+
+        if input_definitions['contacts'][0]['email']['required']:
+            self.set_email('email@google.com')
+            self.set_email_confirmation('email@google.com')
+
+        self.select_telephone_type('Celular')
+
+        if input_definitions['contacts'][0]['telephones'][0]['country_code']:
+            self.set_country_code('54')
+
+        if input_definitions['contacts'][0]['telephones'][0]['area_code']:
+            self.set_area_code('11')
+
+        if input_definitions['contacts'][0]['telephones'][0]['number']:
+            self.set_phone_number('43527685')
+
+        Utils().print_separator()
 
 
 class EmergencyContactSection:
