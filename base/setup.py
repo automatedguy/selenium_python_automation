@@ -5,7 +5,6 @@ import datetime
 from selenium import webdriver
 
 from base.constants import *
-from base.page import Checkout
 
 # Returns abs path relative to this file and not cwd
 
@@ -68,48 +67,75 @@ class BaseTest(unittest.TestCase):
         logger.info('Opening checkout URL: [' + checkout_url + ']')
 
         self.driver.get(checkout_url)
+
+        from page import Checkout
         return Checkout(self.driver, cart_id)
 
-    def get_country_domain(self):
+    @staticmethod
+    def get_country_domain():
         country_domain = {
-            'Argentina': '.ar/',
-            'Colombia': '.co/',
-            'Mexico': '.mx/',
-            'Brasil': '.br/'
+            ARGENTINA: '.ar/',
+            COLOMBIA: '.co/',
+            MEXICO: '.mx/',
+            BRASIL: '.br/'
         }
-        return country_domain.get(COUNTRY, "Invalid Country" + COUNTRY)
+        return country_domain.get(COUNTRY, 'Invalid Country' + COUNTRY)
 
-    def get_country_site(self):
+    @staticmethod
+    def get_country_site():
         country_site = {
-            'Argentina': 'ARG',
-            'Colombia': 'COL',
-            'Mexico': 'MEX',
-            'Brasil': 'BRA'
+            ARGENTINA: 'ARG',
+            COLOMBIA: 'COL',
+            MEXICO: 'MEX',
+            BRASIL: 'BRA'
         }
-        return country_site.get(COUNTRY, "Invalid Country" + COUNTRY)
+        return country_site.get(COUNTRY, 'Invalid Country' + COUNTRY)
 
-    def get_country_currency(self):
+    @staticmethod
+    def get_country_currency():
         country_site = {
-            'Argentina': 'ARS',
-            'Colombia': 'COL',
-            'Mexico': 'MXN',
-            'Brasil': 'BRS'
+            ARGENTINA: 'ARS',
+            COLOMBIA: 'COL',
+            MEXICO: 'MXN',
+            BRASIL: 'BRS'
         }
-        return country_site.get(COUNTRY, "Invalid Country" + COUNTRY)
+        return country_site.get(COUNTRY, 'Invalid Country' + COUNTRY)
 
-    def get_country_language(self):
+    @staticmethod
+    def get_country_language():
         country_language = {
-            'Argentina': 'es',
-            'Colombia': 'es',
-            'Mexico': 'es',
-            'Brasil': 'pt'
+            ARGENTINA: 'es',
+            COLOMBIA: 'es',
+            MEXICO: 'es',
+            BRASIL: 'pt'
         }
-        return country_language.get(COUNTRY, "Invalid Country" + COUNTRY)
+        return country_language.get(COUNTRY, 'Invalid Country' + COUNTRY)
+
+    @staticmethod
+    def get_channel():
+        channel = {
+            ALMUNDO_COM: 'almundo-web',
+            ST_ALMUNDO_COM: 'almundo-web',
+            DV_ALMUNDO_COM: 'almundo-web'
+        }
+        return channel.get(BASE_URL, 'Invalid URL')
+
+    @staticmethod
+    def get_api_host():
+        api_host = {
+            ALMUNDO_COM: API_ALMUNDO_COM,
+            ST_ALMUNDO_COM: APIST_ALMUNDO_COM,
+            DV_ALMUNDO_COM: APIDV_ALMUNDO_COM
+
+        }
+        return api_host(BASE_URL, 'Invalid URL' + BASE_URL)
+
 
     def get_date(self, add_days):
         time_now = datetime.datetime.now()
         new_time = time_now + datetime.timedelta(add_days)
         return new_time.strftime("%Y-%m-%d")
+
 
 if __name__ == "__main__":
     unittest.main()

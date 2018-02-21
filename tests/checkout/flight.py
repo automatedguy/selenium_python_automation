@@ -2,7 +2,7 @@ import unittest
 
 from base.setup import BaseTest, logger
 from constants import SC_ENABLED, SW_CPD, SW_CPDS
-from base.services import get_flight_cart_id, Apikeys
+from services import get_flight_cart_id
 
 
 class FlightTest(BaseTest):
@@ -29,8 +29,7 @@ class FlightTest(BaseTest):
         checkout = self.open_checkout(self.cart_id, checkout_parameter, self.product_route)
         checkout.populate_checkout_info(self.cart_id,
                                         self.get_country_site(),
-                                        self.get_country_language(),
-                                        Apikeys().get_apikey())
+                                        self.get_country_language())
 
         logger.info('Just for the wait...')
 
@@ -41,8 +40,7 @@ class FlightTest(BaseTest):
         checkout = self.open_checkout(self.cart_id, checkout_parameter, self.product_route)
         checkout.populate_checkout_info(self.cart_id,
                                         self.get_country_site(),
-                                        self.get_country_language(),
-                                        Apikeys().get_apikey())
+                                        self.get_country_language())
 
         logger.info('Just for the wait...')
 
@@ -53,8 +51,7 @@ class FlightTest(BaseTest):
         checkout = self.open_checkout(self.cart_id, checkout_parameter, self.product_route)
         checkout.populate_checkout_info(self.cart_id,
                                         self.get_country_site(),
-                                        self.get_country_language(),
-                                        Apikeys().get_apikey())
+                                        self.get_country_language())
 
         logger.info('Just for the wait...')
 
@@ -66,8 +63,7 @@ class FlightTest(BaseTest):
         checkout = self.open_checkout(self.cart_id, checkout_parameter, self.product_route)
         checkout.populate_checkout_info(self.cart_id,
                                         self.get_country_site(),
-                                        self.get_country_language(),
-                                        Apikeys().get_apikey())
+                                        self.get_country_language())
 
         logger.info('Just for the wait...')
 
