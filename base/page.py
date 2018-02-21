@@ -38,7 +38,8 @@ class Checkout(BasePage):
         """ This method will deal with the initial load """
 
         # Retrieve input definitions
-        input_definitions = InputDefinitions(APIST_ALMUNDO_COM, cart_id, country, language)\
+        from setup import BaseTest
+        input_definitions = InputDefinitions(BaseTest().get_api_host(), cart_id, country, language)\
             .get_input_definitions(Apikeys().get_apikey())
 
         # Populate the different sections

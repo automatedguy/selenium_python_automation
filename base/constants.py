@@ -11,6 +11,14 @@ ALMUNDO_COM = 'https://almundo.com'
 ST_ALMUNDO_COM = 'https://st.almundo.com'
 DV_ALMUNDO_COM = 'https://dv.almundo.com'
 
+CCR_ALMUNDO_COM = 'https://crr.almundo.com'
+CCR_ST_ALMUNDO_COM = 'https://ccr.st.almundo.com'
+CCR_DV_ALMUNDO_COM = 'https://ccr.dv.almundo.com'
+
+RET_ALMUNDO_COM = 'https://sucursales.almundo.com'
+RET_ST_ALMUNDO_COM = 'https://sucursales.st.almundo.com'
+RET_DV_ALMUNDO_COM = 'https://sucursales.dv.almundo.com'
+
 # BROWSERS
 CHROME = 'Chrome'
 FIREFOX = 'Firefox'

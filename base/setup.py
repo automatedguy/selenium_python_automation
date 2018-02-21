@@ -19,7 +19,6 @@ logger = logging.getLogger(__name__)
 BASE_URL = ST_ALMUNDO_COM
 BROWSER = CHROME
 COUNTRY = ARGENTINA
-CHECKOUT_PARAMETER = '&sc=1'
 
 
 class BaseTest(unittest.TestCase):
@@ -116,7 +115,15 @@ class BaseTest(unittest.TestCase):
         channel = {
             ALMUNDO_COM: 'almundo-web',
             ST_ALMUNDO_COM: 'almundo-web',
-            DV_ALMUNDO_COM: 'almundo-web'
+            DV_ALMUNDO_COM: 'almundo-web',
+
+            CCR_ALMUNDO_COM: 'ccr',
+            CCR_ST_ALMUNDO_COM: 'ccr',
+            CCR_DV_ALMUNDO_COM: 'ccr',
+
+            RET_ALMUNDO_COM: 'retail',
+            RET_ST_ALMUNDO_COM: 'retail',
+            RET_DV_ALMUNDO_COM: 'retail'
         }
         return channel.get(BASE_URL, 'Invalid URL')
 
@@ -125,13 +132,21 @@ class BaseTest(unittest.TestCase):
         api_host = {
             ALMUNDO_COM: API_ALMUNDO_COM,
             ST_ALMUNDO_COM: APIST_ALMUNDO_COM,
-            DV_ALMUNDO_COM: APIDV_ALMUNDO_COM
+            DV_ALMUNDO_COM: APIDV_ALMUNDO_COM,
+
+            CCR_ALMUNDO_COM: API_ALMUNDO_COM,
+            CCR_ST_ALMUNDO_COM: APIST_ALMUNDO_COM,
+            CCR_DV_ALMUNDO_COM: APIDV_ALMUNDO_COM,
+
+            RET_ALMUNDO_COM: API_ALMUNDO_COM,
+            RET_ST_ALMUNDO_COM: APIST_ALMUNDO_COM,
+            RET_DV_ALMUNDO_COM: APIDV_ALMUNDO_COM,
 
         }
-        return api_host(BASE_URL, 'Invalid URL' + BASE_URL)
+        return api_host.get(BASE_URL, 'Invalid URL' + BASE_URL)
 
-
-    def get_date(self, add_days):
+    @staticmethod
+    def get_date(add_days):
         time_now = datetime.datetime.now()
         new_time = time_now + datetime.timedelta(add_days)
         return new_time.strftime("%Y-%m-%d")

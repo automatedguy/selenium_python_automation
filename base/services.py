@@ -2,7 +2,7 @@ import json
 import logging
 import requests
 from base.constants import *
-from setup import BaseTest, BASE_URL
+from setup import BaseTest
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -14,7 +14,7 @@ class Apikeys:
         self.json_channels_info = json.loads(raw_channels_info.text)
 
     def get_apikey(self):
-        logger.info('Looking for apikey corresponding to Site: [' + BASE_URL + ']')
+        # logger.info('Looking for apikey corresponding to Site: [' + BASE_URL + ']')
         for channel in self.json_channels_info:
             if channel['name'] == BaseTest.get_channel():
                 logger.info('Apikey found, awesome!')
