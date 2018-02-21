@@ -37,10 +37,13 @@ class Checkout(BasePage):
     def populate_checkout_info(self, cart_id='', country='', language='', apikey=''):
         """ This method will deal with the initial load """
 
+        # Retrieve input definitions
         input_definitions = InputDefinitions(APIST_ALMUNDO_COM, cart_id, country, language)\
             .get_input_definitions(apikey)
 
-        PassengerSection(self.driver).populate_passengers(input_definitions)
+        # Populate the different sections
+        PassengerSection(self.driver).populate_passengers_info(input_definitions)
+        BillingSection(self.driver).populate_billing_info(input_definitions)
 
 
 class PassengerSection(Checkout):
@@ -121,7 +124,7 @@ class PassengerSection(Checkout):
         Select(self.driver.find_elements(*self.__nationality_lct)[passenger_index])\
             .select_by_visible_text(passenger_nationality)
 
-    def populate_passengers(self, input_definitions):
+    def populate_passengers_info(self, input_definitions):
 
         total_passengers = len(self.driver.find_elements(*PassengerSectionLct.NAME))
 
@@ -173,9 +176,6 @@ class BillingSection(Checkout):
     __fiscal_type_lct = BillingSectionLct.FISCAL_TYPE
     __fiscal_type_desc = BillingSectionLct.FISCAL_TYPE_DESC
 
-    __fiscal_document_type_lct = BillingSectionLct.FISCAL_DOCUMENT_TYPE
-    __fiscal_document_type_desc = BillingSectionLct.FISCAL_DOCUMENT_TYPE_DESC
-
     __fiscal_document_lct = BillingSectionLct.FISCAL_DOCUMENT
     __fiscal_document_desc = BillingSectionLct.FISCAL_DOCUMENT_DESC
 
@@ -204,7 +204,75 @@ class BillingSection(Checkout):
     __enable_billing_desc = BillingSectionLct.ENABLE_BILLING_DESC
 
     # Actions:
+    def set_fiscal_name(self, billing_fiscal_name):
+        logger.info(FILLING + self.__fiscal_name_desc + billing_fiscal_name)
+        self.driver.find_element(*self.__fiscal_name_lct).send_keys(billing_fiscal_name)
 
+    def select_fiscal_type(self, billing_fiscal_type):
+        logger.info(SELECTING + self.__fiscal_type_desc + billing_fiscal_type)
+        Select(self.driver.find_element(*self.__fiscal_type_lct)).select_by_visible_text(billing_fiscal_type)
+
+    def set_fiscal_document(self, billing_fiscal_document):
+        logger.info(FILLING + self.__fiscal_document_desc + billing_fiscal_document)
+        self.driver.find_element(*self.__fiscal_document_lct).send_keys(billing_fiscal_document)
+
+    def set_address_street(self, billing_address_street):
+        logger.info(FILLING + self.__address_street_desc + billing_address_street)
+        self.driver.find_element(*self.__address_street_lct).send_keys(billing_address_street)
+
+    def set_address_number(self, billing_address_number):
+        logger.info(FILLING + self.__address_number_desc + billing_address_number)
+        self.driver.find_element(*self.__address_number_lct).send_keys(billing_address_number)
+
+    def set_address_floor(self, billing_address_floor):
+        logger.info(FILLING + self.__address_floor_desc + billing_address_floor)
+        self.driver.find_element(*self.__address_floor_lct).send_keys(billing_address_floor)
+
+    def set_address_department(self, billing_address_department):
+        logger.info(FILLING + self.__address_department_desc + billing_address_department)
+        self.driver.find_element(*self.__address_department_lct).send_keys(billing_address_department)
+
+    def set_address_postal_code(self, billing_address_postal_code):
+        logger.info(FILLING + self.__address_postal_code_desc + billing_address_postal_code)
+        self.driver.find_element(*self.__address_postal_code_lct).send_keys(billing_address_postal_code)
+
+    def set_address_state(self, billing_address_state):
+        logger.info(FILLING + self.__address_state_desc + billing_address_state)
+        self.driver.find_element(*self.__address_state_ltc).send_keys(billing_address_state)
+
+    def set_address_city(self, billing_address_city):
+        logger.info(FILLING + self.__address_city_desc + billing_address_city)
+        self.driver.find_element(*self.__address_city_lct).send_keys(billing_address_city)
+
+    def populate_billing_info(self, input_definitions):
+        Utils().print_separator()
+        logger.info("Filling Billing Info")
+
+        if input_definitions['billings'][0]['fiscal_name']['required']:
+            self.set_fiscal_name('Saraza')
+
+        if input_definitions['billings'][0]['fiscal_type']['required']:
+            self.select_fiscal_type('Consumidor Final')
+
+        if input_definitions['billings'][0]['fiscal_document']['required']:
+            self.set_fiscal_document('23281685589')
+
+        if input_definitions['billings'][0]['address']['street']['required']:
+            self.set_address_street('Fake Street 123')
+
+        if input_definitions['billings'][0]['address']['number']['required']:
+            self.set_address_number('12345')
+            self.set_address_floor('10')
+            self.set_address_department('A')
+
+        if input_definitions['billings'][0]['address']['postal_code']['required']:
+            self.set_address_postal_code('7777')
+
+        if input_definitions['billings'][0]['address']['states']['required']:
+            self.set_address_state('Ciudad Autónoma de Buenos Aires')
+
+        if input_definitions['billings'][0]['address']['city']['required']:
+            self.set_address_city('Buenos Aires')
 
 
 class ContactSection(Checkout):

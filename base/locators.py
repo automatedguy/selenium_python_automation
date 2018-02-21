@@ -43,37 +43,34 @@ class PassengerSectionLct(object):
 
 class BillingSectionLct(object):
     FISCAL_NAME = (By.ID, 'fiscal_name')
-    FISCAL_NAME_DESC = 'Fiscal name'
+    FISCAL_NAME_DESC = 'Fiscal name: '
 
     FISCAL_TYPE = (By.ID, 'fiscal_type')
-    FISCAL_TYPE_DESC = 'Fiscal type'
-
-    FISCAL_DOCUMENT_TYPE = (By.CSS_SELECTOR, 'billing-section #document_type')
-    FISCAL_DOCUMENT_TYPE_DESC = 'Fiscal document type'
+    FISCAL_TYPE_DESC = 'Fiscal type: '
 
     FISCAL_DOCUMENT = (By.ID, 'fiscal_document')
-    FISCAL_DOCUMENT_DESC = 'Fiscal document'
+    FISCAL_DOCUMENT_DESC = 'Fiscal document: '
 
     ADDRESS_STREET = (By.ID, 'street')
-    ADDRESS_STREET_DESC = 'Address Street'
+    ADDRESS_STREET_DESC = 'Address street: '
 
     ADDRESS_NUMBER = (By.CSS_SELECTOR, 'billing-form #number')
-    ADDRESS_NUMBER_DESC = 'Address number'
+    ADDRESS_NUMBER_DESC = 'Address number: '
 
     ADDRESS_FLOOR = (By.ID, 'floor')
-    ADDRESS_FLOOR_DESC = 'Address floor'
+    ADDRESS_FLOOR_DESC = 'Address floor: '
 
     ADDRESS_DEPARTMENT = (By.ID, 'department')
-    ADDRESS_DEPARTMENT_DESC = 'Address department'
+    ADDRESS_DEPARTMENT_DESC = 'Address department: '
 
     ADDRESS_POSTAL_CODE = (By.ID, 'postal_code')
-    ADDRESS_POSTAL_CODE_DESC = (By.ID, 'Address postal code')
+    ADDRESS_POSTAL_CODE_DESC = 'Address postal code: '
 
     ADDRESS_STATE = (By.ID, 'state')
-    ADDRESS_STATE_DESC = 'Address state'
+    ADDRESS_STATE_DESC = 'Address state: '
 
     ADDRESS_CITY = (By.ID, 'city')
-    ADDRESS_CITY_DESC = 'Address city'
+    ADDRESS_CITY_DESC = 'Address city: '
 
     ENABLE_BILLING = (By.CSS_SELECTOR, 'billing-section div:nth-child(2) > input')
     ENABLE_BILLING_DESC = 'Enable billing radio button'
