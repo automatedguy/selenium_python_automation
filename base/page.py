@@ -317,15 +317,17 @@ class ContactSection(Checkout):
 
     def set_country_code(self, contact_country_code):
         logger.info(FILLING + self.__country_code_desc + contact_country_code)
-        self.driver.find_element(*self.__country_code_lct).send_keys(contact_country_code)
+        country_code = self.driver.find_element(*self.__country_code_lct)
+        country_code.clear()
+        country_code.send_keys(contact_country_code)
 
     def set_area_code(self, contact_area_code):
         logger.info(FILLING + self.__area_code_desc + contact_area_code)
         self.driver.find_element(*self.__area_code_lct).send_keys(contact_area_code)
 
     def set_phone_number(self, contact_phone_number):
-        logger.info(FILLING + self.__phone_number + contact_phone_number)
-        self.driver.find_element(*self.__phone_number).send_keys(contact_phone_number)
+        logger.info(FILLING + self.__phone_number_desc + contact_phone_number)
+        self.driver.find_element(*self.__phone_number_lct).send_keys(contact_phone_number)
 
     def populate_contact_info(self, input_definitions):
         logger.info("Populating Contact Info")
