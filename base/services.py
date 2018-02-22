@@ -16,7 +16,7 @@ class Apikeys:
         # logger.info('Looking for apikey corresponding to Site: [' + BASE_URL + ']')
         for channel in self.json_channels_info:
             if channel['name'] == channel_name:
-                logger.info('Apikey found, awesome!')
+                logger.info('Apikey for [' + channel_name + '] found [' + channel['value'] + ']')
                 break
         return channel['value']
 

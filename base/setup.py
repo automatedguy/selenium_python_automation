@@ -16,7 +16,7 @@ logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=lo
 logger = logging.getLogger(__name__)
 
 # Test parameters
-BASE_URL = ST_ALMUNDO_COM
+BASE_URL = RET_ST_ALMUNDO_COM
 BROWSER = CHROME
 COUNTRY = ARGENTINA
 
@@ -78,6 +78,7 @@ class BaseTest(unittest.TestCase):
             MEXICO: '.mx/',
             BRASIL: '.br/'
         }
+        logger.info('Getting country domain: [' + country_domain.get(COUNTRY) + ']')
         return country_domain.get(COUNTRY, 'Invalid Country' + COUNTRY)
 
     @staticmethod
@@ -88,17 +89,19 @@ class BaseTest(unittest.TestCase):
             MEXICO: 'MEX',
             BRASIL: 'BRA'
         }
+        logger.info('Getting country site: [' + country_site.get(COUNTRY) + ']')
         return country_site.get(COUNTRY, 'Invalid Country' + COUNTRY)
 
     @staticmethod
     def get_country_currency():
-        country_site = {
+        country_currency = {
             ARGENTINA: 'ARS',
             COLOMBIA: 'COL',
             MEXICO: 'MXN',
             BRASIL: 'BRS'
         }
-        return country_site.get(COUNTRY, 'Invalid Country' + COUNTRY)
+        logger.info('Getting country currency: [' + country_currency.get(COUNTRY) + ']')
+        return country_currency.get(COUNTRY, 'Invalid Country' + COUNTRY)
 
     @staticmethod
     def get_country_language():
@@ -108,6 +111,7 @@ class BaseTest(unittest.TestCase):
             MEXICO: 'es',
             BRASIL: 'pt'
         }
+        logger.info('Getting country language: [' + country_language.get(COUNTRY) + ']')
         return country_language.get(COUNTRY, 'Invalid Country' + COUNTRY)
 
     @staticmethod
@@ -125,6 +129,7 @@ class BaseTest(unittest.TestCase):
             RET_ST_ALMUNDO_COM: 'retail',
             RET_DV_ALMUNDO_COM: 'retail'
         }
+        logger.info('Getting channel name: [' + channel.get(BASE_URL) + ']')
         return channel.get(BASE_URL, 'Invalid URL')
 
     @staticmethod
@@ -143,6 +148,7 @@ class BaseTest(unittest.TestCase):
             RET_DV_ALMUNDO_COM: APIDV_ALMUNDO_COM,
 
         }
+        logger.info('Getting API host: [' + api_host.get(BASE_URL) + ']')
         return api_host.get(BASE_URL, 'Invalid URL' + BASE_URL)
 
     @staticmethod
@@ -155,7 +161,6 @@ class BaseTest(unittest.TestCase):
     def get_flight_cart_id(origin, destination, departure_date, return_date, site, language, adults, children, infants):
         apikeys = Apikeys()
         channel_apikey = apikeys.get_apikey(BaseTest.get_channel())
-        logger.info('X-apikey: [' + channel_apikey + ']')
 
         flights_clusters = FlightsClusters(origin, destination, departure_date, return_date,
                                            site, language,
