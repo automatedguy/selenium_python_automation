@@ -7,7 +7,7 @@ from constants import SC_ENABLED, SW_CPD, SW_CPDS
 class FlightTest(BaseTest):
     # Test parameters
     product_route = '?product=flights'
-    origin = 'BUE'
+    origin = 'SAO'
     destination = 'MIA'
     departure_date = 20
     return_date = departure_date + 20

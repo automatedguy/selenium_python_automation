@@ -12,10 +12,10 @@ class Apikeys:
         raw_channels_info = requests.get(ABS_ALMUNDO_IT)
         self.json_channels_info = json.loads(raw_channels_info.text)
 
-    def get_apikey(self):
+    def get_apikey(self, channel_name):
         # logger.info('Looking for apikey corresponding to Site: [' + BASE_URL + ']')
         for channel in self.json_channels_info:
-            if channel['name'] == 'almundo-web':
+            if channel['name'] == channel_name:
                 logger.info('Apikey found, awesome!')
                 break
         return channel['value']

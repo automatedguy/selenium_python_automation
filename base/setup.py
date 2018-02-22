@@ -154,7 +154,7 @@ class BaseTest(unittest.TestCase):
     @staticmethod
     def get_flight_cart_id(origin, destination, departure_date, return_date, site, language, adults, children, infants):
         apikeys = Apikeys()
-        channel_apikey = apikeys.get_apikey()
+        channel_apikey = apikeys.get_apikey(BaseTest.get_channel())
         logger.info('X-apikey: [' + channel_apikey + ']')
 
         flights_clusters = FlightsClusters(origin, destination, departure_date, return_date,
@@ -172,7 +172,7 @@ class BaseTest(unittest.TestCase):
     @staticmethod
     def get_input_definitions(cart_id):
         apikeys = Apikeys()
-        channel_apikey = apikeys.get_apikey()
+        channel_apikey = apikeys.get_apikey(BaseTest.get_channel())
         input_definitions = InputDefinitions(BaseTest.get_api_host(), cart_id,
                                              BaseTest.get_country_site(),
                                              BaseTest.get_country_language()) \
