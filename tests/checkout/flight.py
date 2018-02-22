@@ -2,7 +2,6 @@ import unittest
 
 from base.setup import BaseTest, logger
 from constants import SC_ENABLED, SW_CPD, SW_CPDS
-from services import get_flight_cart_id
 
 
 class FlightTest(BaseTest):
@@ -17,19 +16,19 @@ class FlightTest(BaseTest):
     infants = '0'
 
     def setUp(self):
-        self.cart_id = get_flight_cart_id(self.origin, self.destination,
-                                          self.get_date(self.departure_date), self.get_date(self.return_date),
-                                          self.get_country_site(), self.get_country_language(),
-                                          self.adults, self.children, self.infants)
+        self.cart_id = self.get_flight_cart_id(self.origin, self.destination,
+                                               self.get_date(self.departure_date), self.get_date(self.return_date),
+                                               self.get_country_site(), self.get_country_language(),
+                                               self.adults, self.children, self.infants)
+
+        self.input_definitions = self.get_input_definitions(self.cart_id)
 
     def test_no_parameter(self):
         """ Load checkout without additional parameters"""
         checkout_parameter = ''
 
         checkout = self.open_checkout(self.cart_id, checkout_parameter, self.product_route)
-        checkout.populate_checkout_info(self.cart_id,
-                                        self.get_country_site(),
-                                        self.get_country_language())
+        checkout.populate_checkout_info(self.input_definitions)
 
         logger.info('Just for the wait...')
 
@@ -38,9 +37,7 @@ class FlightTest(BaseTest):
         checkout_parameter = SC_ENABLED
 
         checkout = self.open_checkout(self.cart_id, checkout_parameter, self.product_route)
-        checkout.populate_checkout_info(self.cart_id,
-                                        self.get_country_site(),
-                                        self.get_country_language())
+        checkout.populate_checkout_info(self.input_definitions)
 
         logger.info('Just for the wait...')
 
@@ -49,9 +46,7 @@ class FlightTest(BaseTest):
         checkout_parameter = SW_CPD
 
         checkout = self.open_checkout(self.cart_id, checkout_parameter, self.product_route)
-        checkout.populate_checkout_info(self.cart_id,
-                                        self.get_country_site(),
-                                        self.get_country_language())
+        checkout.populate_checkout_info(self.input_definitions)
 
         logger.info('Just for the wait...')
 
@@ -61,9 +56,7 @@ class FlightTest(BaseTest):
         checkout_parameter = SW_CPDS
 
         checkout = self.open_checkout(self.cart_id, checkout_parameter, self.product_route)
-        checkout.populate_checkout_info(self.cart_id,
-                                        self.get_country_site(),
-                                        self.get_country_language())
+        checkout.populate_checkout_info(self.input_definitions)
 
         logger.info('Just for the wait...')
 

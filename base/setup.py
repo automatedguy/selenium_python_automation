@@ -1,8 +1,8 @@
 import os
-import logging
 import unittest
 import datetime
 from selenium import webdriver
+from services import *
 
 from base.constants import *
 
@@ -150,6 +150,35 @@ class BaseTest(unittest.TestCase):
         time_now = datetime.datetime.now()
         new_time = time_now + datetime.timedelta(add_days)
         return new_time.strftime("%Y-%m-%d")
+
+    @staticmethod
+    def get_flight_cart_id(origin, destination, departure_date, return_date, site, language, adults, children, infants):
+        apikeys = Apikeys()
+        channel_apikey = apikeys.get_apikey()
+        logger.info('X-apikey: [' + channel_apikey + ']')
+
+        flights_clusters = FlightsClusters(origin, destination, departure_date, return_date,
+                                           site, language,
+                                           adults, children, infants)
+
+        product_id = flights_clusters.get_flight_id(channel_apikey)
+        logger.info('Flight ID: [' + product_id + ']')
+
+        cart = Cart(site, language)
+        cart_id = cart.get_cart_id(channel_apikey, product_id)
+
+        return cart_id
+
+    @staticmethod
+    def get_input_definitions(cart_id):
+        apikeys = Apikeys()
+        channel_apikey = apikeys.get_apikey()
+        input_definitions = InputDefinitions(BaseTest.get_api_host(), cart_id,
+                                             BaseTest.get_country_site(),
+                                             BaseTest.get_country_language()) \
+            .get_input_definitions(channel_apikey)
+
+        return input_definitions
 
 
 if __name__ == "__main__":

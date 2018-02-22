@@ -4,7 +4,6 @@ from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.wait import WebDriverWait
 from constants import *
 from locators import *
-from services import InputDefinitions, Apikeys
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -34,13 +33,8 @@ class Checkout(BasePage):
         self.driver = driver
         self.cart_id = cart_id
 
-    def populate_checkout_info(self, cart_id='', country='', language=''):
+    def populate_checkout_info(self, input_definitions):
         """ This method will deal with the initial load """
-
-        # Retrieve input definitions
-        from setup import BaseTest
-        input_definitions = InputDefinitions(BaseTest().get_api_host(), cart_id, country, language)\
-            .get_input_definitions(Apikeys().get_apikey())
 
         # Populate the different sections
         PassengerSection(self.driver).populate_passengers_info(input_definitions)

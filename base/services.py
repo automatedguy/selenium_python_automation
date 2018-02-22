@@ -2,7 +2,6 @@ import json
 import logging
 import requests
 from base.constants import *
-from setup import BaseTest
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -16,7 +15,7 @@ class Apikeys:
     def get_apikey(self):
         # logger.info('Looking for apikey corresponding to Site: [' + BASE_URL + ']')
         for channel in self.json_channels_info:
-            if channel['name'] == BaseTest.get_channel():
+            if channel['name'] == 'almundo-web':
                 logger.info('Apikey found, awesome!')
                 break
         return channel['value']
@@ -124,23 +123,6 @@ class Cart:
         json_cart_book_id = json.loads(raw_cart_book_id.text)
         return json_cart_book_id['cart_id']
 
-
-def get_flight_cart_id(origin, destination, departure_date, return_date, site, language, adults, children, infants):
-    apikeys = Apikeys()
-    channel_apikey = apikeys.get_apikey()
-    logger.info('X-apikey: [' + channel_apikey + ']')
-
-    flights_clusters = FlightsClusters(origin, destination, departure_date, return_date,
-                                       site, language,
-                                       adults, children, infants)
-
-    product_id = flights_clusters.get_flight_id(channel_apikey)
-    logger.info('Flight ID: [' + product_id + ']')
-
-    cart = Cart(site, language)
-    cart_id = cart.get_cart_id(channel_apikey, product_id)
-
-    return cart_id
 
 # HOTEL THINGS
 # autocomplete = Autocomplete('MIA', 'CITY')
