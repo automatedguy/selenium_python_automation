@@ -5,11 +5,12 @@ from constants import SC_ENABLED, SW_CPD, SW_CPDS
 
 
 class FlightTest(BaseTest):
+
     # Test parameters
     product_route = '?product=flights'
-    origin = 'SAO'
+    origin = BaseTest.get_flight_origin()
     destination = 'MIA'
-    departure_date = 20
+    departure_date = 50
     return_date = departure_date + 20
     adults = '2'
     children = '1'

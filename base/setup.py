@@ -16,7 +16,7 @@ logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=lo
 logger = logging.getLogger(__name__)
 
 # Test parameters
-BASE_URL = RET_ST_ALMUNDO_COM
+BASE_URL = ST_ALMUNDO_COM
 BROWSER = CHROME
 COUNTRY = ARGENTINA
 
@@ -158,18 +158,29 @@ class BaseTest(unittest.TestCase):
         return new_time.strftime("%Y-%m-%d")
 
     @staticmethod
+    def get_flight_origin():
+        flight_origin = {
+            ARGENTINA: 'BUE',
+            COLOMBIA: 'BOG',
+            MEXICO: 'MEX',
+            BRASIL: 'SAO'
+        }
+        logger.info('Getting flight origin for ' + COUNTRY + ' :[' + flight_origin.get(COUNTRY) + ']')
+        return flight_origin.get(COUNTRY)
+
+    @staticmethod
     def get_flight_cart_id(origin, destination, departure_date, return_date, site, language, adults, children, infants):
         apikeys = Apikeys()
         channel_apikey = apikeys.get_apikey(BaseTest.get_channel())
 
-        flights_clusters = FlightsClusters(origin, destination, departure_date, return_date,
+        flights_clusters = FlightsClusters(BaseTest.get_api_host(), origin, destination, departure_date, return_date,
                                            site, language,
                                            adults, children, infants)
 
         product_id = flights_clusters.get_flight_id(channel_apikey)
         logger.info('Flight ID: [' + product_id + ']')
 
-        cart = Cart(site, language)
+        cart = Cart(BaseTest.get_api_host(), site, language)
         cart_id = cart.get_cart_id(channel_apikey, product_id)
 
         return cart_id

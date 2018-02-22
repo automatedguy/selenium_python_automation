@@ -74,8 +74,8 @@ class HotelsDetails:
 
 
 class FlightsClusters:
-    def __init__(self, origin, destination, departure_date, return_date, site, language, adults, children, infants):
-        self.flights_clusters_url = APIST_ALMUNDO_COM \
+    def __init__(self, api_host, origin, destination, departure_date, return_date, site, language, adults, children, infants):
+        self.flights_clusters_url = api_host \
                                     + '/api/flights/clusters?' \
                                     + 'from=' + origin + ',' + destination + '&to=' + destination + ',' + origin \
                                     + '&departure=' + departure_date + ',' + return_date \
@@ -110,8 +110,8 @@ class InputDefinitions:
 
 
 class Cart:
-    def __init__(self, site, language):
-        self.book_url = APIST_ALMUNDO_COM \
+    def __init__(self, api_host, site, language):
+        self.book_url = api_host \
                         + '/api/v3/cart/' \
                         + '?site=' + site \
                         + '&language=' + language
