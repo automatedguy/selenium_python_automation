@@ -6,7 +6,6 @@ import unittest
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
-from constants import *
 from services import *
 
 # Returns abs path relative to this file and not cwd
