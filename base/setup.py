@@ -2,7 +2,9 @@ import os
 import unittest
 import datetime
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 from services import *
+import socket
 
 from base.constants import *
 
@@ -16,9 +18,10 @@ logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=lo
 logger = logging.getLogger(__name__)
 
 # Test parameters
-BASE_URL = CCR_ST_ALMUNDO_COM
+BASE_URL = DV_ALMUNDO_COM
 BROWSER = CHROME
 COUNTRY = ARGENTINA
+FORCE_HEADLESS = False
 
 
 class BaseTest(unittest.TestCase):
@@ -44,9 +47,19 @@ class BaseTest(unittest.TestCase):
         logger.info(SETTING_UP + self.browser)
 
         if self.browser == CHROME:
-            self.driver = webdriver.Chrome(PATH("../resources/chromedriver"))
+            if 'jenkins' in socket.gethostname() or FORCE_HEADLESS:
+                logger.info('Setting headless mode')
+                chrome_options = Options()
+                chrome_options.add_argument("--headless")
+                chrome_options.add_argument("--window-size=1920x1080")
+                # chrome_options.add_argument('--disable-gpu')  # Last I checked this was necessary.
+                self.driver = webdriver.Chrome(PATH("../resources/chromedriver"), chrome_options=chrome_options)
+            else:
+                self.driver = webdriver.Chrome(PATH("../resources/chromedriver"))
+
         elif self.browser == FIREFOX:
             self.driver = webdriver.Firefox()
+
         else:
             logger(VALID_BROWSERS + CHROME + ' - ' + FIREFOX)
         self.driver.maximize_window()
