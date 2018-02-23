@@ -6,8 +6,8 @@ class FlightTest(BaseTest):
 
     # Test parameters
     product_route = '?product=flights'
-    origin = 'IGU'
-    destination = 'MAD'
+    origin = BaseTest.get_flight_origin()
+    destination = 'MIA'
     departure_date = 50
     return_date = departure_date + 20
     adults = '1'
