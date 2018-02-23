@@ -16,7 +16,7 @@ logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=lo
 logger = logging.getLogger(__name__)
 
 # Test parameters
-BASE_URL = ST_ALMUNDO_COM
+BASE_URL = CCR_ST_ALMUNDO_COM
 BROWSER = CHROME
 COUNTRY = ARGENTINA
 

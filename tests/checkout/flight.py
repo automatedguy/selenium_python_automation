@@ -1,7 +1,7 @@
 import unittest
 
 from base.setup import BaseTest, logger
-from constants import SC_ENABLED, SW_CPD, SW_CPDS
+from constants import *
 
 
 class FlightTest(BaseTest):
