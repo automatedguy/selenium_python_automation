@@ -1,7 +1,7 @@
 import unittest
 
-from base.setup import BaseTest
 from page import LoginModal
+from setup import BaseTest
 
 
 class HomeNavigationTest(BaseTest):

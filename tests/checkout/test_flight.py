@@ -1,7 +1,7 @@
 import unittest
 
-from base.setup import BaseTest, logger
 from constants import *
+from setup import BaseTest, logger
 
 
 class FlightTest(BaseTest):

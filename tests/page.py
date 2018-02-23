@@ -1,7 +1,9 @@
 # coding=utf-8
 import logging
+
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.wait import WebDriverWait
+
 from constants import *
 from locators import *
 

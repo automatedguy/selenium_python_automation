@@ -1,7 +1,7 @@
 import unittest
 
-from base.setup import BaseTest
-from base.setup import logger
+from setup import BaseTest
+from setup import logger
 
 
 class HotelTest(BaseTest):
