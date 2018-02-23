@@ -3,7 +3,7 @@ import logging
 
 import requests
 
-from constants import *
+from base.constants import *
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -47,7 +47,7 @@ class HotelsAvailabilities:
                                         + 'entityId=' + entity_id \
                                         + '&entityType=' + entity_type \
                                         + '&checkin=' + checkin \
-                                        + '&checkout=' + checkout \
+                                        + '&test_checkout=' + checkout \
                                         + '&room=' + room \
                                         + '&language=' + language \
                                         + '&site=' + site
@@ -64,7 +64,7 @@ class HotelsDetails:
                                   + '/api/hotels/v2/detail?' \
                                   + 'hotelId=' + hotel_id \
                                   + '&checkin=' + checkin \
-                                  + '&checkout=' + checkout \
+                                  + '&test_checkout=' + checkout \
                                   + '&room=' + room \
                                   + '&language=' + language \
                                   + '&site=' + site

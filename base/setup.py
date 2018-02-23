@@ -6,9 +6,10 @@ import unittest
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
-from services import *
+from base.services import *
 
 # Returns abs path relative to this file and not cwd
+
 
 PATH = lambda p: os.path.abspath(
     os.path.join(os.path.dirname(__file__), p)
@@ -18,7 +19,7 @@ logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=lo
 logger = logging.getLogger(__name__)
 
 # Test parameters
-BASE_URL = DV_ALMUNDO_COM
+BASE_URL = ALMUNDO_COM
 BROWSER = CHROME
 COUNTRY = ARGENTINA
 FORCE_HEADLESS = False
@@ -76,11 +77,11 @@ class BaseTest(unittest.TestCase):
         checkout_route = 'checkout/'
         checkout_url = self.domain_url + checkout_route + cart_id + product_route + checkout_parameter
 
-        logger.info('Opening checkout URL: [' + checkout_url + ']')
+        logger.info('Opening test_checkout URL: [' + checkout_url + ']')
 
         self.driver.get(checkout_url)
 
-        from page import Checkout
+        from base.page import Checkout
         return Checkout(self.driver, cart_id)
 
     @staticmethod

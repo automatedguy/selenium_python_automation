@@ -1,10 +1,10 @@
 import unittest
 
-from setup import BaseTest
-from setup import logger
+from base.setup import BaseTest
+from base.setup import logger
 
 
-class CarTest(BaseTest):
+class TripTest(BaseTest):
 
     product_route = ''
 
@@ -24,5 +24,5 @@ class CarTest(BaseTest):
 
 
 if __name__ == '__main__':
-    suite = unittest.TestLoader().loadTestsFromTestCase(CarTest)
+    suite = unittest.TestLoader().loadTestsFromTestCase(TripTest)
     unittest.TextTestRunner(verbosity=2).run(suite)

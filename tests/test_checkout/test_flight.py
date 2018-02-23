@@ -1,19 +1,17 @@
-import unittest
 
-from constants import *
-from setup import BaseTest, logger
+from base.setup import *
 
 
 class FlightTest(BaseTest):
 
     # Test parameters
     product_route = '?product=flights'
-    origin = BaseTest.get_flight_origin()
-    destination = 'MIA'
+    origin = 'IGU'
+    destination = 'MAD'
     departure_date = 50
     return_date = departure_date + 20
-    adults = '2'
-    children = '1'
+    adults = '1'
+    children = '0'
     infants = '0'
 
     def setUp(self):
@@ -25,7 +23,7 @@ class FlightTest(BaseTest):
         self.input_definitions = self.get_input_definitions(self.cart_id)
 
     def test_no_parameter(self):
-        """ Load checkout without additional parameters"""
+        """ Load test_checkout without additional parameters"""
         checkout_parameter = ''
 
         checkout = self.open_checkout(self.cart_id, checkout_parameter, self.product_route)
@@ -34,7 +32,7 @@ class FlightTest(BaseTest):
         logger.info('Just for the wait...')
 
     def test_sc_enabled(self):
-        """ Load checkout with &sc=1 """
+        """ Load test_checkout with &sc=1 """
         checkout_parameter = SC_ENABLED
 
         checkout = self.open_checkout(self.cart_id, checkout_parameter, self.product_route)
@@ -43,7 +41,7 @@ class FlightTest(BaseTest):
         logger.info('Just for the wait...')
 
     def test_sw_cpd(self):
-        """ Load checkout with &sw=cpd """
+        """ Load test_checkout with &sw=cpd """
         checkout_parameter = SW_CPD
 
         checkout = self.open_checkout(self.cart_id, checkout_parameter, self.product_route)
@@ -52,7 +50,7 @@ class FlightTest(BaseTest):
         logger.info('Just for the wait...')
 
     def test_sw_cpds(self):
-        """ Load checkout with &sw=cpds """
+        """ Load test_checkout with &sw=cpds """
         pass
         checkout_parameter = SW_CPDS
 

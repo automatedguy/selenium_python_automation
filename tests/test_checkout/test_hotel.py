@@ -1,12 +1,12 @@
 import unittest
 
-from setup import BaseTest
-from setup import logger
+from base.setup import BaseTest
+from base.setup import logger
 
 
-class TripTest(BaseTest):
+class HotelTest(BaseTest):
 
-    product_route = ''
+    product_route = '?product=hotel'
 
     def test_no_parameter(self):
         pass
@@ -24,5 +24,5 @@ class TripTest(BaseTest):
 
 
 if __name__ == '__main__':
-    suite = unittest.TestLoader().loadTestsFromTestCase(TripTest)
+    suite = unittest.TestLoader().loadTestsFromTestCase(HotelTest)
     unittest.TextTestRunner(verbosity=2).run(suite)

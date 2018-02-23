@@ -1,11 +1,11 @@
 # coding=utf-8
 import logging
 
+from base.locators import *
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.wait import WebDriverWait
 
-from constants import *
-from locators import *
+from base.constants import *
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
