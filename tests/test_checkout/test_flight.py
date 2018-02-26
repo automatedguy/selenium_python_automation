@@ -11,8 +11,8 @@ class FlightTest(BaseTest):
     departure_date = 50
     return_date = departure_date + 20
     adults = '1'
-    children = '0'
-    infants = '0'
+    children = '1'
+    infants = '1'
 
     def setUp(self):
         self.cart_id = self.get_flight_cart_id(self.origin, self.destination,

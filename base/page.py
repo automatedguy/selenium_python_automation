@@ -1,9 +1,11 @@
 # coding=utf-8
+import datetime
 import logging
 
 from base.locators import *
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.wait import WebDriverWait
+from random import randint
 
 from base.constants import *
 
@@ -23,6 +25,11 @@ class BasePage(object):
         WebDriverWait(driver, 100).until(lambda driver: driver.find_element_by_xpath(locator))
         return self.driver.find_element_by_xpath(locator)
 
+    @staticmethod
+    def get_current_year(remove_years):
+        time_now = datetime.datetime.now()
+        new_time = time_now + datetime.timedelta(remove_years * 365)
+        return new_time.strftime("%Y")
 
 # Checkout class and sections
 
@@ -80,6 +87,16 @@ class PassengerSection(Checkout):
     __nationality_desc = PassengerSectionLct.NATIONALITY_DESC
 
     # Actions
+    @staticmethod
+    def get_age(age_range):
+        age = {
+            'ADULT': -12,
+            'CHILD': -6,
+            'INFANT': -1,
+        }
+        age.get(age_range, 'Invalid age range' + age_range)
+        return age.get(age_range)
+
     def set_name(self, passenger_index, passenger_name):
         logger.info(FILLING + self.__name_desc + passenger_name)
         self.driver.find_elements(*self.__name_lct)[passenger_index].send_keys(passenger_name)
@@ -88,10 +105,11 @@ class PassengerSection(Checkout):
         logger.info(FILLING + self.__last_name_desc + passenger_last_name)
         self.driver.find_elements(*self.__last_name_lct)[passenger_index].send_keys(passenger_last_name)
 
-    def set_document_type(self, passenger_index, passenger_document_type):
-        logger.info(SELECTING + self.__document_type_desc + passenger_document_type)
+    def set_document_type(self, passenger_index, document_type_options):
+        document_type_selected = document_type_options[(randint(0, len(document_type_options)-1))]['description']
+        logger.info(SELECTING + self.__document_type_desc + document_type_selected)
         Select(self.driver.find_elements(*self.__document_type_lct)[passenger_index])\
-            .select_by_visible_text(passenger_document_type)
+            .select_by_visible_text(document_type_selected)
 
     def set_document_number(self, passenger_index, passenger_document_number):
         logger.info(FILLING + self.__document_number_desc + passenger_document_number)
@@ -105,9 +123,11 @@ class PassengerSection(Checkout):
     def select_birthmonth(self, passenger_index, passenger_birthmonth):
         logger.info(SELECTING + self.__birthmonth_desc + passenger_birthmonth)
         Select(self.driver.find_elements(*self.__birthmonth_lct)[passenger_index])\
-            .select_by_visible_text(passenger_birthmonth)
+            .select_by_index(passenger_birthmonth)
 
-    def select_birthyear(self, passenger_index, passenger_birthyear):
+    def select_birthyear(self, passenger_index, passenger_age_range):
+        passenger_birthyear = self.get_current_year(self.get_age(passenger_age_range))
+
         logger.info(SELECTING + self.__birthyear_desc + passenger_birthyear)
         Select(self.driver.find_elements(*self.__birthyear_lct)[passenger_index])\
             .select_by_visible_text(passenger_birthyear)
@@ -140,15 +160,17 @@ class PassengerSection(Checkout):
                 self.set_last_name(passenger, 'Nevermind')
 
             if input_definitions['passengers'][passenger]['document']['document_type']['required']:
-                self.set_document_type(passenger, 'Pasaporte')
+                options = input_definitions['passengers'][passenger]['document']['document_type']['options']
+                self.set_document_type(passenger, options)
 
             if input_definitions['passengers'][passenger]['document']['number']['required']:
                 self.set_document_number(passenger, '23456543N')
 
             if input_definitions['passengers'][passenger]['birthday']['required']:
                 self.select_birthday(passenger, '1')
-                self.select_birthmonth(passenger, 'Enero')
-                self.select_birthyear(passenger, '1990')
+                self.select_birthmonth(passenger, '2')
+                age_range = input_definitions['passengers'][passenger]['description']
+                self.select_birthyear(passenger, age_range)
 
             if input_definitions['passengers'][passenger]['gender']['required']:
                 self.select_gender(passenger, 'Masculino')
@@ -206,7 +228,8 @@ class BillingSection(Checkout):
         logger.info(FILLING + self.__fiscal_name_desc + billing_fiscal_name)
         self.driver.find_element(*self.__fiscal_name_lct).send_keys(billing_fiscal_name)
 
-    def select_fiscal_type(self, billing_fiscal_type):
+    def select_fiscal_type(self, options):
+        billing_fiscal_type = options[(randint(0, len(options) - 1))]['description']
         logger.info(SELECTING + self.__fiscal_type_desc + billing_fiscal_type)
         Select(self.driver.find_element(*self.__fiscal_type_lct)).select_by_visible_text(billing_fiscal_type)
 
@@ -250,7 +273,8 @@ class BillingSection(Checkout):
             self.set_fiscal_name('Saraza')
 
         if input_definitions['billings'][0]['fiscal_type']['required']:
-            self.select_fiscal_type('Consumidor Final')
+            options = input_definitions['billings'][0]['fiscal_type_document']['options']
+            self.select_fiscal_type(options)
 
         if input_definitions['billings'][0]['fiscal_document']['required']:
             self.set_fiscal_document('23281685589')
@@ -260,8 +284,18 @@ class BillingSection(Checkout):
 
         if input_definitions['billings'][0]['address']['number']['required']:
             self.set_address_number('12345')
-            self.set_address_floor('10')
-            self.set_address_department('A')
+
+        try:
+            if not input_definitions['billings'][0]['address']['floor']['required']:
+                self.set_address_floor('10')
+        except Exception as no_floor:
+            logger.warning('Floor is not available [Exception]: ' + str(no_floor))
+
+        try:
+            if not input_definitions['billings'][0]['address']['department']['required']:
+                self.set_address_department('A')
+        except Exception as no_department:
+            logger.warning('Department is not available [Exception]: ' + str(no_department))
 
         if input_definitions['billings'][0]['address']['postal_code']['required']:
             self.set_address_postal_code('7777')
@@ -308,7 +342,8 @@ class ContactSection(Checkout):
         logger.info(FILLING + self.__email_confirmation_desc + contact_email_confirmation)
         self.driver.find_element(*self.__email_confirmation_lct).send_keys(contact_email_confirmation)
 
-    def select_telephone_type(self, contact_telephone_type):
+    def select_telephone_type(self, contact_telephone_type_options):
+        contact_telephone_type = contact_telephone_type_options[randint(0, len(contact_telephone_type_options) - 1)]['description']
         logger.info(FILLING + self.__telephone_type_desc + contact_telephone_type)
         self.driver.find_element(*self.__telephone_type_lct).send_keys(contact_telephone_type)
 
@@ -334,7 +369,8 @@ class ContactSection(Checkout):
             self.set_email('email@google.com')
             self.set_email_confirmation('email@google.com')
 
-        self.select_telephone_type('Celular')
+        telephone_type_options = input_definitions['contacts'][0]['telephones'][0]['telephone_type']['options']
+        self.select_telephone_type(telephone_type_options)
 
         if input_definitions['contacts'][0]['telephones'][0]['country_code']:
             self.set_country_code('54')
