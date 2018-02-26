@@ -1,11 +1,12 @@
 # coding=utf-8
 import datetime
 import logging
+import string
 
 from base.locators import *
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.wait import WebDriverWait
-from random import randint
+from random import randint, choice
 
 from base.constants import *
 
@@ -90,18 +91,25 @@ class PassengerSection(Checkout):
     @staticmethod
     def get_age(age_range):
         age = {
-            'ADULT': -12,
-            'CHILD': -6,
+            'ADULT': -13,
+            'CHILD': -7,
             'INFANT': -1,
         }
         age.get(age_range, 'Invalid age range' + age_range)
         return age.get(age_range)
 
-    def set_name(self, passenger_index, passenger_name):
+    @staticmethod
+    def get_random_string(min_char, max_char):
+        all_char = string.ascii_letters
+        return "".join(choice(all_char) for x in range(randint(min_char, max_char)))
+
+    def set_name(self, passenger_index):
+        passenger_name = self.get_random_string(7, 10)
         logger.info(FILLING + self.__name_desc + passenger_name)
         self.driver.find_elements(*self.__name_lct)[passenger_index].send_keys(passenger_name)
 
-    def set_last_name(self, passenger_index, passenger_last_name):
+    def set_last_name(self, passenger_index):
+        passenger_last_name = self.get_random_string(7, 10)
         logger.info(FILLING + self.__last_name_desc + passenger_last_name)
         self.driver.find_elements(*self.__last_name_lct)[passenger_index].send_keys(passenger_last_name)
 
@@ -115,12 +123,14 @@ class PassengerSection(Checkout):
         logger.info(FILLING + self.__document_number_desc + passenger_document_number)
         self.driver.find_elements(*self.__document_number_lct)[passenger_index].send_keys(passenger_document_number)
 
-    def select_birthday(self, passenger_index, passenger_birthday):
+    def select_birthday(self, passenger_index):
+        passenger_birthday = str(randint(1, 28))
         logger.info(SELECTING + self.__birthday_desc + passenger_birthday)
         Select(self.driver.find_elements(*self.__birthday_lct)[passenger_index])\
             .select_by_visible_text(passenger_birthday)
 
-    def select_birthmonth(self, passenger_index, passenger_birthmonth):
+    def select_birthmonth(self, passenger_index):
+        passenger_birthmonth = str(randint(1, 12))
         logger.info(SELECTING + self.__birthmonth_desc + passenger_birthmonth)
         Select(self.driver.find_elements(*self.__birthmonth_lct)[passenger_index])\
             .select_by_index(passenger_birthmonth)
@@ -154,10 +164,10 @@ class PassengerSection(Checkout):
             logger.info('Filling Passenger N°: ' + str(passenger + 1))
 
             if input_definitions['passengers'][passenger]['first_name']['required']:
-                self.set_name(passenger, 'Whatever')
+                self.set_name(passenger)
 
             if input_definitions['passengers'][passenger]['last_name']['required']:
-                self.set_last_name(passenger, 'Nevermind')
+                self.set_last_name(passenger)
 
             if input_definitions['passengers'][passenger]['document']['document_type']['required']:
                 options = input_definitions['passengers'][passenger]['document']['document_type']['options']
@@ -167,8 +177,8 @@ class PassengerSection(Checkout):
                 self.set_document_number(passenger, '23456543N')
 
             if input_definitions['passengers'][passenger]['birthday']['required']:
-                self.select_birthday(passenger, '1')
-                self.select_birthmonth(passenger, '2')
+                self.select_birthday(passenger)
+                self.select_birthmonth(passenger)
                 age_range = input_definitions['passengers'][passenger]['description']
                 self.select_birthyear(passenger, age_range)
 
@@ -257,7 +267,8 @@ class BillingSection(Checkout):
         logger.info(FILLING + self.__address_postal_code_desc + billing_address_postal_code)
         self.driver.find_element(*self.__address_postal_code_lct).send_keys(billing_address_postal_code)
 
-    def set_address_state(self, billing_address_state):
+    def set_address_state(self, options):
+        billing_address_state = options[randint(1, len(options)-1)]['description']
         logger.info(FILLING + self.__address_state_desc + billing_address_state)
         self.driver.find_element(*self.__address_state_ltc).send_keys(billing_address_state)
 
@@ -301,7 +312,8 @@ class BillingSection(Checkout):
             self.set_address_postal_code('7777')
 
         if input_definitions['billings'][0]['address']['states']['required']:
-            self.set_address_state('Ciudad Autónoma de Buenos Aires')
+            options = input_definitions['billings'][0]['address']['states']['options']
+            self.set_address_state(options)
 
         if input_definitions['billings'][0]['address']['city']['required']:
             self.set_address_city('Buenos Aires')
