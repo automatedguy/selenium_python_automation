@@ -15,6 +15,7 @@ class FlightTest(BaseTest):
     infants = '1'
 
     def setUp(self):
+
         self.api_host = self.get_api_host()
         self.channel = self.get_channel()
         self.country_site = self.get_country_site()

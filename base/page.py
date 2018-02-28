@@ -47,18 +47,17 @@ class Checkout(BasePage):
     def populate_checkout_info(self, channel, api_host, country_site, country_language):
         """ This method will deal with the initial load """
 
-        input_definitions = self.get_input_definitions(self.cart_id, channel, api_host, country_site, country_language)
+        input_definitions = self.get_input_definitions(channel, api_host, country_site, country_language)
 
         # Populate the different sections
         PassengerSection(self.driver).populate_passengers_info(input_definitions)
         BillingSection(self.driver).populate_billing_info(input_definitions)
         ContactSection(self.driver).populate_contact_info(input_definitions)
 
-    @staticmethod
-    def get_input_definitions(cart_id, channel, api_host, country_site, country_language):
+    def get_input_definitions(self, channel, api_host, country_site, country_language):
         apikeys = Apikeys()
         channel_apikey = apikeys.get_apikey(channel)
-        input_definitions = InputDefinitions(api_host, cart_id,
+        input_definitions = InputDefinitions(api_host, self.cart_id,
                                              country_site,
                                              country_language).get_input_definitions(channel_apikey)
 
