@@ -83,6 +83,10 @@ class Checkout(BasePage):
 class CrossSelling(Checkout):
     """Cross Selling section"""
 
+    def __init__(self, driver):
+        super(CrossSelling, self).__init__(driver)
+        self.driver = driver
+
 
 class PassengerSection(Checkout):
     """"Passenger Section"""
@@ -448,6 +452,10 @@ class PaymentSection(Checkout):
 
 class AgentSection(Checkout):
     """ Agent Section"""
+
+    def __init__(self, driver):
+        super(AgentSection, self).__init__(driver)
+        self.driver = driver
 
 
 # Home page and sections
