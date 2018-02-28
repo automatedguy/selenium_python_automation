@@ -80,6 +80,10 @@ class Checkout(BasePage):
         return postal_code.get(country)
 
 
+class CrossSelling(Checkout):
+    """Cross Selling section"""
+
+
 class PassengerSection(Checkout):
     """"Passenger Section"""
 
@@ -441,6 +445,10 @@ class PaymentSection(Checkout):
         super(PaymentSection, self).__init__(driver)
         self.driver = driver
 
+
+class AgentSection(Checkout):
+    """ Agent Section"""
+    
 
 # Home page and sections
 
