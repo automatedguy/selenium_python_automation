@@ -9,6 +9,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 from random import randint, choice
 
 from base.constants import *
+from services import Apikeys, InputDefinitions
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -43,13 +44,25 @@ class Checkout(BasePage):
         self.driver = driver
         self.cart_id = cart_id
 
-    def populate_checkout_info(self, input_definitions):
+    def populate_checkout_info(self, channel, api_host, country_site, country_language):
         """ This method will deal with the initial load """
+
+        input_definitions = self.get_input_definitions(self.cart_id, channel, api_host, country_site, country_language)
 
         # Populate the different sections
         PassengerSection(self.driver).populate_passengers_info(input_definitions)
         BillingSection(self.driver).populate_billing_info(input_definitions)
         ContactSection(self.driver).populate_contact_info(input_definitions)
+
+    @staticmethod
+    def get_input_definitions(cart_id, channel, api_host, country_site, country_language):
+        apikeys = Apikeys()
+        channel_apikey = apikeys.get_apikey(channel)
+        input_definitions = InputDefinitions(api_host, cart_id,
+                                             country_site,
+                                             country_language).get_input_definitions(channel_apikey)
+
+        return input_definitions
 
 
 class PassengerSection(Checkout):

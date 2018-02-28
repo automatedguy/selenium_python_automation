@@ -16,6 +16,7 @@ class FlightTest(BaseTest):
 
     def setUp(self):
         self.api_host = self.get_api_host()
+        self.channel = self.get_channel()
         self.country_site = self.get_country_site()
         self.country_language = self.get_country_language()
 
@@ -24,14 +25,12 @@ class FlightTest(BaseTest):
                                                self.country_site, self.country_language,
                                                self.adults, self.children, self.infants)
 
-        self.input_definitions = self.get_input_definitions(self.cart_id)
-
     def test_no_parameter(self):
         """ Load test_checkout without additional parameters"""
         checkout_parameter = ''
 
         checkout = self.open_checkout(self.cart_id, checkout_parameter, self.product_route)
-        checkout.populate_checkout_info(self.input_definitions)
+        checkout.populate_checkout_info(self.channel, self.api_host, self.country_site, self.country_language)
 
         logger.info('Just for the wait...')
 

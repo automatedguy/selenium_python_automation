@@ -199,17 +199,6 @@ class BaseTest(unittest.TestCase):
 
         return cart_id
 
-    @staticmethod
-    def get_input_definitions(cart_id):
-        apikeys = Apikeys()
-        channel_apikey = apikeys.get_apikey(BaseTest.get_channel())
-        input_definitions = InputDefinitions(BaseTest.get_api_host(), cart_id,
-                                             BaseTest.get_country_site(),
-                                             BaseTest.get_country_language()) \
-            .get_input_definitions(channel_apikey)
-
-        return input_definitions
-
 
 if __name__ == "__main__":
     unittest.main()
