@@ -448,7 +448,7 @@ class PaymentSection(Checkout):
 
 class AgentSection(Checkout):
     """ Agent Section"""
-    
+
 
 # Home page and sections
 
