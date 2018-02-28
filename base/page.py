@@ -56,7 +56,7 @@ class Checkout(BasePage):
 
         # Populate the different sections
         PassengerSection(self.driver).populate_passengers_info(input_definitions)
-        BillingSection(self.driver).populate_billing_info(input_definitions)
+        BillingSection(self.driver, self.country_site).populate_billing_info(input_definitions)
         ContactSection(self.driver).populate_contact_info(input_definitions)
 
     def get_input_definitions(self, channel, api_host, country_site, country_language):
@@ -222,9 +222,11 @@ class PassengerSection(Checkout):
 class BillingSection(Checkout):
     """ Billing Section """
 
-    def __init__(self, driver):
+    def __init__(self, driver, country_site):
         super(BillingSection, self).__init__(driver)
+        super(BillingSection, self).__init__(country_site)
         self.driver = driver
+        self.country_site = country_site
 
     # Locators
 
