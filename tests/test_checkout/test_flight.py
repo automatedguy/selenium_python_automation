@@ -41,29 +41,28 @@ class FlightTest(BaseTest):
         """ Load test_checkout with &sc=1 """
         checkout_parameter = SC_ENABLED
 
-        checkout = self.open_checkout(self.cart_id, checkout_parameter, self.product_route)
-        checkout.populate_checkout_info()
+        checkout = self.open_checkout(self.cart_id, checkout_parameter, self.product_route,
+                                      self.channel, self.api_host, self.country_site, self.country_language)
 
-        logger.info('Just for the wait...')
+        checkout.populate_checkout_info()
 
     def test_sw_cpd(self):
         """ Load test_checkout with &sw=cpd """
         checkout_parameter = SW_CPD
 
-        checkout = self.open_checkout(self.cart_id, checkout_parameter, self.product_route)
-        checkout.populate_checkout_info(self.input_definitions)
+        checkout = self.open_checkout(self.cart_id, checkout_parameter, self.product_route,
+                                      self.channel, self.api_host, self.country_site, self.country_language)
 
-        logger.info('Just for the wait...')
+        checkout.populate_checkout_info()
 
     def test_sw_cpds(self):
         """ Load test_checkout with &sw=cpds """
-        pass
         checkout_parameter = SW_CPDS
 
-        checkout = self.open_checkout(self.cart_id, checkout_parameter, self.product_route)
-        checkout.populate_checkout_info(self.input_definitions)
+        checkout = self.open_checkout(self.cart_id, checkout_parameter, self.product_route,
+                                      self.channel, self.api_host, self.country_site, self.country_language)
 
-        logger.info('Just for the wait...')
+        checkout.populate_checkout_info()
 
 
 if __name__ == '__main__':
