@@ -30,7 +30,7 @@ class FlightTest(BaseTest):
         """ Load test_checkout without additional parameters"""
         checkout_parameter = ''
 
-        add_cross_selling = True
+        add_cross_selling = False
 
         checkout = self.open_checkout(self.cart_id, checkout_parameter, self.product_route,
                                       self.channel, self.api_host, self.country_site, self.country_language)

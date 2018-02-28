@@ -29,6 +29,12 @@ COLOMBIA = 'Colombia'
 MEXICO = 'Mexico'
 BRASIL = 'Brasil'
 
+# SITES
+ARG = 'ARG'
+COL = 'COL'
+MEX = 'MEX'
+BRA = 'BRA'
+
 # MESSAGES
 VALID_BROWSERS = 'Please select a valid Browser admitted are: '
 SETTING_UP = 'Setting up browser: '

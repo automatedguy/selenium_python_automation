@@ -51,6 +51,7 @@ class Checkout(BasePage):
     def populate_checkout_info(self, add_cross_selling):
         """ This method will deal with the initial load """
 
+        # Get the input definitions for the first time
         input_definitions = self.get_input_definitions(self.channel, self.api_host,
                                                        self.country_site, self.country_language)
 
@@ -58,7 +59,7 @@ class Checkout(BasePage):
         if add_cross_selling:
             input_definitions = CrossSelling(self.driver).populate_cross_selling_info()
 
-        PassengerSection(self.driver).populate_passengers_info(input_definitions)
+        PassengerSection(self.driver, self.country_site).populate_passengers_info(input_definitions)
         BillingSection(self.driver, self.country_site).populate_billing_info(input_definitions)
         ContactSection(self.driver).populate_contact_info(input_definitions)
 
@@ -72,15 +73,26 @@ class Checkout(BasePage):
         return input_definitions
 
     @staticmethod
-    def get_postal_code(country):
+    def get_postal_code(country_site):
         postal_code = {
-            'ARG': '1009',
-            'COL': '110111',
-            'MEX': '03400',
-            'BRA': '20000-000'
+            ARG: '1009',
+            COL: '110111',
+            MEX: '03400',
+            BRA: '20000-000'
         }
-        postal_code.get(country, 'Invalid country' + country)
-        return postal_code.get(country)
+        postal_code.get(country_site, 'Invalid country' + country_site)
+        return postal_code.get(country_site)
+
+    @staticmethod
+    def get_document_number(country_site):
+        document_number = {
+            ARG: '28549400',
+            COL: '28549400',
+            MEX: '28549400',
+            BRA: '12345678900'
+        }
+        document_number.get(country_site, 'Invalid country' + country_site)
+        return document_number.get(country_site)
 
 
 class CrossSelling(Checkout):
@@ -109,11 +121,12 @@ class CrossSelling(Checkout):
 class PassengerSection(Checkout):
     """"Passenger Section"""
 
-    def __init__(self, driver):
+    def __init__(self, driver, country_site):
         super(PassengerSection, self).__init__(driver)
+        super(PassengerSection, self).__init__(country_site)
         self.driver = driver
+        self.country_site = country_site
 
-    # Locators
     __name_lct = PassengerSectionLct.NAME
     __name_desc = PassengerSectionLct.NAME_DESC
 
@@ -208,7 +221,7 @@ class PassengerSection(Checkout):
 
     def populate_passengers_info(self, input_definitions):
 
-        total_passengers = len(self.driver.find_elements(*PassengerSectionLct.NAME))
+        total_passengers = len(self.driver.find_elements(*self.__name_lct))
 
         Utils().print_separator()
         logger.info("Filling Passengers info - Total Passengers: " + str(total_passengers))
@@ -228,7 +241,7 @@ class PassengerSection(Checkout):
                 self.set_document_type(passenger, options)
 
             if input_definitions['passengers'][passenger]['document']['number']['required']:
-                self.set_document_number(passenger, '23456543N')
+                self.set_document_number(passenger, self.get_document_number(self.country_site))
 
             if input_definitions['passengers'][passenger]['birthday']['required']:
                 self.select_birthday(passenger)
