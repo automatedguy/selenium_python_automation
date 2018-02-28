@@ -15,9 +15,13 @@ class FlightTest(BaseTest):
     infants = '1'
 
     def setUp(self):
+        self.api_host = self.get_api_host()
+        self.country_site = self.get_country_site()
+        self.country_language = self.get_country_language()
+
         self.cart_id = self.get_flight_cart_id(self.origin, self.destination,
                                                self.get_date(self.departure_date), self.get_date(self.return_date),
-                                               self.get_country_site(), self.get_country_language(),
+                                               self.country_site, self.country_language,
                                                self.adults, self.children, self.infants)
 
         self.input_definitions = self.get_input_definitions(self.cart_id)
