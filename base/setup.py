@@ -72,7 +72,9 @@ class BaseTest(unittest.TestCase):
         logger.info(TEARING_DOWN + BROWSER)
         self.driver.quit()
 
-    def open_checkout(self, cart_id, checkout_parameter, product_route):
+    def open_checkout(self, cart_id, checkout_parameter, product_route,
+                      channel, api_host, country_site, country_language):
+
         self.domain_url = self.base_url
         checkout_route = 'checkout/'
         checkout_url = self.domain_url + checkout_route + cart_id + product_route + checkout_parameter
@@ -82,7 +84,7 @@ class BaseTest(unittest.TestCase):
         self.driver.get(checkout_url)
 
         from base.page import Checkout
-        return Checkout(self.driver, cart_id)
+        return Checkout(self.driver, cart_id, channel, api_host, country_site, country_language)
 
     @staticmethod
     def get_country_domain():

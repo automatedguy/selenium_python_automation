@@ -39,15 +39,20 @@ class BasePage(object):
 class Checkout(BasePage):
     """Checkout Page class"""
 
-    def __init__(self, driver, cart_id=''):
+    def __init__(self, driver, cart_id='', channel='', api_host='', country_site='', country_language=''):
         super(Checkout, self).__init__(driver)
         self.driver = driver
         self.cart_id = cart_id
+        self.channel = channel
+        self.api_host = api_host
+        self.country_site = country_site
+        self.country_language = country_language
 
-    def populate_checkout_info(self, channel, api_host, country_site, country_language):
+    def populate_checkout_info(self):
         """ This method will deal with the initial load """
 
-        input_definitions = self.get_input_definitions(channel, api_host, country_site, country_language)
+        input_definitions = self.get_input_definitions(self.channel, self.api_host,
+                                                       self.country_site, self.country_language)
 
         # Populate the different sections
         PassengerSection(self.driver).populate_passengers_info(input_definitions)

@@ -30,8 +30,10 @@ class FlightTest(BaseTest):
         """ Load test_checkout without additional parameters"""
         checkout_parameter = ''
 
-        checkout = self.open_checkout(self.cart_id, checkout_parameter, self.product_route)
-        checkout.populate_checkout_info(self.channel, self.api_host, self.country_site, self.country_language)
+        checkout = self.open_checkout(self.cart_id, checkout_parameter, self.product_route,
+                                      self.channel, self.api_host, self.country_site, self.country_language)
+
+        checkout.populate_checkout_info()
 
         logger.info('Just for the wait...')
 
@@ -40,7 +42,7 @@ class FlightTest(BaseTest):
         checkout_parameter = SC_ENABLED
 
         checkout = self.open_checkout(self.cart_id, checkout_parameter, self.product_route)
-        checkout.populate_checkout_info(self.input_definitions)
+        checkout.populate_checkout_info()
 
         logger.info('Just for the wait...')
 
