@@ -68,6 +68,17 @@ class Checkout(BasePage):
 
         return input_definitions
 
+    @staticmethod
+    def get_postal_code(country):
+        postal_code = {
+            'ARG': '1009',
+            'COL': '110111',
+            'MEX': '03400',
+            'BRA': '20000-000'
+        }
+        postal_code.get(country, 'Invalid country' + country)
+        return postal_code.get(country)
+
 
 class PassengerSection(Checkout):
     """"Passenger Section"""
@@ -326,7 +337,7 @@ class BillingSection(Checkout):
             logger.warning('Department is not available [Exception]: ' + str(no_department))
 
         if input_definitions['billings'][0]['address']['postal_code']['required']:
-            self.set_address_postal_code('7777')
+            self.set_address_postal_code(self.get_postal_code(self.country_site))
 
         if input_definitions['billings'][0]['address']['states']['required']:
             options = input_definitions['billings'][0]['address']['states']['options']
