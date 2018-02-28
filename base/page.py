@@ -48,13 +48,16 @@ class Checkout(BasePage):
         self.country_site = country_site
         self.country_language = country_language
 
-    def populate_checkout_info(self):
+    def populate_checkout_info(self, add_cross_selling):
         """ This method will deal with the initial load """
 
         input_definitions = self.get_input_definitions(self.channel, self.api_host,
                                                        self.country_site, self.country_language)
 
         # Populate the different sections
+        if add_cross_selling:
+            input_definitions = CrossSelling(self.driver).populate_cross_selling_info()
+
         PassengerSection(self.driver).populate_passengers_info(input_definitions)
         BillingSection(self.driver, self.country_site).populate_billing_info(input_definitions)
         ContactSection(self.driver).populate_contact_info(input_definitions)
@@ -86,6 +89,21 @@ class CrossSelling(Checkout):
     def __init__(self, driver):
         super(CrossSelling, self).__init__(driver)
         self.driver = driver
+
+    # Locators
+    __add_insurance_lct = CrossSellingSectionLct.ADD_INSURANCE
+    __add_insurance_desc = CrossSellingSectionLct.ADD_INSURANCE_DESC
+
+    __add_transfer_lct = CrossSellingSectionLct.ADD_TRANSFER
+    __add_transfer_desc = CrossSellingSectionLct.ADD_INSURANCE_DESC
+
+    def click_add_insurance(self):
+        logger.info(CLICKING + self.__add_insurance_desc)
+        self.driver.find_elements(*self.__add_insurance_lct)[0].click()
+
+    def populate_cross_selling_info(self):
+        self.click_add_insurance()
+        return self.get_input_definitions(self.channel, self.api_host, self.country_site, self.country_language)
 
 
 class PassengerSection(Checkout):

@@ -9,6 +9,14 @@ class LoginModalLct(object):
     CLOSE_BUTTON_DESC = 'Close login modal (X)'
 
 
+class CrossSellingSectionLct(object):
+    ADD_INSURANCE = (By.CSS_SELECTOR, '#healthcross-input')
+    ADD_INSURANCE_DESC = 'Add insurance radio button'
+
+    ADD_TRANSFER = (By.CSS_SELECTOR, '#radio-yes')
+    ADD_TRANSFER_DESC = 'Add insurance radio button'
+
+
 class PassengerSectionLct(object):
     NAME = (By.CSS_SELECTOR, '#first_name')
     NAME_DESC = 'Name: '
