@@ -64,21 +64,18 @@ class Checkout(BasePage):
 
         # Come on!! Get this from the input definitions!!
         # and that will be better.
-        passenger_done, \
-            billing_done, \
-            contact_done, \
-            cross_selling_done, \
-            emergency_contact_done = False
+        passenger_done = False
+        billing_done = False
+        contact_done = False
+        cross_selling_done = False
+        emergency_contact_done = False
 
         if not add_cross_selling:
             cross_selling_done = True
             emergency_contact_done = True
 
         # Populate the different sections iterating and trying
-        while not passenger_done and \
-                not billing_done and \
-                not contact_done and \
-                not cross_selling_done:
+        while not passenger_done or not billing_done or not contact_done or not cross_selling_done:
 
             if not cross_selling_done:
                 # Changes in cross selling affects input definitions "Emergency contact"...
@@ -174,7 +171,7 @@ class PassengerSection(Checkout):
         self.driver.find_elements(*self.__name_lct)[passenger_index].send_keys(passenger_name)
 
     def set_last_name(self, passenger_index):
-        passenger_last_name = self.get_random_string(7, 10)
+        passenger_last_name = Utils().get_random_string(7, 10)
         logger.info(FILLING + self.__last_name_desc + passenger_last_name)
         self.driver.find_elements(*self.__last_name_lct)[passenger_index].send_keys(passenger_last_name)
 
@@ -228,7 +225,7 @@ class PassengerSection(Checkout):
         for passenger in range(0, total_passengers):
             logger.info('Filling Passenger N°: ' + str(passenger + 1))
 
-            if input_definitions.is_passenger_first_name_req(passenger):
+            if input_definitions['passengers'][passenger]['first_name']['required']:
                 self.set_name(passenger)
 
             if input_definitions['passengers'][passenger]['last_name']['required']:
@@ -254,7 +251,7 @@ class PassengerSection(Checkout):
                 self.select_nationality(passenger, 'Argentina')
 
             Utils().print_separator()
-            return True
+        return True
 
 
 class BillingSection(Checkout):

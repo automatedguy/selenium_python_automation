@@ -105,8 +105,8 @@ class InputDefinitions:
         self.json_input_definitions = None
 
     # Crazy Change this patter will be applied for all the fields.
-    def is_passenger_first_name_req(self, passenger):
-        if self.input_definitions['passengers'][passenger]['first_name']['required']:
+    def is_passenger_first_name_req(self, passenger, input_definitions):
+        if input_definitions['passengers'][passenger]['first_name']['required']:
             return True
         else:
             return False
