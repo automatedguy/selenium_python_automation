@@ -62,13 +62,17 @@ class Checkout(BasePage):
         # Get the input definitions for the first time
         self.set_input_definitions()
 
+        # Come on!! Get this from the input definitions!!
+        # and that will be better.
         passenger_done, \
             billing_done, \
             contact_done, \
-            cross_selling_done = False
+            cross_selling_done, \
+            emergency_contact_done = False
 
         if not add_cross_selling:
             cross_selling_done = True
+            emergency_contact_done = True
 
         # Populate the different sections iterating and trying
         while not passenger_done and \
