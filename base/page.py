@@ -27,12 +27,6 @@ class BasePage(object):
         WebDriverWait(driver, 100).until(lambda driver: driver.find_element_by_xpath(locator))
         return self.driver.find_element_by_xpath(locator)
 
-    @staticmethod
-    def get_current_year(remove_years):
-        time_now = datetime.datetime.now()
-        new_time = time_now + datetime.timedelta(remove_years * 365)
-        return new_time.strftime("%Y")
-
 
 # Checkout class and sections
 
@@ -48,53 +42,72 @@ class Checkout(BasePage):
         self.api_host = api_host
         self.country_site = country_site
         self.country_language = country_language
+        self.input_definitions = None
+
+    def set_input_definitions(self):
+        self.input_definitions = InputDefinitions(
+            self.api_host,
+            self.cart_id,
+            self.country_site,
+            self.country_language
+        ).get_input_definitions(
+            Apikeys().get_apikey(
+                self.channel
+            )
+        )
 
     def populate_checkout_info(self, add_cross_selling):
         """ This method will deal with the initial load """
 
         # Get the input definitions for the first time
-        input_definitions = InputDefinitions(self.api_host, self.cart_id,
-                                             self.country_site,
-                                             self.country_language). \
-            get_input_definitions(Apikeys().get_apikey(self.channel))
+        self.set_input_definitions()
 
-        # Populate the different sections
-        if add_cross_selling:
-            input_definitions = CrossSelling(self.driver).populate_cross_selling_info()
+        passenger_done, \
+            billing_done, \
+            contact_done, \
+            cross_selling_done = False
 
-        PassengerSection(self.driver, self.country_site).populate_passengers_info(input_definitions)
-        BillingSection(self.driver, self.country_site).populate_billing_info(input_definitions)
-        ContactSection(self.driver).populate_contact_info(input_definitions)
+        if not add_cross_selling:
+            cross_selling_done = True
 
-        return input_definitions
+        # Populate the different sections iterating and trying
+        while not passenger_done and \
+                not billing_done and \
+                not contact_done and \
+                not cross_selling_done:
 
-    @staticmethod
-    def get_postal_code(country_site):
-        postal_code = {
-            ARG: '1009',
-            COL: '110111',
-            MEX: '03400',
-            BRA: '20000-000'
-        }
-        postal_code.get(country_site, 'Invalid country' + country_site)
-        return postal_code.get(country_site)
+            if not cross_selling_done:
+                # Changes in cross selling affects input definitions "Emergency contact"...
+                cross_selling_done = CrossSelling(
+                    self.driver).populate_cross_selling_info()
+                # so we need to update them
+                self.set_input_definitions()
 
-    @staticmethod
-    def get_document_number(country_site):
-        document_number = {
-            ARG: '28549400',
-            COL: '28549400',
-            MEX: '28549400',
-            BRA: '12345678900'
-        }
-        document_number.get(country_site, 'Invalid country' + country_site)
-        return document_number.get(country_site)
+            if not passenger_done:
+                passenger_done = PassengerSection(
+                    self.driver, self.country_site
+                ).populate_passengers_info(
+                    self.input_definitions
+                )
+
+            if not billing_done:
+                billing_done = BillingSection(
+                    self.driver, self.country_site
+                ).populate_billing_info(
+                    self.input_definitions
+                )
+
+            if not contact_done:
+                contact_done = ContactSection(
+                    self.driver).populate_contact_info(
+                    self.input_definitions
+                )
 
 
 class CrossSelling(Checkout):
     """Cross Selling section"""
 
-    def __init__(self, driver):
+    def __init__(self, driver, input_definitions):
         super(CrossSelling, self).__init__(driver)
         self.driver = driver
 
@@ -111,10 +124,7 @@ class CrossSelling(Checkout):
 
     def populate_cross_selling_info(self):
         self.click_add_insurance()
-        return InputDefinitions(self.api_host, self.cart_id,
-                                self.country_site,
-                                self.country_language). \
-            get_input_definitions(Apikeys().get_apikey(self.channel))
+        return True
 
 
 class PassengerSection(Checkout):
@@ -154,23 +164,8 @@ class PassengerSection(Checkout):
     __nationality_desc = PassengerSectionLct.NATIONALITY_DESC
 
     # Actions
-    @staticmethod
-    def get_age(age_range):
-        age = {
-            'ADULT': -13,
-            'CHILD': -7,
-            'INFANT': -1,
-        }
-        age.get(age_range, 'Invalid age range' + age_range)
-        return age.get(age_range)
-
-    @staticmethod
-    def get_random_string(min_char, max_char):
-        all_char = string.ascii_letters
-        return "".join(choice(all_char) for x in range(randint(min_char, max_char)))
-
     def set_name(self, passenger_index):
-        passenger_name = self.get_random_string(7, 10)
+        passenger_name = Utils().get_random_string(7, 10)
         logger.info(FILLING + self.__name_desc + passenger_name)
         self.driver.find_elements(*self.__name_lct)[passenger_index].send_keys(passenger_name)
 
@@ -202,7 +197,7 @@ class PassengerSection(Checkout):
             .select_by_index(passenger_birthmonth)
 
     def select_birthyear(self, passenger_index, passenger_age_range):
-        passenger_birthyear = self.get_current_year(self.get_age(passenger_age_range))
+        passenger_birthyear = Utils().get_current_year(Utils().get_age(passenger_age_range))
 
         logger.info(SELECTING + self.__birthyear_desc + passenger_birthyear)
         Select(self.driver.find_elements(*self.__birthyear_lct)[passenger_index]) \
@@ -229,7 +224,7 @@ class PassengerSection(Checkout):
         for passenger in range(0, total_passengers):
             logger.info('Filling Passenger N°: ' + str(passenger + 1))
 
-            if input_definitions.is_first_name_req(passenger):
+            if input_definitions.is_passenger_first_name_req(passenger):
                 self.set_name(passenger)
 
             if input_definitions['passengers'][passenger]['last_name']['required']:
@@ -240,7 +235,7 @@ class PassengerSection(Checkout):
                 self.set_document_type(passenger, options)
 
             if input_definitions['passengers'][passenger]['document']['number']['required']:
-                self.set_document_number(passenger, self.get_document_number(self.country_site))
+                self.set_document_number(passenger, Utils().get_document_number(self.country_site))
 
             if input_definitions['passengers'][passenger]['birthday']['required']:
                 self.select_birthday(passenger)
@@ -255,6 +250,7 @@ class PassengerSection(Checkout):
                 self.select_nationality(passenger, 'Argentina')
 
             Utils().print_separator()
+            return True
 
 
 class BillingSection(Checkout):
@@ -377,7 +373,7 @@ class BillingSection(Checkout):
             logger.warning('Department is not available [Exception]: ' + str(no_department))
 
         if input_definitions['billings'][0]['address']['postal_code']['required']:
-            self.set_address_postal_code(self.get_postal_code(self.country_site))
+            self.set_address_postal_code(Utils().get_postal_code(self.country_site))
 
         if input_definitions['billings'][0]['address']['states']['required']:
             options = input_definitions['billings'][0]['address']['states']['options']
@@ -387,6 +383,7 @@ class BillingSection(Checkout):
             self.set_address_city('Buenos Aires')
 
         Utils().print_separator()
+        return True
 
 
 class ContactSection(Checkout):
@@ -463,6 +460,7 @@ class ContactSection(Checkout):
             self.set_phone_number('43527685')
 
         Utils().print_separator()
+        return True
 
 
 class EmergencyContactSection:
@@ -508,6 +506,51 @@ class LoginModal(BasePage):
 
 
 class Utils:
+    """ Utils class: all static methods for general pourposes """
+
     @staticmethod
     def print_separator():
         logger.info('****************************************************')
+
+    @staticmethod
+    def get_current_year(remove_years):
+        time_now = datetime.datetime.now()
+        new_time = time_now + datetime.timedelta(remove_years * 365)
+        return new_time.strftime("%Y")
+
+    @staticmethod
+    def get_postal_code(country_site):
+        postal_code = {
+            ARG: '1009',
+            COL: '110111',
+            MEX: '03400',
+            BRA: '20000-000'
+        }
+        postal_code.get(country_site, 'Invalid country' + country_site)
+        return postal_code.get(country_site)
+
+    @staticmethod
+    def get_document_number(country_site):
+        document_number = {
+            ARG: '28549400',
+            COL: '28549400',
+            MEX: '28549400',
+            BRA: '12345678900'
+        }
+        document_number.get(country_site, 'Invalid country' + country_site)
+        return document_number.get(country_site)
+
+    @staticmethod
+    def get_age(age_range):
+        age = {
+            'ADULT': -13,
+            'CHILD': -7,
+            'INFANT': -1,
+        }
+        age.get(age_range, 'Invalid age range' + age_range)
+        return age.get(age_range)
+
+    @staticmethod
+    def get_random_string(min_char, max_char):
+        all_char = string.ascii_letters
+        return "".join(choice(all_char) for x in range(randint(min_char, max_char)))
