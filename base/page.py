@@ -104,7 +104,7 @@ class Checkout(BasePage):
                     self.input_definitions
                 )
 
-            # TODO: do something decent with this line below
+            # TODO: do something decent with this line below i.e define next button :)
             self.driver.find_element(By.CSS_SELECTOR, '.am-wizard-footer button.button-next').click()
 
 
@@ -498,6 +498,18 @@ class PaymentSection(Checkout):
     def __init__(self, driver):
         super(PaymentSection, self).__init__(driver)
         self.driver = driver
+
+    def populate_grid(self):
+        return
+
+    def populate_combo(self):
+        return
+
+    def populate_card_info(self):
+        return
+
+    def populate_credit_card_retail(self):
+        return
 
 
 class AgentSection(Checkout):
