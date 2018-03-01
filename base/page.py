@@ -33,6 +33,7 @@ class BasePage(object):
         new_time = time_now + datetime.timedelta(remove_years * 365)
         return new_time.strftime("%Y")
 
+
 # Checkout class and sections
 
 
@@ -52,8 +53,10 @@ class Checkout(BasePage):
         """ This method will deal with the initial load """
 
         # Get the input definitions for the first time
-        input_definitions = self.get_input_definitions(self.channel, self.api_host,
-                                                       self.country_site, self.country_language)
+        input_definitions = InputDefinitions(self.api_host, self.cart_id,
+                                             self.country_site,
+                                             self.country_language). \
+            get_input_definitions(Apikeys().get_apikey(self.channel))
 
         # Populate the different sections
         if add_cross_selling:
@@ -62,13 +65,6 @@ class Checkout(BasePage):
         PassengerSection(self.driver, self.country_site).populate_passengers_info(input_definitions)
         BillingSection(self.driver, self.country_site).populate_billing_info(input_definitions)
         ContactSection(self.driver).populate_contact_info(input_definitions)
-
-    def get_input_definitions(self, channel, api_host, country_site, country_language):
-        apikeys = Apikeys()
-        channel_apikey = apikeys.get_apikey(channel)
-        input_definitions = InputDefinitions(api_host, self.cart_id,
-                                             country_site,
-                                             country_language).get_input_definitions(channel_apikey)
 
         return input_definitions
 
@@ -115,7 +111,10 @@ class CrossSelling(Checkout):
 
     def populate_cross_selling_info(self):
         self.click_add_insurance()
-        return self.get_input_definitions(self.channel, self.api_host, self.country_site, self.country_language)
+        return InputDefinitions(self.api_host, self.cart_id,
+                                self.country_site,
+                                self.country_language). \
+            get_input_definitions(Apikeys().get_apikey(self.channel))
 
 
 class PassengerSection(Checkout):
@@ -181,9 +180,9 @@ class PassengerSection(Checkout):
         self.driver.find_elements(*self.__last_name_lct)[passenger_index].send_keys(passenger_last_name)
 
     def set_document_type(self, passenger_index, document_type_options):
-        document_type_selected = document_type_options[(randint(0, len(document_type_options)-1))]['description']
+        document_type_selected = document_type_options[(randint(0, len(document_type_options) - 1))]['description']
         logger.info(SELECTING + self.__document_type_desc + document_type_selected)
-        Select(self.driver.find_elements(*self.__document_type_lct)[passenger_index])\
+        Select(self.driver.find_elements(*self.__document_type_lct)[passenger_index]) \
             .select_by_visible_text(document_type_selected)
 
     def set_document_number(self, passenger_index, passenger_document_number):
@@ -193,30 +192,30 @@ class PassengerSection(Checkout):
     def select_birthday(self, passenger_index):
         passenger_birthday = str(randint(1, 28))
         logger.info(SELECTING + self.__birthday_desc + passenger_birthday)
-        Select(self.driver.find_elements(*self.__birthday_lct)[passenger_index])\
+        Select(self.driver.find_elements(*self.__birthday_lct)[passenger_index]) \
             .select_by_visible_text(passenger_birthday)
 
     def select_birthmonth(self, passenger_index):
         passenger_birthmonth = str(randint(1, 12))
         logger.info(SELECTING + self.__birthmonth_desc + passenger_birthmonth)
-        Select(self.driver.find_elements(*self.__birthmonth_lct)[passenger_index])\
+        Select(self.driver.find_elements(*self.__birthmonth_lct)[passenger_index]) \
             .select_by_index(passenger_birthmonth)
 
     def select_birthyear(self, passenger_index, passenger_age_range):
         passenger_birthyear = self.get_current_year(self.get_age(passenger_age_range))
 
         logger.info(SELECTING + self.__birthyear_desc + passenger_birthyear)
-        Select(self.driver.find_elements(*self.__birthyear_lct)[passenger_index])\
+        Select(self.driver.find_elements(*self.__birthyear_lct)[passenger_index]) \
             .select_by_visible_text(passenger_birthyear)
 
     def select_gender(self, passenger_index, passenger_gender):
         logger.info(SELECTING + self.__gender_desc + passenger_gender)
-        Select(self.driver.find_elements(*self.__gender_lct)[passenger_index])\
+        Select(self.driver.find_elements(*self.__gender_lct)[passenger_index]) \
             .select_by_visible_text(passenger_gender)
 
     def select_nationality(self, passenger_index, passenger_nationality):
         logger.info(SELECTING + self.__nationality_desc + passenger_nationality)
-        Select(self.driver.find_elements(*self.__nationality_lct)[passenger_index])\
+        Select(self.driver.find_elements(*self.__nationality_lct)[passenger_index]) \
             .select_by_visible_text(passenger_nationality)
 
     def populate_passengers_info(self, input_definitions):
@@ -230,7 +229,7 @@ class PassengerSection(Checkout):
         for passenger in range(0, total_passengers):
             logger.info('Filling Passenger N°: ' + str(passenger + 1))
 
-            if input_definitions['passengers'][passenger]['first_name']['required']:
+            if input_definitions.is_first_name_req(passenger):
                 self.set_name(passenger)
 
             if input_definitions['passengers'][passenger]['last_name']['required']:
@@ -337,7 +336,7 @@ class BillingSection(Checkout):
         self.driver.find_element(*self.__address_postal_code_lct).send_keys(billing_address_postal_code)
 
     def set_address_state(self, options):
-        billing_address_state = options[randint(1, len(options)-1)]['description']
+        billing_address_state = options[randint(1, len(options) - 1)]['description']
         logger.info(FILLING + self.__address_state_desc + billing_address_state)
         self.driver.find_element(*self.__address_state_ltc).send_keys(billing_address_state)
 
@@ -424,7 +423,8 @@ class ContactSection(Checkout):
         self.driver.find_element(*self.__email_confirmation_lct).send_keys(contact_email_confirmation)
 
     def select_telephone_type(self, contact_telephone_type_options):
-        contact_telephone_type = contact_telephone_type_options[randint(0, len(contact_telephone_type_options) - 1)]['description']
+        contact_telephone_type = contact_telephone_type_options[randint(0, len(contact_telephone_type_options) - 1)][
+            'description']
         logger.info(FILLING + self.__telephone_type_desc + contact_telephone_type)
         self.driver.find_element(*self.__telephone_type_lct).send_keys(contact_telephone_type)
 

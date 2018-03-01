@@ -102,13 +102,21 @@ class InputDefinitions:
                              + '/api/v3/cart/' + cart_id \
                              + '/input-definitions?site=' + country \
                              + '&language=' + language
+        self.json_input_definitions = None
+
+    # Crazy Change
+    def is_first_name_req(self, passenger):
+        if self.input_definitions['passengers'][passenger]['first_name']['required']:
+            return True
+        else:
+            return False
 
     def get_input_definitions(self, apikey):
         logger.info('Getting input definitions...')
         raw_input_definitions = requests.get(self.input_def_url, headers={'X-Apikey': apikey, 'Version': 'v3'})
-        json_input_definitions = json.loads(raw_input_definitions.text)
-        logger.info("Input definitions retrieved!" + str(json_input_definitions))
-        return json_input_definitions
+        self.json_input_definitions = json.loads(raw_input_definitions.text)
+        logger.info("Input definitions retrieved!" + str(self.json_input_definitions))
+        return self.json_input_definitions
 
 
 class Cart:
