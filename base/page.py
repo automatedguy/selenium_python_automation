@@ -104,6 +104,9 @@ class Checkout(BasePage):
                     self.input_definitions
                 )
 
+            # TODO: do something decent with this line below
+            self.driver.find_element(By.CSS_SELECTOR, '.am-wizard-footer button.button-next').click()
+
 
 class CrossSelling(Checkout):
     """Cross Selling section"""
@@ -215,6 +218,7 @@ class PassengerSection(Checkout):
             .select_by_visible_text(passenger_nationality)
 
     def populate_passengers_info(self, input_definitions):
+        logger.info('Checking if Passengers section is displayed')
 
         if self.driver.find_element(*self.__name_lct).is_displayed():
             total_passengers = len(self.driver.find_elements(*self.__name_lct))
@@ -254,6 +258,7 @@ class PassengerSection(Checkout):
                 Utils().print_separator()
             return True
         else:
+            logger.info('Passengers section is not displayed.')
             return False
 
 
@@ -345,49 +350,56 @@ class BillingSection(Checkout):
         self.driver.find_element(*self.__address_city_lct).send_keys(billing_address_city)
 
     def populate_billing_info(self, input_definitions):
-        logger.info("Populating Billing Info")
-        Utils().print_separator()
+        logger.info('Checking if Billing section is displayed')
 
-        if input_definitions['billings'][0]['fiscal_name']['required']:
-            self.set_fiscal_name('Saraza')
+        if self.driver.find_element(*self.__fiscal_name_lct).is_displayed():
 
-        if input_definitions['billings'][0]['fiscal_type']['required']:
-            options = input_definitions['billings'][0]['fiscal_type_document']['options']
-            self.select_fiscal_type(options)
+            logger.info("Populating Billing Info")
+            Utils().print_separator()
 
-        if input_definitions['billings'][0]['fiscal_document']['required']:
-            self.set_fiscal_document('23281685589')
+            if input_definitions['billings'][0]['fiscal_name']['required']:
+                self.set_fiscal_name('Saraza')
 
-        if input_definitions['billings'][0]['address']['street']['required']:
-            self.set_address_street('Fake Street 123')
+            if input_definitions['billings'][0]['fiscal_type']['required']:
+                options = input_definitions['billings'][0]['fiscal_type_document']['options']
+                self.select_fiscal_type(options)
 
-        if input_definitions['billings'][0]['address']['number']['required']:
-            self.set_address_number('12345')
+            if input_definitions['billings'][0]['fiscal_document']['required']:
+                self.set_fiscal_document('23281685589')
 
-        try:
-            if not input_definitions['billings'][0]['address']['floor']['required']:
-                self.set_address_floor('10')
-        except Exception as no_floor:
-            logger.warning('Floor is not available [Exception]: ' + str(no_floor))
+            if input_definitions['billings'][0]['address']['street']['required']:
+                self.set_address_street('Fake Street 123')
 
-        try:
-            if not input_definitions['billings'][0]['address']['department']['required']:
-                self.set_address_department('A')
-        except Exception as no_department:
-            logger.warning('Department is not available [Exception]: ' + str(no_department))
+            if input_definitions['billings'][0]['address']['number']['required']:
+                self.set_address_number('12345')
 
-        if input_definitions['billings'][0]['address']['postal_code']['required']:
-            self.set_address_postal_code(Utils().get_postal_code(self.country_site))
+            try:
+                if not input_definitions['billings'][0]['address']['floor']['required']:
+                    self.set_address_floor('10')
+            except Exception as no_floor:
+                logger.warning('Floor is not available [Exception]: ' + str(no_floor))
 
-        if input_definitions['billings'][0]['address']['states']['required']:
-            options = input_definitions['billings'][0]['address']['states']['options']
-            self.set_address_state(options)
+            try:
+                if not input_definitions['billings'][0]['address']['department']['required']:
+                    self.set_address_department('A')
+            except Exception as no_department:
+                logger.warning('Department is not available [Exception]: ' + str(no_department))
 
-        if input_definitions['billings'][0]['address']['city']['required']:
-            self.set_address_city('Buenos Aires')
+            if input_definitions['billings'][0]['address']['postal_code']['required']:
+                self.set_address_postal_code(Utils().get_postal_code(self.country_site))
 
-        Utils().print_separator()
-        return True
+            if input_definitions['billings'][0]['address']['states']['required']:
+                options = input_definitions['billings'][0]['address']['states']['options']
+                self.set_address_state(options)
+
+            if input_definitions['billings'][0]['address']['city']['required']:
+                self.set_address_city('Buenos Aires')
+
+            Utils().print_separator()
+            return True
+        else:
+            logger.info('Billing section is not displayed.')
+            return False
 
 
 class ContactSection(Checkout):
@@ -444,27 +456,32 @@ class ContactSection(Checkout):
         self.driver.find_element(*self.__phone_number_lct).send_keys(contact_phone_number)
 
     def populate_contact_info(self, input_definitions):
-        logger.info("Populating Contact Info")
-        Utils().print_separator()
+        logger.info('Checking if contact section is displayed')
+        if self.driver.find_element(*self.__email_lct).is_displayed():
+            logger.info("Populating Contact Info")
+            Utils().print_separator()
 
-        if input_definitions['contacts'][0]['email']['required']:
-            self.set_email('email@google.com')
-            self.set_email_confirmation('email@google.com')
+            if input_definitions['contacts'][0]['email']['required']:
+                self.set_email('email@google.com')
+                self.set_email_confirmation('email@google.com')
 
-        telephone_type_options = input_definitions['contacts'][0]['telephones'][0]['telephone_type']['options']
-        self.select_telephone_type(telephone_type_options)
+            telephone_type_options = input_definitions['contacts'][0]['telephones'][0]['telephone_type']['options']
+            self.select_telephone_type(telephone_type_options)
 
-        if input_definitions['contacts'][0]['telephones'][0]['country_code']:
-            self.set_country_code('54')
+            if input_definitions['contacts'][0]['telephones'][0]['country_code']:
+                self.set_country_code('54')
 
-        if input_definitions['contacts'][0]['telephones'][0]['area_code']:
-            self.set_area_code('11')
+            if input_definitions['contacts'][0]['telephones'][0]['area_code']:
+                self.set_area_code('11')
 
-        if input_definitions['contacts'][0]['telephones'][0]['number']:
-            self.set_phone_number('43527685')
+            if input_definitions['contacts'][0]['telephones'][0]['number']:
+                self.set_phone_number('43527685')
 
-        Utils().print_separator()
-        return True
+            Utils().print_separator()
+            return True
+        else:
+            logger.info('Contact section is not displayed.')
+            return False
 
 
 class EmergencyContactSection:
