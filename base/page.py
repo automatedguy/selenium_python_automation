@@ -216,42 +216,45 @@ class PassengerSection(Checkout):
 
     def populate_passengers_info(self, input_definitions):
 
-        total_passengers = len(self.driver.find_elements(*self.__name_lct))
-
-        Utils().print_separator()
-        logger.info("Filling Passengers info - Total Passengers: " + str(total_passengers))
-        Utils().print_separator()
-
-        for passenger in range(0, total_passengers):
-            logger.info('Filling Passenger N°: ' + str(passenger + 1))
-
-            if input_definitions['passengers'][passenger]['first_name']['required']:
-                self.set_name(passenger)
-
-            if input_definitions['passengers'][passenger]['last_name']['required']:
-                self.set_last_name(passenger)
-
-            if input_definitions['passengers'][passenger]['document']['document_type']['required']:
-                options = input_definitions['passengers'][passenger]['document']['document_type']['options']
-                self.set_document_type(passenger, options)
-
-            if input_definitions['passengers'][passenger]['document']['number']['required']:
-                self.set_document_number(passenger, Utils().get_document_number(self.country_site))
-
-            if input_definitions['passengers'][passenger]['birthday']['required']:
-                self.select_birthday(passenger)
-                self.select_birthmonth(passenger)
-                age_range = input_definitions['passengers'][passenger]['description']
-                self.select_birthyear(passenger, age_range)
-
-            if input_definitions['passengers'][passenger]['gender']['required']:
-                self.select_gender(passenger, 'Masculino')
-
-            if input_definitions['passengers'][passenger]['nationality']['required']:
-                self.select_nationality(passenger, 'Argentina')
+        if self.driver.find_element(*self.__name_lct).is_displayed():
+            total_passengers = len(self.driver.find_elements(*self.__name_lct))
 
             Utils().print_separator()
-        return True
+            logger.info("Filling Passengers info - Total Passengers: " + str(total_passengers))
+            Utils().print_separator()
+
+            for passenger in range(0, total_passengers):
+                logger.info('Filling Passenger N°: ' + str(passenger + 1))
+
+                if input_definitions['passengers'][passenger]['first_name']['required']:
+                    self.set_name(passenger)
+
+                if input_definitions['passengers'][passenger]['last_name']['required']:
+                    self.set_last_name(passenger)
+
+                if input_definitions['passengers'][passenger]['document']['document_type']['required']:
+                    options = input_definitions['passengers'][passenger]['document']['document_type']['options']
+                    self.set_document_type(passenger, options)
+
+                if input_definitions['passengers'][passenger]['document']['number']['required']:
+                    self.set_document_number(passenger, Utils().get_document_number(self.country_site))
+
+                if input_definitions['passengers'][passenger]['birthday']['required']:
+                    self.select_birthday(passenger)
+                    self.select_birthmonth(passenger)
+                    age_range = input_definitions['passengers'][passenger]['description']
+                    self.select_birthyear(passenger, age_range)
+
+                if input_definitions['passengers'][passenger]['gender']['required']:
+                    self.select_gender(passenger, 'Masculino')
+
+                if input_definitions['passengers'][passenger]['nationality']['required']:
+                    self.select_nationality(passenger, 'Argentina')
+
+                Utils().print_separator()
+            return True
+        else:
+            return False
 
 
 class BillingSection(Checkout):

@@ -43,19 +43,23 @@ class FlightTest(BaseTest):
         """ Load test_checkout with &sc=1 """
         checkout_parameter = SC_ENABLED
 
+        add_cross_selling = False
+
         checkout = self.open_checkout(self.cart_id, checkout_parameter, self.product_route,
                                       self.channel, self.api_host, self.country_site, self.country_language)
 
-        checkout.populate_checkout_info()
+        checkout.populate_checkout_info(add_cross_selling)
 
     def test_sw_cpd(self):
         """ Load test_checkout with &sw=cpd """
         checkout_parameter = SW_CPD
 
+        add_cross_selling = False
+
         checkout = self.open_checkout(self.cart_id, checkout_parameter, self.product_route,
                                       self.channel, self.api_host, self.country_site, self.country_language)
 
-        checkout.populate_checkout_info()
+        checkout.populate_checkout_info(add_cross_selling)
 
     def test_sw_cpds(self):
         """ Load test_checkout with &sw=cpds """
