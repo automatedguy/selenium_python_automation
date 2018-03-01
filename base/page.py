@@ -98,6 +98,9 @@ class Checkout(BasePage):
                     self.input_definitions
                 )
 
+            if not emergency_contact_done:
+                emergency_contact_done = EmergencyContactSection(self.driver)
+
             if not contact_done:
                 contact_done = ContactSection(
                     self.driver).populate_contact_info(
@@ -111,7 +114,7 @@ class Checkout(BasePage):
 class CrossSelling(Checkout):
     """Cross Selling section"""
 
-    def __init__(self, driver, input_definitions):
+    def __init__(self, driver):
         super(CrossSelling, self).__init__(driver)
         self.driver = driver
 
@@ -490,6 +493,32 @@ class EmergencyContactSection:
     def __init__(self, driver):
         super(EmergencyContactSection, self).__init__(driver)
         self.driver = driver
+
+    __first_name_lct = EmergencyContactSection.FIRST_NAME
+    __first_name_desc = EmergencyContactSection.FIRST_NAME_DESC
+
+    __last_name_lct = EmergencyContactSection.LAST_NAME
+    __last_name_desc = EmergencyContactSection.LAST_NAME_DESC
+
+    __telephone_type_lct = EmergencyContactSection.TELEPHONE_TYPE
+    __telephone_type_desc = EmergencyContactSection.TELEPHONE_TYPE_DESC
+
+    __country_code_lct = EmergencyContactSection.COUNTRY_CODE
+    __country_code_desc = EmergencyContactSection.COUNTRY_CODE_DESC
+
+    __area_code_lct = EmergencyContactSection.AREA_CODE
+    __area_code_desc = EmergencyContactSection.AREA_CODE_DESC
+
+    __phone_number_lct = EmergencyContactSection.PHONE_NUMBER
+    __phone_number_desc = EmergencyContactSection.PHONE_NUMBER_DESC
+
+    def set_first_name(self, emergency_contact_first_name):
+        logger.info(FILLING + self.__first_name_desc + emergency_contact_first_name)
+        self.driver.find_element(*self.__first_name_lct).send_keys(emergency_contact_first_name)
+
+    def set_last_name(self, emergency_contact_last_name):
+        logger.info(FILLING + self.__last_name_desc + emergency_contact_last_name)
+        self.driver.find_element(*self.__last_name_lct).send_keys(emergency_contact_last_name)
 
 
 class PaymentSection(Checkout):

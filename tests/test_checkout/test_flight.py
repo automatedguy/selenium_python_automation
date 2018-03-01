@@ -65,7 +65,7 @@ class FlightTest(BaseTest):
         """ Load test_checkout with &sw=cpds """
         checkout_parameter = SW_CPDS
 
-        add_cross_selling = False
+        add_cross_selling = True
 
         checkout = self.open_checkout(self.cart_id, checkout_parameter, self.product_route,
                                       self.channel, self.api_host, self.country_site, self.country_language)

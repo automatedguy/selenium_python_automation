@@ -18,10 +18,10 @@ class CrossSellingSectionLct(object):
 
 
 class PassengerSectionLct(object):
-    NAME = (By.CSS_SELECTOR, '#first_name')
+    NAME = (By.CSS_SELECTOR, '#passengers-section #first_name')
     NAME_DESC = 'Name: '
 
-    LAST_NAME = (By.CSS_SELECTOR, '#last_name')
+    LAST_NAME = (By.CSS_SELECTOR, '#passengers-section #last_name')
     LAST_NAME_DESC = 'Last Name: '
 
     DOCUMENT_TYPE = (By.CSS_SELECTOR, 'passengers-form #document_type')
