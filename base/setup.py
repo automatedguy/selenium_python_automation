@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 # Test parameters
 BASE_URL = ST_ALMUNDO_COM
 BROWSER = CHROME
-COUNTRY = ARGENTINA
+COUNTRY = BRASIL
 FORCE_HEADLESS = False
 
 

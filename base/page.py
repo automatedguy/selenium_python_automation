@@ -578,24 +578,36 @@ class EmergencyContactSection(Checkout):
         return True
 
 
-class PaymentSection(Checkout):
-    """Payment Section"""
+class PaymentSectionGrid(Checkout):
+    """Payment Section Grid"""
 
     def __init__(self, driver):
-        super(PaymentSection, self).__init__(driver)
+        super(PaymentSectionGrid, self).__init__(driver)
         self.driver = driver
 
-    def populate_grid(self):
-        return
 
-    def populate_combo(self):
-        return
+class PaymentSectionCombo(Checkout):
+    """Payment Section Combo"""
 
-    def populate_card_info(self):
-        return
+    def __init__(self, driver):
+        super(PaymentSectionCombo, self).__init__(driver)
+        self.driver = driver
 
-    def populate_credit_card_retail(self):
-        return
+
+class PaymentSectionTwoCards(Checkout):
+    """Payment Section Two Cards"""
+
+    def __init__(self, driver):
+        super(PaymentSectionTwoCards, self).__init__(driver)
+        self.driver = driver
+
+
+class PaymentSectionRetailCard(Checkout):
+    """Payment Section Retail Card"""
+
+    def __init__(self, driver):
+        super(PaymentSectionRetailCard, self).__init__(driver)
+        self.driver = driver
 
 
 class AgentSection(Checkout):
