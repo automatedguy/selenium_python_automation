@@ -24,12 +24,47 @@ class FlightTest(BaseTest):
                                                            self.country_site, self.country_language,
                                                            self.adults, self.children, self.infants)
 
-    def test_no_parameter(self):
+    def test_one(self):
         """ Load test_checkout without additional parameters"""
 
         add_cross_selling = True
 
         checkout = self.open_checkout_ab_router(self.ab_router_url, self.channel, self.api_host, self.country_site, self.country_language)
+
+        checkout.populate_checkout_info(add_cross_selling)
+
+        logger.info('Just for the wait...')
+
+    def test_two(self):
+        """ Load test_checkout without additional parameters"""
+
+        add_cross_selling = True
+
+        checkout = self.open_checkout_ab_router(self.ab_router_url, self.channel, self.api_host, self.country_site, self.country_language)
+
+        checkout.populate_checkout_info(add_cross_selling)
+
+        logger.info('Just for the wait...')
+
+    def test_three(self):
+        """ Load test_checkout without additional parameters"""
+
+        add_cross_selling = True
+
+        checkout = self.open_checkout_ab_router(self.ab_router_url, self.channel, self.api_host, self.country_site,
+                                                self.country_language)
+
+        checkout.populate_checkout_info(add_cross_selling)
+
+        logger.info('Just for the wait...')
+
+    def test_four(self):
+        """ Load test_checkout without additional parameters"""
+
+        add_cross_selling = True
+
+        checkout = self.open_checkout_ab_router(self.ab_router_url, self.channel, self.api_host, self.country_site,
+                                                self.country_language)
 
         checkout.populate_checkout_info(add_cross_selling)
 
