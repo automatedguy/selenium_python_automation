@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 # Test parameters
 BASE_URL = ST_ALMUNDO_COM
 BROWSER = CHROME
-COUNTRY = BRASIL
+COUNTRY = ARGENTINA
 FORCE_HEADLESS = False
 
 
@@ -79,9 +79,20 @@ class BaseTest(unittest.TestCase):
         checkout_route = 'checkout/'
         checkout_url = self.domain_url + checkout_route + cart_id + product_route + checkout_parameter
 
-        logger.info('Opening test_checkout URL: [' + checkout_url + ']')
+        logger.info('Opening checkout URL: [' + checkout_url + ']')
 
         self.driver.get(checkout_url)
+
+        from base.page import Checkout
+        return Checkout(self.driver, cart_id, channel, api_host, country_site, country_language)
+
+    def open_checkout_ab_router(self, ab_router_url, channel, api_host, country_site, country_language):
+        ab_checkout_url = 'https://' + ab_router_url
+        logger.info('Opening AB checkout URL: [' + ab_checkout_url + ']')
+
+        self.driver.get(ab_checkout_url)
+
+        cart_id = ab_checkout_url[(ab_checkout_url.index('checkout/')+len('checkout/')):ab_checkout_url.index('?')]
 
         from base.page import Checkout
         return Checkout(self.driver, cart_id, channel, api_host, country_site, country_language)
@@ -200,6 +211,23 @@ class BaseTest(unittest.TestCase):
         cart_id = cart.get_cart_id(channel_apikey, product_id)
 
         return cart_id
+
+    @staticmethod
+    def get_flight_ab_router_url(origin, destination, departure_date, return_date, site, language, adults, children, infants):
+        apikeys = Apikeys()
+        channel_apikey = apikeys.get_apikey(BaseTest.get_channel())
+
+        flights_clusters = FlightsClusters(BaseTest.get_api_host(), origin, destination, departure_date, return_date,
+                                           site, language,
+                                           adults, children, infants)
+
+        product_id = flights_clusters.get_flight_id(channel_apikey)
+        logger.info('Flight ID: [' + product_id + ']')
+
+        ab_router = AbRouterUrl(BASE_URL + BaseTest.get_country_domain(), site, language)
+        ab_router_url = ab_router.get_ab_router_cart_id(channel_apikey, product_id)
+
+        return ab_router_url
 
 
 if __name__ == "__main__":

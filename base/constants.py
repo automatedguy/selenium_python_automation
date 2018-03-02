@@ -50,6 +50,7 @@ FILLING = 'Filling '
 
 # Parameters
 SC_ENABLED = '&sc=1'
+SCT_ENABLED = '&sct=1'
 SW_CPD = '&sw=cpd'
 SW_CPDS = '&sw=cpds'
 

@@ -134,6 +134,21 @@ class Cart:
         return json_cart_book_id['cart_id']
 
 
+class AbRouterUrl:
+    def __init__(self, api_host, site, language):
+        self.book_url = api_host \
+                        + 'chkabrouter/cart' \
+                        + '?site=' + site \
+                        + '&language=' + language
+        logger.info('Ab Router Book URL: [' + self.book_url + ']')
+
+    def get_ab_router_cart_id(self, apikey, flight_id):
+        data = {"products": [{"type": "FLIGHT", "id": flight_id}]}
+        raw_cart_book_id = requests.post(self.book_url, headers={'X-Apikey': apikey}, json=data)
+        json_cart_book_id = json.loads(raw_cart_book_id.text)
+        return json_cart_book_id['urlToRedirect']
+
+
 # HOTEL THINGS
 # autocomplete = Autocomplete('MIA', 'CITY')
 # location_entity_id = autocomplete.get_entity_id(channel_apikey, 'Miami')

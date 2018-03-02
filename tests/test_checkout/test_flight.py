@@ -50,6 +50,21 @@ class FlightTest(BaseTest):
 
         checkout.populate_checkout_info(add_cross_selling)
 
+        logger.info('Just for the wait...')
+
+    def test_stc_enabled(self):
+        """ Load test_checkout with &sc=1 """
+        checkout_parameter = SCT_ENABLED
+
+        add_cross_selling = True
+
+        checkout = self.open_checkout(self.cart_id, checkout_parameter, self.product_route,
+                                      self.channel, self.api_host, self.country_site, self.country_language)
+
+        checkout.populate_checkout_info(add_cross_selling)
+
+        logger.info('Just for the wait...')
+
     def test_sw_cpd(self):
         """ Load test_checkout with &sw=cpd """
         checkout_parameter = SW_CPD
@@ -60,6 +75,8 @@ class FlightTest(BaseTest):
                                       self.channel, self.api_host, self.country_site, self.country_language)
 
         checkout.populate_checkout_info(add_cross_selling)
+
+        logger.info('Just for the wait...')
 
     def test_sw_cpds(self):
         """ Load test_checkout with &sw=cpds """
