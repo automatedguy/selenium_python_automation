@@ -72,6 +72,8 @@ class FlightTest(BaseTest):
 
         checkout.populate_checkout_info(add_cross_selling)
 
+        logger.info('Just for the wait...')
+
 
 if __name__ == '__main__':
     suite = unittest.TestLoader().loadTestsFromTestCase(FlightTest)

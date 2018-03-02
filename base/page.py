@@ -495,13 +495,12 @@ class ContactSection(Checkout):
             return False
 
 
-class EmergencyContactSection:
+class EmergencyContactSection(Checkout):
     """ Emergency Contact Section """
 
     def __init__(self, driver):
         super(EmergencyContactSection, self).__init__(driver)
         self.driver = driver
-
     __first_name_lct = EmergencyContactSection.FIRST_NAME
     __first_name_desc = EmergencyContactSection.FIRST_NAME_DESC
 
@@ -520,19 +519,62 @@ class EmergencyContactSection:
     __phone_number_lct = EmergencyContactSection.PHONE_NUMBER
     __phone_number_desc = EmergencyContactSection.PHONE_NUMBER_DESC
 
-    def set_first_name(self, emergency_contact_first_name):
+    def set_first_name(self):
+        emergency_contact_first_name = Utils().get_random_string(7, 10)
         logger.info(FILLING + self.__first_name_desc + emergency_contact_first_name)
         self.driver.find_element(*self.__first_name_lct).send_keys(emergency_contact_first_name)
 
-    def set_last_name(self, emergency_contact_last_name):
+    def set_last_name(self):
+        emergency_contact_last_name = Utils().get_random_string(7, 10)
         logger.info(FILLING + self.__last_name_desc + emergency_contact_last_name)
         self.driver.find_element(*self.__last_name_lct).send_keys(emergency_contact_last_name)
 
-    def set_telephone_type(self):
-        logger.info(SELECTING + self.__telephone_type_desc)
-        Select(self.driver.find_element(*self.__telephone_type_lct)).select_by_visible_text()
+    def select_telephone_type(self, options):
+        telephone_type = options[randint(0, len(options)-1)]['description']
+        logger.info(SELECTING + self.__telephone_type_desc + telephone_type)
+        Select(self.driver.find_element(*self.__telephone_type_lct)).select_by_visible_text(telephone_type)
+
+    def set_country_code(self, country_code):
+        logger.info(FILLING + self.__country_code_desc + country_code)
+        self.driver.find_element(*self.__country_code_lct).send_keys(country_code)
+
+    def set_area_code(self, area_code):
+        logger.info(FILLING + self.__area_code_desc + area_code)
+        self.driver.find_element(*self.__area_code_lct).send_keys(area_code)
+
+    def set_phone_number(self, phone_number):
+        logger.info(FILLING + self.__phone_number_desc + phone_number)
+        self.driver.find_element(*self.__phone_number_lct).send_keys(phone_number)
 
     def populate_emergency_contact(self, input_definitions):
+        logger.info('Checking if emergency contact section is displayed')
+        if self.driver.find_element(*self.__first_name_lct).is_displayed():
+            logger.info("Populating Emergency Contact Info")
+            Utils().print_separator()
+
+            if input_definitions['emergency_contacts'][0]['first_name']['required']:
+                self.set_first_name()
+
+            if input_definitions['emergency_contacts'][0]['last_name']['required']:
+                self.set_last_name()
+
+            telephone_type_options = input_definitions['emergency_contacts'][0]['telephone']['telephone_type']['options']
+            self.select_telephone_type(telephone_type_options)
+
+            if input_definitions['emergency_contacts'][0]['telephone']['country_code']['required']:
+                self.set_country_code('54')
+
+            if input_definitions['emergency_contacts'][0]['telephone']['area_code']['required']:
+                self.set_area_code('11')
+
+            if input_definitions['emergency_contacts'][0]['telephone']['number']['required']:
+                self.set_phone_number('77777777')
+
+            Utils().print_separator()
+            return True
+        else:
+            logger.info('Emergency Contact section is not displayed.')
+            return False
         return True
 
 

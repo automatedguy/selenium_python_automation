@@ -106,20 +106,20 @@ class ContactSectionLct(object):
 
 class EmergencyContactSection(object):
     FIRST_NAME = (By.CSS_SELECTOR, 'emergency-contact-form #first_name')
-    FIRST_NAME_DESC = 'E-mail: '
+    FIRST_NAME_DESC = 'Name/s: '
 
     LAST_NAME = (By.CSS_SELECTOR, 'emergency-contact-form #last_name')
-    LAST_NAME_DESC = 'E-mail confirmation: '
+    LAST_NAME_DESC = 'Last Name/s: '
 
     TELEPHONE_TYPE = (By.CSS_SELECTOR, 'emergency-contact-form #telephone_type')
     TELEPHONE_TYPE_DESC = 'Telephone type: '
 
-    COUNTRY_CODE = (By.CSS_SELECTOR, 'emergency-contact-form #country_codel')
+    COUNTRY_CODE = (By.CSS_SELECTOR, 'emergency-contact-form #country_code')
     COUNTRY_CODE_DESC = 'Country code: '
 
     AREA_CODE = (By.CSS_SELECTOR, 'emergency-contact-form #area_code')
     AREA_CODE_DESC = 'Area code: '
 
     PHONE_NUMBER = (By.CSS_SELECTOR, 'emergency-contact-form #number')
-    PHONE_NUMBER_DESC = 'Telephone number: '
+    PHONE_NUMBER_DESC = 'Phone number: '
 
