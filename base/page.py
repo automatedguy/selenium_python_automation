@@ -3,9 +3,13 @@ import datetime
 import logging
 import string
 
+from selenium.common.exceptions import WebDriverException
+
 from base.locators import *
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
 from random import randint, choice
 
 from base.constants import *
@@ -21,12 +25,12 @@ class BasePage(object):
     def __init__(self, driver):
         self.driver = driver
 
-    def wait_for_element(self, element, locator, description, obj):
-        driver = element.driver
-        logger.info(WAITING_FOR_MSG + "[" + description + "] " + obj)
-        WebDriverWait(driver, 100).until(lambda driver: driver.find_element_by_xpath(locator))
-        return self.driver.find_element_by_xpath(locator)
-
+    def wait_for_element(self, locator, description):
+        logger.info('Waiting for: [' + description + ']')
+        element = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located(locator)
+        )
+        return element
 
 # Checkout class and sections
 
@@ -78,28 +82,27 @@ class Checkout(BasePage):
         while not passenger_done or not billing_done or not contact_done or not cross_selling_done:
 
             if not cross_selling_done:
-                # Changes in cross selling affects input definitions "Emergency contact"...
                 cross_selling_done = CrossSelling(
                     self.driver).populate_cross_selling_info()
-                # so we need to update them
                 self.set_input_definitions()
 
             if not passenger_done:
                 passenger_done = PassengerSection(
-                    self.driver, self.country_site
-                ).populate_passengers_info(
+                    self.driver, self.country_site).populate_passengers_info(
+                    self.input_definitions
+                )
+
+            if not emergency_contact_done:
+                emergency_contact_done = EmergencyContactSection(
+                    self.driver).populate_emergency_contact(
                     self.input_definitions
                 )
 
             if not billing_done:
                 billing_done = BillingSection(
-                    self.driver, self.country_site
-                ).populate_billing_info(
+                    self.driver, self.country_site).populate_billing_info(
                     self.input_definitions
                 )
-
-            if not emergency_contact_done:
-                emergency_contact_done = EmergencyContactSection(self.driver)
 
             if not contact_done:
                 contact_done = ContactSection(
@@ -127,7 +130,11 @@ class CrossSelling(Checkout):
 
     def click_add_insurance(self):
         logger.info(CLICKING + self.__add_insurance_desc)
-        self.driver.find_elements(*self.__add_insurance_lct)[0].click()
+        try:
+            self.driver.find_elements(*self.__add_insurance_lct)[0].click()
+        except WebDriverException as insurance_except:
+            logger.warning("Trying to locate insurance radio button: [Exception]" + str(insurance_except))
+            self.driver.find_elements(*self.__add_insurance_lct)[0].click()
 
     def populate_cross_selling_info(self):
         self.click_add_insurance()
@@ -142,7 +149,6 @@ class PassengerSection(Checkout):
         super(PassengerSection, self).__init__(country_site)
         self.driver = driver
         self.country_site = country_site
-
     __name_lct = PassengerSectionLct.NAME
     __name_desc = PassengerSectionLct.NAME_DESC
 
@@ -221,8 +227,10 @@ class PassengerSection(Checkout):
             .select_by_visible_text(passenger_nationality)
 
     def populate_passengers_info(self, input_definitions):
-        logger.info('Checking if Passengers section is displayed')
 
+        self.wait_for_element(PassengerSectionLct.NAME, 'Passenger first name fields')
+
+        logger.info('Checking if Passengers section is displayed')
         if self.driver.find_element(*self.__name_lct).is_displayed():
             total_passengers = len(self.driver.find_elements(*self.__name_lct))
 
@@ -519,6 +527,13 @@ class EmergencyContactSection:
     def set_last_name(self, emergency_contact_last_name):
         logger.info(FILLING + self.__last_name_desc + emergency_contact_last_name)
         self.driver.find_element(*self.__last_name_lct).send_keys(emergency_contact_last_name)
+
+    def set_telephone_type(self):
+        logger.info(SELECTING + self.__telephone_type_desc)
+        Select(self.driver.find_element(*self.__telephone_type_lct)).select_by_visible_text()
+
+    def populate_emergency_contact(self, input_definitions):
+        return True
 
 
 class PaymentSection(Checkout):
