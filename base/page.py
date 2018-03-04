@@ -32,6 +32,25 @@ class BasePage(object):
         )
         return element
 
+    def fill_data_indexed(self, locator, description, index, text_to_send):
+        logger.info(FILLING + description + text_to_send)
+        self.driver.find_elements(locator)[index].send_keys(text_to_send)
+        return
+
+    def fill_data(self, locator, description, text_to_send):
+        logger.info(FILLING + description + text_to_send)
+        self.driver.find_element(locator).send_keys(text_to_send)
+        return
+
+    def select_data_indexed(self, locator, description, index, option):
+        return
+
+    def select_data_visible(self, locator, description, option):
+        logger.info(SELECTING + description + option)
+        Select(self.driver.find_element(locator)).select_by_visible_text(option)
+        return
+
+
 # Checkout class and sections
 
 
@@ -149,6 +168,7 @@ class PassengerSection(Checkout):
         super(PassengerSection, self).__init__(country_site)
         self.driver = driver
         self.country_site = country_site
+
     __name_lct = PassengerSectionLct.NAME
     __name_desc = PassengerSectionLct.NAME_DESC
 
@@ -322,10 +342,19 @@ class BillingSection(Checkout):
         logger.info(FILLING + self.__fiscal_name_desc + billing_fiscal_name)
         self.driver.find_element(*self.__fiscal_name_lct).send_keys(billing_fiscal_name)
 
+    def fill_fiscal_name(self, fiscal_name):
+        self.fill_data(*self.__fiscal_name_lct, self.__fiscal_name_desc, fiscal_name)
+
     def select_fiscal_type(self, options):
         billing_fiscal_type = options[(randint(0, len(options) - 1))]['description']
         logger.info(SELECTING + self.__fiscal_type_desc + billing_fiscal_type)
         Select(self.driver.find_element(*self.__fiscal_type_lct)).select_by_visible_text(billing_fiscal_type)
+
+    def get_fiscal_type(self):
+        return self.input_definitions['billings'][0]['fiscal_type_document']['options']
+
+    def select_fiscal_type_exp(self, fiscal_type):
+        self.select_data_visible(*self.__fiscal_type_lct, self.__fiscal_type_desc, fiscal_type)
 
     def set_fiscal_document(self, billing_fiscal_document):
         logger.info(FILLING + self.__fiscal_document_desc + billing_fiscal_document)
@@ -374,6 +403,11 @@ class BillingSection(Checkout):
             if input_definitions['billings'][0]['fiscal_type']['required']:
                 options = input_definitions['billings'][0]['fiscal_type_document']['options']
                 self.select_fiscal_type(options)
+
+            if input_definitions['billings'][0]['fiscal_type']['required']:
+                options = input_definitions['billings'][0]['fiscal_type_document']['options']
+                fiscal_type = options[(randint(0, len(options) - 1))]['description']
+                self.select_fiscal_type_exp(fiscal_type)
 
             if input_definitions['billings'][0]['fiscal_document']['required']:
                 self.set_fiscal_document('23281685589')
@@ -501,6 +535,7 @@ class EmergencyContactSection(Checkout):
     def __init__(self, driver):
         super(EmergencyContactSection, self).__init__(driver)
         self.driver = driver
+
     __first_name_lct = EmergencyContactSection.FIRST_NAME
     __first_name_desc = EmergencyContactSection.FIRST_NAME_DESC
 
@@ -530,7 +565,7 @@ class EmergencyContactSection(Checkout):
         self.driver.find_element(*self.__last_name_lct).send_keys(emergency_contact_last_name)
 
     def select_telephone_type(self, options):
-        telephone_type = options[randint(0, len(options)-1)]['description']
+        telephone_type = options[randint(0, len(options) - 1)]['description']
         logger.info(SELECTING + self.__telephone_type_desc + telephone_type)
         Select(self.driver.find_element(*self.__telephone_type_lct)).select_by_visible_text(telephone_type)
 
@@ -558,7 +593,8 @@ class EmergencyContactSection(Checkout):
             if input_definitions['emergency_contacts'][0]['last_name']['required']:
                 self.set_last_name()
 
-            telephone_type_options = input_definitions['emergency_contacts'][0]['telephone']['telephone_type']['options']
+            telephone_type_options = input_definitions['emergency_contacts'][0]['telephone']['telephone_type'][
+                'options']
             self.select_telephone_type(telephone_type_options)
 
             if input_definitions['emergency_contacts'][0]['telephone']['country_code']['required']:
