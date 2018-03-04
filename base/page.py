@@ -301,6 +301,7 @@ class BillingSection(Checkout):
         super(BillingSection, self).__init__(country_site)
         self.driver = driver
         self.country_site = country_site
+        self.fiscal_type_options = None
 
     # Locators
 
@@ -350,8 +351,14 @@ class BillingSection(Checkout):
         logger.info(SELECTING + self.__fiscal_type_desc + billing_fiscal_type)
         Select(self.driver.find_element(*self.__fiscal_type_lct)).select_by_visible_text(billing_fiscal_type)
 
-    def get_fiscal_type(self):
-        return self.input_definitions['billings'][0]['fiscal_type_document']['options']
+    def get_fiscal_type_options(self):
+        logger.info('Getting fiscal type available options from input definitions...')
+        self.fiscal_type_options = self.input_definitions['billings'][0]['fiscal_type_document']['options']
+        logger.info('Available options are:' + str(self.fiscal_type_options))
+
+    def get_rand_fiscal_type(self):
+        self.get_fiscal_type_options()
+        return self.fiscal_type_options[(randint(0, len(self.fiscal_type_options) - 1))]['description']
 
     def select_fiscal_type_exp(self, fiscal_type):
         self.select_data_visible(*self.__fiscal_type_lct, self.__fiscal_type_desc, fiscal_type)
@@ -399,15 +406,14 @@ class BillingSection(Checkout):
 
             if input_definitions['billings'][0]['fiscal_name']['required']:
                 self.set_fiscal_name('Saraza')
+                self.fill_fiscal_name('Panqueca')
 
             if input_definitions['billings'][0]['fiscal_type']['required']:
                 options = input_definitions['billings'][0]['fiscal_type_document']['options']
                 self.select_fiscal_type(options)
 
             if input_definitions['billings'][0]['fiscal_type']['required']:
-                options = input_definitions['billings'][0]['fiscal_type_document']['options']
-                fiscal_type = options[(randint(0, len(options) - 1))]['description']
-                self.select_fiscal_type_exp(fiscal_type)
+                self.select_fiscal_type_exp(self.get_rand_fiscal_type())
 
             if input_definitions['billings'][0]['fiscal_document']['required']:
                 self.set_fiscal_document('23281685589')
