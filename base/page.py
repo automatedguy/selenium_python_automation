@@ -376,7 +376,7 @@ class PassengerSection(Checkout):
                     self.select_gender(passenger, self.get_rand_gender(passenger))
 
                 if self.input_definitions['passengers'][passenger]['nationality']['required']:
-                    self.select_nationality(passenger, 'Argentina')
+                    self.select_nationality(passenger, Utils().get_nationality(self.country_site))
 
                 self.print_separator()
             return True
@@ -562,7 +562,7 @@ class BillingSection(Checkout):
                 self.fill_address_state(billing_address_state)
 
             if self.input_definitions['billings'][0]['address']['city']['required']:
-                self.fill_address_city('Buenos Aires')
+                self.fill_address_city(Utils().get_country_city(self.country_site))
 
             self.print_separator()
             return True
@@ -906,3 +906,23 @@ class Utils:
             BRA: '12345678900'
         }
         return fiscal_document.get(country_site)
+
+    @staticmethod
+    def get_country_city(country_site):
+        country_city = {
+            ARG: 'Buenos Aires',
+            COL: 'Bogota',
+            MEX: 'Distrito Federal D.F.',
+            BRA: 'São Paulo'
+        }
+        return country_city.get(country_site)
+
+    @staticmethod
+    def get_nationality(country_site):
+        nationality = {
+            ARG: ARGENTINA,
+            COL: COLOMBIA,
+            MEX: MEXICO,
+            BRA: BRASIL
+        }
+        return nationality.get(country_site)
