@@ -35,28 +35,28 @@ class BasePage(object):
             FILLING + '[' + description + '] : [' + input_data + ']'
         )
 
-    def fill_data(self, locator, description, input_data):
+    def fill_data(self, description, input_data, *locator):
         self.filling_data(description, input_data)
         self.driver.find_element(locator).send_keys(input_data)
         return
 
-    def fill_data_indexed(self, locator, description, index, input_data):
+    def fill_data_indexed(self, index, input_data, description, *locator):
         self.filling_data(description, input_data)
-        self.driver.find_elements(locator)[index].send_keys(input_data)
+        self.driver.find_elements(*locator)[index].send_keys(input_data)
         return
 
-    def selecting_data(self, description, input_data):
+    def selecting_data(self, description, option):
         self.logger.info(
-            SELECTING + '[' + description + '] : [' + input_data + ']'
+            SELECTING + '[' + description + '] : [' + option + ']'
         )
 
-    def select_data_visible(self, locator, description, option):
+    def select_data_visible(self, option, description, *locator):
         self.selecting_data(description + option)
         Select(self.driver.find_element(locator)).select_by_visible_text(option)
         return
 
-    def select_data_visible_indexed(self, locator, description, index, option):
-        self.selecting_data(description + option)
+    def select_data_visible_indexed(self, index, option, description, *locator):
+        self.selecting_data(description, option)
         Select(self.driver.find_elements(locator)[index]).select_by_visible_text(option)
         return
 
@@ -118,9 +118,11 @@ class Checkout(BasePage):
                     self.driver
                 ).populate_cross_selling_info()
 
+                self.set_input_definitions()
+
             if not passenger_done:
                 passenger_done = PassengerSection(
-                    self.driver, self.country_site
+                    self.driver, self.country_site, self.input_definitions
                 ).populate_passengers_info()
 
             if not emergency_contact_done:
@@ -166,19 +168,20 @@ class CrossSelling(Checkout):
 
     def populate_cross_selling_info(self):
         self.click_add_insurance()
-        self.set_input_definitions()
         return True
 
 
 class PassengerSection(Checkout):
     """"Passenger Section"""
 
-    def __init__(self, driver, country_site):
+    def __init__(self, driver, country_site, input_definitions):
         super(PassengerSection, self).__init__(driver)
         super(PassengerSection, self).__init__(country_site)
+        super(PassengerSection, self).__init__(input_definitions)
         self.driver = driver
         self.country_site = country_site
         self.document_type_options = None
+        self.input_definitions = input_definitions
 
     __first_name_lct = PassengerSectionLct.FIRST_NAME
     __first_name_desc = PassengerSectionLct.FIRST_NAME_DESC
@@ -210,18 +213,18 @@ class PassengerSection(Checkout):
     # Actions
     def fill_first_name(self, index, first_name):
         self.fill_data_indexed(
-            *self.__first_name_lct,
-            self.__first_name_desc,
             index,
-            first_name
+            first_name,
+            self.__first_name_desc,
+            *self.__first_name_lct
         )
 
     def fill_last_name(self, index, last_name):
         self.fill_data_indexed(
-            *self.__last_name_lct,
-            self.__last_name_desc,
             index,
-            last_name
+            last_name,
+            self.__last_name_desc,
+            *self.__last_name_lct
         )
 
     def get_document_type_options(self, index):
@@ -229,65 +232,66 @@ class PassengerSection(Checkout):
             self.input_definitions['passengers'][index]['document']['document_type']['options']
         )
 
-    def get_rand_document_type(self):
+    def get_rand_document_type(self, index):
+        self.get_document_type_options(index)
         return (
             self.document_type_options[(randint(0, len(self.document_type_options) - 1))]['description']
         )
 
     def select_document_type(self, index, document_type_selected):
         self.select_data_visible_indexed(
-            *self.__document_type_lct,
-            self.__document_type_desc,
             index,
-            document_type_selected
+            document_type_selected,
+            self.__document_type_desc,
+            *self.__document_type_lct
         )
 
     def fill_document_number(self, index, document_number):
         self.fill_data_indexed(
-            self.__document_number_lct,
-            self.__document_number_desc,
             index,
-            document_number
+            document_number,
+            self.__document_number_desc,
+            self.__document_number_lct,
         )
 
     def select_birthday(self, index, birthday):
         self.select_data_visible_indexed(
-            *self.__birthday_lct,
-            self.__birthday_desc,
             index,
-            birthday
+            birthday,
+            self.__birthday_desc,
+            * self.__birthday_lct
         )
 
     def select_birthmonth(self, index, birthmonth):
         self.select_data_visible_indexed(
-            *self.__birthmonth_lct,
-            self.__birthmonth_desc,
             index,
-            birthmonth
+            birthmonth,
+            self.__birthmonth_desc,
+            *self.__birthmonth_lct
         )
 
     def select_birthyear(self, index, birthyear):
         self.select_data_visible_indexed(
-            *self.__birthyear_lct,
-            self.__birthyear_desc,
             index,
-            birthyear
+            birthyear,
+            self.__birthyear_desc,
+            *self.__birthyear_lct
         )
 
     def select_gender(self, index, gender):
         self.select_data_visible_indexed(
-            *self.__gender_lct,
-            self.__gender_desc,
             index,
-            gender
+            gender,
+            self.__gender_desc,
+            *self.__gender_lct
         )
 
     def select_nationality(self, index, nationality):
         self.select_data_visible_indexed(
-            *self.__nationality_lct,
-            self.__nationality_desc,
             index,
-            nationality
+            nationality,
+            self.__nationality_desc,
+            *self.__nationality_lct
         )
 
     def populate_passengers_info(self):
@@ -299,11 +303,11 @@ class PassengerSection(Checkout):
             total_passengers = len(self.driver.find_elements(*self.__first_name_lct))
 
             self.print_separator()
-            self.filling_data('Passengers info - Total Passengers' + str(total_passengers))
+            self.filling_data('Passengers info - Total Passengers', str(total_passengers))
             self.print_separator()
 
             for passenger in range(0, total_passengers):
-                self.filling_data('Passenger N°' + str(passenger + 1))
+                self.filling_data('Passenger N°', str(passenger + 1))
 
                 if self.input_definitions['passengers'][passenger]['first_name']['required']:
                     self.fill_first_name(passenger, Utils().get_random_string(7, 10))
@@ -312,7 +316,7 @@ class PassengerSection(Checkout):
                     self.fill_last_name(passenger, Utils().get_random_string(7, 10))
 
                 if self.input_definitions['passengers'][passenger]['document']['document_type']['required']:
-                    self.select_document_type(passenger, self.get_rand_document_type())
+                    self.select_document_type(passenger, self.get_rand_document_type(passenger))
 
                 if self.input_definitions['passengers'][passenger]['document']['number']['required']:
                     self.fill_document_number(passenger, Utils().get_document_number(self.country_site))
