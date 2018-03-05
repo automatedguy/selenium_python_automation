@@ -35,9 +35,9 @@ class BasePage(object):
             FILLING + '[' + description + '] : [' + input_data + ']'
         )
 
-    def fill_data(self, description, input_data, *locator):
+    def fill_data(self, input_data, description, *locator):
         self.filling_data(description, input_data)
-        self.driver.find_element(locator).send_keys(input_data)
+        self.driver.find_element(*locator).send_keys(input_data)
         return
 
     def fill_data_indexed(self, index, input_data, description, *locator):
@@ -50,9 +50,14 @@ class BasePage(object):
             SELECTING + '[' + description + '] : [' + option + ']'
         )
 
+    def selected_data(self, description, option):
+        self.logger.info(
+            SELECTED + '[' + description + '] : [' + option + ']'
+        )
+
     def select_data_visible(self, option, description, *locator):
-        self.selecting_data(description + option)
-        Select(self.driver.find_element(locator)).select_by_visible_text(option)
+        self.selecting_data(description, option)
+        Select(self.driver.find_element(*locator)).select_by_visible_text(option)
         return
 
     def select_data_visible_indexed(self, index, option, description, *locator):
@@ -62,7 +67,9 @@ class BasePage(object):
 
     def select_data_index_indexed(self, index, option, description, *locator):
         self.selecting_data(description, option)
-        Select(self.driver.find_elements(*locator)[index]).select_by_index(option)
+        selection = Select(self.driver.find_elements(*locator)[index])
+        selection.select_by_index(option)
+        self.selected_data(description, selection.first_selected_option.text)
         return
 
     def print_separator(self):
@@ -132,7 +139,7 @@ class Checkout(BasePage):
 
             if not emergency_contact_done:
                 emergency_contact_done = EmergencyContactSection(
-                    self.driver
+                    self.driver, self.input_definitions
                 ).populate_emergency_contact()
 
             if not billing_done:
@@ -595,9 +602,10 @@ class ContactSection(Checkout):
 class EmergencyContactSection(Checkout):
     """ Emergency Contact Section """
 
-    def __init__(self, driver):
+    def __init__(self, driver, input_definitions):
         super(EmergencyContactSection, self).__init__(driver)
         self.driver = driver
+        self.input_definitions = input_definitions
 
     __first_name_lct = EmergencyContactSection.FIRST_NAME
     __first_name_desc = EmergencyContactSection.FIRST_NAME_DESC
@@ -617,32 +625,47 @@ class EmergencyContactSection(Checkout):
     __phone_number_lct = EmergencyContactSection.PHONE_NUMBER
     __phone_number_desc = EmergencyContactSection.PHONE_NUMBER_DESC
 
-    def set_first_name(self):
-        emergency_contact_first_name = Utils().get_random_string(7, 10)
-        self.logger.info(FILLING + self.__first_name_desc + emergency_contact_first_name)
-        self.driver.find_element(*self.__first_name_lct).send_keys(emergency_contact_first_name)
+    def fill_first_name(self, first_name):
+        self.fill_data(
+            first_name,
+            self.__first_name_desc,
+            *self.__first_name_lct
+        )
 
-    def set_last_name(self):
-        emergency_contact_last_name = Utils().get_random_string(7, 10)
-        self.logger.info(FILLING + self.__last_name_desc + emergency_contact_last_name)
-        self.driver.find_element(*self.__last_name_lct).send_keys(emergency_contact_last_name)
+    def fill_last_name(self, last_name):
+        self.fill_data(
+            last_name,
+            self.__last_name_desc,
+            *self.__last_name_lct
+        )
 
-    def select_telephone_type(self, options):
-        telephone_type = options[randint(0, len(options) - 1)]['description']
-        self.logger.info(SELECTING + self.__telephone_type_desc + telephone_type)
-        Select(self.driver.find_element(*self.__telephone_type_lct)).select_by_visible_text(telephone_type)
+    def select_telephone_type(self, telephone_type):
+        self.select_data_visible(
+            telephone_type,
+            self.__telephone_type_desc,
+            *self.__telephone_type_lct
+        )
 
-    def set_country_code(self, country_code):
-        self.logger.info(FILLING + self.__country_code_desc + country_code)
-        self.driver.find_element(*self.__country_code_lct).send_keys(country_code)
+    def fill_country_code(self, country_code):
+        self.fill_data(
+            country_code,
+            self.__country_code_desc,
+            *self.__country_code_lct
+        )
 
-    def set_area_code(self, area_code):
-        self.logger.info(FILLING + self.__area_code_desc + area_code)
-        self.driver.find_element(*self.__area_code_lct).send_keys(area_code)
+    def fill_area_code(self, area_code):
+        self.fill_data(
+            area_code,
+            self.__area_code_desc,
+            *self.__area_code_lct
+        )
 
-    def set_phone_number(self, phone_number):
-        self.logger.info(FILLING + self.__phone_number_desc + phone_number)
-        self.driver.find_element(*self.__phone_number_lct).send_keys(phone_number)
+    def fill_phone_number(self, phone_number):
+        self.fill_data(
+            phone_number,
+            self.__phone_number_desc,
+            *self.__phone_number_lct
+        )
 
     def populate_emergency_contact(self):
         self.logger.info('Checking if emergency contact section is displayed')
@@ -651,23 +674,25 @@ class EmergencyContactSection(Checkout):
             self.print_separator()
 
             if self.input_definitions['emergency_contacts'][0]['first_name']['required']:
-                self.set_first_name()
+                self.fill_first_name(Utils().get_random_string(7, 10))
 
             if self.input_definitions['emergency_contacts'][0]['last_name']['required']:
-                self.set_last_name()
+                self.fill_last_name(Utils().get_random_string(7, 10))
 
             telephone_type_options = self.input_definitions['emergency_contacts'][0]['telephone']['telephone_type'][
                 'options']
-            self.select_telephone_type(telephone_type_options)
+            telephone_type = telephone_type_options[randint(0, len(telephone_type_options) - 1)]['description']
+
+            self.select_telephone_type(telephone_type)
 
             if self.input_definitions['emergency_contacts'][0]['telephone']['country_code']['required']:
-                self.set_country_code('54')
+                self.fill_country_code('54')
 
             if self.input_definitions['emergency_contacts'][0]['telephone']['area_code']['required']:
-                self.set_area_code('11')
+                self.fill_area_code('11')
 
             if self.input_definitions['emergency_contacts'][0]['telephone']['number']['required']:
-                self.set_phone_number('77777777')
+                self.fill_phone_number('77777777')
 
             self.print_separator()
             return True

@@ -44,6 +44,7 @@ WAITING_FOR = 'Waiting for: '
 # ACTIONS
 CLICKING = 'Clicking '
 SELECTING = 'Selecting '
+SELECTED = 'Selected '
 FILLING = 'Filling '
 
 # CHECKOUT
