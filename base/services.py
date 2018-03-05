@@ -104,13 +104,6 @@ class InputDefinitions:
                              + '&language=' + language
         self.json_input_definitions = None
 
-    # Crazy Change this patter will be applied for all the fields.
-    def is_passenger_first_name_req(self, passenger, input_definitions):
-        if input_definitions['passengers'][passenger]['first_name']['required']:
-            return True
-        else:
-            return False
-
     def get_input_definitions(self, apikey):
         logger.info('Getting input definitions...')
         raw_input_definitions = requests.get(self.input_def_url, headers={'X-Apikey': apikey, 'Version': 'v3'})

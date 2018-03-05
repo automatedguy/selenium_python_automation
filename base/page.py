@@ -57,7 +57,12 @@ class BasePage(object):
 
     def select_data_visible_indexed(self, index, option, description, *locator):
         self.selecting_data(description, option)
-        Select(self.driver.find_elements(locator)[index]).select_by_visible_text(option)
+        Select(self.driver.find_elements(*locator)[index]).select_by_visible_text(option)
+        return
+
+    def select_data_index_indexed(self, index, option, description, *locator):
+        self.selecting_data(description, option)
+        Select(self.driver.find_elements(*locator)[index]).select_by_index(option)
         return
 
     def print_separator(self):
@@ -251,7 +256,7 @@ class PassengerSection(Checkout):
             index,
             document_number,
             self.__document_number_desc,
-            self.__document_number_lct,
+            *self.__document_number_lct,
         )
 
     def select_birthday(self, index, birthday):
@@ -263,7 +268,7 @@ class PassengerSection(Checkout):
         )
 
     def select_birthmonth(self, index, birthmonth):
-        self.select_data_visible_indexed(
+        self.select_data_index_indexed(
             index,
             birthmonth,
             self.__birthmonth_desc,

@@ -42,9 +42,9 @@ TEARING_DOWN = 'Tearing down browser: '
 WAITING_FOR = 'Waiting for: '
 
 # ACTIONS
-CLICKING = 'Clicking '
-SELECTING = 'Selecting '
-FILLING = 'Filling '
+CLICKING = 'Clicking'
+SELECTING = 'Selecting'
+FILLING = 'Filling'
 
 # CHECKOUT
 
@@ -53,5 +53,3 @@ SC_ENABLED = '&sc=1'
 SCT_ENABLED = '&sct=1'
 SW_CPD = '&sw=cpd'
 SW_CPDS = '&sw=cpds'
-
-
