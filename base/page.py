@@ -47,7 +47,7 @@ class BasePage(object):
 
     def selecting_data(self, description, input_data):
         self.logger.info(
-            SELECTING + + '[' + description + '] : [' + input_data + ']'
+            SELECTING + '[' + description + '] : [' + input_data + ']'
         )
 
     def select_data_visible(self, locator, description, option):
@@ -115,32 +115,28 @@ class Checkout(BasePage):
 
             if not cross_selling_done:
                 cross_selling_done = CrossSelling(
-                    self.driver).populate_cross_selling_info()
-                self.set_input_definitions()
+                    self.driver
+                ).populate_cross_selling_info()
 
             if not passenger_done:
                 passenger_done = PassengerSection(
-                    self.driver, self.country_site).populate_passengers_info(
-                    self.input_definitions
-                )
+                    self.driver, self.country_site
+                ).populate_passengers_info()
 
             if not emergency_contact_done:
                 emergency_contact_done = EmergencyContactSection(
-                    self.driver).populate_emergency_contact(
-                    self.input_definitions
-                )
+                    self.driver
+                ).populate_emergency_contact()
 
             if not billing_done:
                 billing_done = BillingSection(
-                    self.driver, self.country_site).populate_billing_info(
-                    self.input_definitions
-                )
+                    self.driver, self.country_site
+                ).populate_billing_info()
 
             if not contact_done:
                 contact_done = ContactSection(
-                    self.driver).populate_contact_info(
-                    self.input_definitions
-                )
+                    self.driver
+                ).populate_contact_info()
 
             # TODO: do something decent with this line below i.e define next button :)
             self.driver.find_element(By.CSS_SELECTOR, '.am-wizard-footer button.button-next').click()
@@ -170,6 +166,7 @@ class CrossSelling(Checkout):
 
     def populate_cross_selling_info(self):
         self.click_add_insurance()
+        self.set_input_definitions()
         return True
 
 
@@ -293,7 +290,7 @@ class PassengerSection(Checkout):
             nationality
         )
 
-    def populate_passengers_info(self, input_definitions):
+    def populate_passengers_info(self):
 
         self.wait_for_element(PassengerSectionLct.FIRST_NAME, 'Passengers Section')
 
@@ -308,29 +305,29 @@ class PassengerSection(Checkout):
             for passenger in range(0, total_passengers):
                 self.filling_data('Passenger N°' + str(passenger + 1))
 
-                if input_definitions['passengers'][passenger]['first_name']['required']:
+                if self.input_definitions['passengers'][passenger]['first_name']['required']:
                     self.fill_first_name(passenger, Utils().get_random_string(7, 10))
 
-                if input_definitions['passengers'][passenger]['last_name']['required']:
+                if self.input_definitions['passengers'][passenger]['last_name']['required']:
                     self.fill_last_name(passenger, Utils().get_random_string(7, 10))
 
-                if input_definitions['passengers'][passenger]['document']['document_type']['required']:
+                if self.input_definitions['passengers'][passenger]['document']['document_type']['required']:
                     self.select_document_type(passenger, self.get_rand_document_type())
 
-                if input_definitions['passengers'][passenger]['document']['number']['required']:
+                if self.input_definitions['passengers'][passenger]['document']['number']['required']:
                     self.fill_document_number(passenger, Utils().get_document_number(self.country_site))
 
-                if input_definitions['passengers'][passenger]['birthday']['required']:
+                if self.input_definitions['passengers'][passenger]['birthday']['required']:
                     self.select_birthday(passenger, str(randint(1, 28)))
                     self.select_birthmonth(passenger, str(randint(1, 12)))
                     self.select_birthyear(passenger, Utils().get_current_year(
-                        Utils().get_age(input_definitions['passengers'][passenger]['description']))
+                        Utils().get_age(self.input_definitions['passengers'][passenger]['description']))
                     )
 
-                if input_definitions['passengers'][passenger]['gender']['required']:
+                if self.input_definitions['passengers'][passenger]['gender']['required']:
                     self.select_gender(passenger, 'Masculino')
 
-                if input_definitions['passengers'][passenger]['nationality']['required']:
+                if self.input_definitions['passengers'][passenger]['nationality']['required']:
                     self.select_nationality(passenger, 'Argentina')
 
                 self.print_separator()
@@ -447,7 +444,7 @@ class BillingSection(Checkout):
         self.logger.info(FILLING + self.__address_city_desc + billing_address_city)
         self.driver.find_element(*self.__address_city_lct).send_keys(billing_address_city)
 
-    def populate_billing_info(self, input_definitions):
+    def populate_billing_info(self):
         self.logger.info('Checking if Billing section is displayed')
 
         if self.driver.find_element(*self.__fiscal_name_lct).is_displayed():
@@ -455,46 +452,46 @@ class BillingSection(Checkout):
             self.logger.info("Populating Billing Info")
             self.print_separator()
 
-            if input_definitions['billings'][0]['fiscal_name']['required']:
+            if self.input_definitions['billings'][0]['fiscal_name']['required']:
                 self.set_fiscal_name('Saraza')
                 self.fill_fiscal_name('Panqueca')
 
-            if input_definitions['billings'][0]['fiscal_type']['required']:
-                options = input_definitions['billings'][0]['fiscal_type_document']['options']
+            if self.input_definitions['billings'][0]['fiscal_type']['required']:
+                options = self.input_definitions['billings'][0]['fiscal_type_document']['options']
                 self.select_fiscal_type(options)
 
-            if input_definitions['billings'][0]['fiscal_type']['required']:
+            if self.input_definitions['billings'][0]['fiscal_type']['required']:
                 self.select_fiscal_type_exp(self.get_rand_fiscal_type())
 
-            if input_definitions['billings'][0]['fiscal_document']['required']:
+            if self.input_definitions['billings'][0]['fiscal_document']['required']:
                 self.set_fiscal_document('23281685589')
 
-            if input_definitions['billings'][0]['address']['street']['required']:
+            if self.input_definitions['billings'][0]['address']['street']['required']:
                 self.set_address_street('Fake Street 123')
 
-            if input_definitions['billings'][0]['address']['number']['required']:
+            if self.input_definitions['billings'][0]['address']['number']['required']:
                 self.set_address_number('12345')
 
             try:
-                if not input_definitions['billings'][0]['address']['floor']['required']:
+                if not self.input_definitions['billings'][0]['address']['floor']['required']:
                     self.set_address_floor('10')
             except Exception as no_floor:
                 self.logger.warning('Floor is not available [Exception]: ' + str(no_floor))
 
             try:
-                if not input_definitions['billings'][0]['address']['department']['required']:
+                if not self.input_definitions['billings'][0]['address']['department']['required']:
                     self.set_address_department('A')
             except Exception as no_department:
                 self.logger.warning('Department is not available [Exception]: ' + str(no_department))
 
-            if input_definitions['billings'][0]['address']['postal_code']['required']:
+            if self.input_definitions['billings'][0]['address']['postal_code']['required']:
                 self.set_address_postal_code(Utils().get_postal_code(self.country_site))
 
-            if input_definitions['billings'][0]['address']['states']['required']:
-                options = input_definitions['billings'][0]['address']['states']['options']
+            if self.input_definitions['billings'][0]['address']['states']['required']:
+                options = self.input_definitions['billings'][0]['address']['states']['options']
                 self.set_address_state(options)
 
-            if input_definitions['billings'][0]['address']['city']['required']:
+            if self.input_definitions['billings'][0]['address']['city']['required']:
                 self.set_address_city('Buenos Aires')
 
             self.print_separator()
@@ -557,26 +554,26 @@ class ContactSection(Checkout):
         self.logger.info(FILLING + self.__phone_number_desc + contact_phone_number)
         self.driver.find_element(*self.__phone_number_lct).send_keys(contact_phone_number)
 
-    def populate_contact_info(self, input_definitions):
+    def populate_contact_info(self):
         self.logger.info('Checking if contact section is displayed')
         if self.driver.find_element(*self.__email_lct).is_displayed():
             self.logger.info("Populating Contact Info")
             self.print_separator()
 
-            if input_definitions['contacts'][0]['email']['required']:
+            if self.input_definitions['contacts'][0]['email']['required']:
                 self.set_email('email@google.com')
                 self.set_email_confirmation('email@google.com')
 
-            telephone_type_options = input_definitions['contacts'][0]['telephones'][0]['telephone_type']['options']
+            telephone_type_options = self.input_definitions['contacts'][0]['telephones'][0]['telephone_type']['options']
             self.select_telephone_type(telephone_type_options)
 
-            if input_definitions['contacts'][0]['telephones'][0]['country_code']:
+            if self.input_definitions['contacts'][0]['telephones'][0]['country_code']:
                 self.set_country_code('54')
 
-            if input_definitions['contacts'][0]['telephones'][0]['area_code']:
+            if self.input_definitions['contacts'][0]['telephones'][0]['area_code']:
                 self.set_area_code('11')
 
-            if input_definitions['contacts'][0]['telephones'][0]['number']:
+            if self.input_definitions['contacts'][0]['telephones'][0]['number']:
                 self.set_phone_number('43527685')
 
             self.print_separator()
@@ -638,29 +635,29 @@ class EmergencyContactSection(Checkout):
         self.logger.info(FILLING + self.__phone_number_desc + phone_number)
         self.driver.find_element(*self.__phone_number_lct).send_keys(phone_number)
 
-    def populate_emergency_contact(self, input_definitions):
+    def populate_emergency_contact(self):
         self.logger.info('Checking if emergency contact section is displayed')
         if self.driver.find_element(*self.__first_name_lct).is_displayed():
             self.logger.info("Populating Emergency Contact Info")
             self.print_separator()
 
-            if input_definitions['emergency_contacts'][0]['first_name']['required']:
+            if self.input_definitions['emergency_contacts'][0]['first_name']['required']:
                 self.set_first_name()
 
-            if input_definitions['emergency_contacts'][0]['last_name']['required']:
+            if self.input_definitions['emergency_contacts'][0]['last_name']['required']:
                 self.set_last_name()
 
-            telephone_type_options = input_definitions['emergency_contacts'][0]['telephone']['telephone_type'][
+            telephone_type_options = self.input_definitions['emergency_contacts'][0]['telephone']['telephone_type'][
                 'options']
             self.select_telephone_type(telephone_type_options)
 
-            if input_definitions['emergency_contacts'][0]['telephone']['country_code']['required']:
+            if self.input_definitions['emergency_contacts'][0]['telephone']['country_code']['required']:
                 self.set_country_code('54')
 
-            if input_definitions['emergency_contacts'][0]['telephone']['area_code']['required']:
+            if self.input_definitions['emergency_contacts'][0]['telephone']['area_code']['required']:
                 self.set_area_code('11')
 
-            if input_definitions['emergency_contacts'][0]['telephone']['number']['required']:
+            if self.input_definitions['emergency_contacts'][0]['telephone']['number']['required']:
                 self.set_phone_number('77777777')
 
             self.print_separator()
