@@ -32,22 +32,24 @@ class BasePage(object):
         )
         return element
 
-    def fill_data_indexed(self, locator, description, index, text_to_send):
-        logger.info(FILLING + description + text_to_send)
-        self.driver.find_elements(locator)[index].send_keys(text_to_send)
-        return
-
     def fill_data(self, locator, description, text_to_send):
         logger.info(FILLING + description + text_to_send)
         self.driver.find_element(locator).send_keys(text_to_send)
         return
 
-    def select_data_indexed(self, locator, description, index, option):
+    def fill_data_indexed(self, locator, description, index, text_to_send):
+        logger.info(FILLING + description + text_to_send)
+        self.driver.find_elements(locator)[index].send_keys(text_to_send)
         return
 
     def select_data_visible(self, locator, description, option):
         logger.info(SELECTING + description + option)
         Select(self.driver.find_element(locator)).select_by_visible_text(option)
+        return
+
+    def select_data_visible_indexed(self, locator, description, index, option):
+        logger.info(SELECTING + description + option)
+        Select(self.driver.find_elements(locator)[index]).select_by_visible_text(option)
         return
 
 
