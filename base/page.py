@@ -30,10 +30,19 @@ class BasePage(object):
         )
         return element
 
+    def clearing_input(self, description):
+        self.logger.info(
+            CLEARING + '[' + description + ']'
+        )
+
     def filling_data(self, description, input_data):
         self.logger.info(
             FILLING + '[' + description + '] : [' + input_data + ']'
         )
+
+    def clear_input(self, description, *locator):
+        self.clearing_input(description)
+        self.driver.find_element(*locator).clear()
 
     def fill_data(self, input_data, description, *locator):
         self.filling_data(description, input_data)
@@ -149,7 +158,7 @@ class Checkout(BasePage):
 
             if not contact_done:
                 contact_done = ContactSection(
-                    self.driver
+                    self.driver, self.input_definitions
                 ).populate_contact_info()
 
             # TODO: do something decent with this line below i.e define next button :)
@@ -536,9 +545,11 @@ class BillingSection(Checkout):
 class ContactSection(Checkout):
     """ Contact Section """
 
-    def __init__(self, driver):
+    def __init__(self, driver, input_definitions):
         super(ContactSection, self).__init__(driver)
+        super(ContactSection, self).__init__(input_definitions)
         self.driver = driver
+        self.input_definitions = input_definitions
 
     __email_lct = ContactSectionLct.EMAIL
     __email_desc = ContactSectionLct.EMAIL_DESC
@@ -558,33 +569,51 @@ class ContactSection(Checkout):
     __phone_number_lct = ContactSectionLct.PHONE_NUMBER
     __phone_number_desc = ContactSectionLct.PHONE_NUMBER_DESC
 
-    def set_email(self, contact_email):
-        self.logger.info(FILLING + self.__email_desc + contact_email)
-        self.driver.find_element(*self.__email_lct).send_keys(contact_email)
+    def fill_email(self, email):
+        self.fill_data(
+            email,
+            self.__email_desc,
+            *self.__email_lct
+        )
 
-    def set_email_confirmation(self, contact_email_confirmation):
-        self.logger.info(FILLING + self.__email_confirmation_desc + contact_email_confirmation)
-        self.driver.find_element(*self.__email_confirmation_lct).send_keys(contact_email_confirmation)
+    def fill_email_confirmation(self, email_confirmation):
+        self.fill_data(
+            email_confirmation,
+            self.__email_confirmation_desc,
+            *self.__email_confirmation_lct
+        )
 
-    def select_telephone_type(self, contact_telephone_type_options):
-        contact_telephone_type = contact_telephone_type_options[randint(0, len(contact_telephone_type_options) - 1)][
-            'description']
-        self.logger.info(FILLING + self.__telephone_type_desc + contact_telephone_type)
-        self.driver.find_element(*self.__telephone_type_lct).send_keys(contact_telephone_type)
+    def select_telephone_type(self, telephone_type):
+        self.select_data_visible(
+            telephone_type,
+            self.__telephone_type_desc,
+            *self.__telephone_type_lct
+        )
 
-    def set_country_code(self, contact_country_code):
-        self.logger.info(FILLING + self.__country_code_desc + contact_country_code)
-        country_code = self.driver.find_element(*self.__country_code_lct)
-        country_code.clear()
-        country_code.send_keys(contact_country_code)
+    def fill_country_code(self, country_code):
+        self.clear_input(
+            self.__country_code_desc,
+            *self.__country_code_lct
+        )
+        self.fill_data(
+            country_code,
+            self.__country_code_desc,
+            *self.__country_code_lct
+        )
 
-    def set_area_code(self, contact_area_code):
-        self.logger.info(FILLING + self.__area_code_desc + contact_area_code)
-        self.driver.find_element(*self.__area_code_lct).send_keys(contact_area_code)
+    def fill_area_code(self, area_code):
+        self.fill_data(
+            area_code,
+            self.__area_code_desc,
+            *self.__area_code_lct
+        )
 
-    def set_phone_number(self, contact_phone_number):
-        self.logger.info(FILLING + self.__phone_number_desc + contact_phone_number)
-        self.driver.find_element(*self.__phone_number_lct).send_keys(contact_phone_number)
+    def fill_phone_number(self, phone_number):
+        self.fill_data(
+            phone_number,
+            self.__phone_number_desc,
+            *self.__phone_number_lct
+        )
 
     def populate_contact_info(self):
         self.logger.info('Checking if contact section is displayed')
@@ -593,20 +622,22 @@ class ContactSection(Checkout):
             self.print_separator()
 
             if self.input_definitions['contacts'][0]['email']['required']:
-                self.set_email('email@google.com')
-                self.set_email_confirmation('email@google.com')
+                self.fill_email('email@google.com')
+                self.fill_email_confirmation('email@google.com')
 
             telephone_type_options = self.input_definitions['contacts'][0]['telephones'][0]['telephone_type']['options']
-            self.select_telephone_type(telephone_type_options)
+            telephone_type = telephone_type_options[randint(0, len(telephone_type_options) - 1)]['description']
+
+            self.select_telephone_type(telephone_type)
 
             if self.input_definitions['contacts'][0]['telephones'][0]['country_code']:
-                self.set_country_code('54')
+                self.fill_country_code('54')
 
             if self.input_definitions['contacts'][0]['telephones'][0]['area_code']:
-                self.set_area_code('11')
+                self.fill_area_code('11')
 
             if self.input_definitions['contacts'][0]['telephones'][0]['number']:
-                self.set_phone_number('43527685')
+                self.fill_phone_number('43527685')
 
             self.print_separator()
             return True

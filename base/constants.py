@@ -46,6 +46,7 @@ CLICKING = 'Clicking '
 SELECTING = 'Selecting '
 SELECTED = 'Selected '
 FILLING = 'Filling '
+CLEARING = 'Clearing '
 
 # CHECKOUT
 
