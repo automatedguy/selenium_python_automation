@@ -53,7 +53,7 @@ class FlightTest(BaseTest):
         logger.info('Just for the wait...')
 
     def test_stc_enabled(self):
-        """ Load test_checkout with &sc=1 """
+        """ Load test_checkout with &stc=1 """
         checkout_parameter = SCT_ENABLED
 
         add_cross_selling = True
