@@ -213,6 +213,7 @@ class PassengerSection(Checkout):
         self.driver = driver
         self.country_site = country_site
         self.document_type_options = None
+        self.gender_options = None
         self.input_definitions = input_definitions
 
     __first_name_lct = PassengerSectionLct.FIRST_NAME
@@ -310,6 +311,17 @@ class PassengerSection(Checkout):
             *self.__birthyear_lct
         )
 
+    def get_gender_options(self, index):
+        self.gender_options = (
+            self.input_definitions['passengers'][index]['gender']['options']
+        )
+
+    def get_rand_gender(self, index):
+        self.get_gender_options(index)
+        return (
+            self.gender_options[(randint(0, len(self.document_type_options) - 1))]['description']
+        )
+
     def select_gender(self, index, gender):
         self.select_data_visible_indexed(
             index,
@@ -361,7 +373,7 @@ class PassengerSection(Checkout):
                     )
 
                 if self.input_definitions['passengers'][passenger]['gender']['required']:
-                    self.select_gender(passenger, 'Masculino')
+                    self.select_gender(passenger, self.get_rand_gender(passenger))
 
                 if self.input_definitions['passengers'][passenger]['nationality']['required']:
                     self.select_nationality(passenger, 'Argentina')
@@ -515,13 +527,16 @@ class BillingSection(Checkout):
                 self.select_fiscal_type(self.get_rand_fiscal_type())
 
             if self.input_definitions['billings'][0]['fiscal_document']['required']:
-                self.fill_fiscal_document('23281685589')
+                self.fill_fiscal_document(Utils.get_fiscal_document(self.country_site))
 
             if self.input_definitions['billings'][0]['address']['street']['required']:
                 self.fill_address_street('Fake Street 123')
 
-            if self.input_definitions['billings'][0]['address']['number']['required']:
-                self.fill_address_number('12345')
+            try:
+                if self.input_definitions['billings'][0]['address']['number']['required']:
+                    self.fill_address_number('12345')
+            except Exception as no_address_number:
+                self.logger.warning('Address number is not available [Exception]: ' + str(no_address_number))
 
             try:
                 if not self.input_definitions['billings'][0]['address']['floor']['required']:
@@ -535,8 +550,11 @@ class BillingSection(Checkout):
             except Exception as no_department:
                 self.logger.warning('Department is not available [Exception]: ' + str(no_department))
 
-            if self.input_definitions['billings'][0]['address']['postal_code']['required']:
-                self.fill_address_postal_code(Utils().get_postal_code(self.country_site))
+            try:
+                if self.input_definitions['billings'][0]['address']['postal_code']['required']:
+                    self.fill_address_postal_code(Utils().get_postal_code(self.country_site))
+            except Exception as no_postal_code:
+                self.logger.warning('Postal code is not available [Exception]: ' + str(no_postal_code))
 
             if self.input_definitions['billings'][0]['address']['states']['required']:
                 options = self.input_definitions['billings'][0]['address']['states']['options']
@@ -842,9 +860,24 @@ class Utils:
     def get_document_number(country_site):
         document_number = {
             ARG: '28549400',
-            COL: '28549400',
+            COL: '800999333',
             MEX: '28549400',
             BRA: '12345678900'
+        }
+        document_number.get(country_site, 'Invalid country' + country_site)
+        return document_number.get(country_site)
+
+    @staticmethod
+    def get_document_number_exp(country_site):
+        document_number = {
+            'DNI': '28549400',
+            'Pasaporte': '800999300',
+            'CPF': '28549400',
+            'NIT': '12345678900',
+            '': '',
+            '': ''
+
+
         }
         document_number.get(country_site, 'Invalid country' + country_site)
         return document_number.get(country_site)
@@ -863,3 +896,13 @@ class Utils:
     def get_random_string(min_char, max_char):
         all_char = string.ascii_letters
         return "".join(choice(all_char) for x in range(randint(min_char, max_char)))
+
+    @staticmethod
+    def get_fiscal_document(country_site):
+        fiscal_document = {
+            ARG: '28549400',
+            COL: '800999333',
+            MEX: '28549400',
+            BRA: '12345678900'
+        }
+        return fiscal_document.get(country_site)

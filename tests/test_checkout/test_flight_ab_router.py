@@ -62,7 +62,7 @@ class FlightTest(BaseTest):
     def test_four(self):
         """ Ab router redirection test handle dynamically whatever comes from router """
 
-        add_cross_selling = True
+        add_cross_selling = False
 
         checkout = self.open_checkout_ab_router(self.ab_router_url, self.channel, self.api_host, self.country_site,
                                                 self.country_language)
