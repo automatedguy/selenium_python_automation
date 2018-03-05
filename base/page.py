@@ -169,7 +169,7 @@ class Checkout(BasePage):
 
             if not contact_done:
                 contact_done = ContactSection(
-                    self.driver, self.input_definitions
+                    self.driver, self.input_definitions, self.country_site
                 ).populate_contact_info()
 
             # TODO: do something decent with this line below i.e define next button :)
@@ -574,11 +574,14 @@ class BillingSection(Checkout):
 class ContactSection(Checkout):
     """ Contact Section """
 
-    def __init__(self, driver, input_definitions):
+    def __init__(self, driver, input_definitions, country_site):
         super(ContactSection, self).__init__(driver)
         super(ContactSection, self).__init__(input_definitions)
+        super(ContactSection, self).__init__(country_site)
         self.driver = driver
         self.input_definitions = input_definitions
+        self.telephone_type_options = None
+        self.country_site = country_site
 
     __email_lct = ContactSectionLct.EMAIL
     __email_desc = ContactSectionLct.EMAIL_DESC
@@ -611,6 +614,14 @@ class ContactSection(Checkout):
             self.__email_confirmation_desc,
             *self.__email_confirmation_lct
         )
+
+    def get_telephone_type_options(self):
+        self.telephone_type_options = \
+            self.input_definitions['contacts'][0]['telephones'][0]['telephone_type']['options']
+
+    def get_rand_telephone_type(self):
+        self.get_telephone_type_options()
+        return self.telephone_type_options[randint(0, len(self.telephone_type_options) - 1)]['description']
 
     def select_telephone_type(self, telephone_type):
         self.select_data_visible(
@@ -654,19 +665,16 @@ class ContactSection(Checkout):
                 self.fill_email('email@google.com')
                 self.fill_email_confirmation('email@google.com')
 
-            telephone_type_options = self.input_definitions['contacts'][0]['telephones'][0]['telephone_type']['options']
-            telephone_type = telephone_type_options[randint(0, len(telephone_type_options) - 1)]['description']
-
-            self.select_telephone_type(telephone_type)
+            self.select_telephone_type(self.get_rand_telephone_type())
 
             if self.input_definitions['contacts'][0]['telephones'][0]['country_code']:
-                self.fill_country_code('54')
+                self.fill_country_code(Utils().get_country_code(self.country_site))
 
             if self.input_definitions['contacts'][0]['telephones'][0]['area_code']:
-                self.fill_area_code('11')
+                self.fill_area_code(Utils().get_area_code(self.country_site))
 
             if self.input_definitions['contacts'][0]['telephones'][0]['number']:
-                self.fill_phone_number('43527685')
+                self.fill_phone_number(Utils().get_phone_number(self.country_site))
 
             self.print_separator()
             return True
@@ -926,3 +934,33 @@ class Utils:
             BRA: BRASIL
         }
         return nationality.get(country_site)
+
+    @staticmethod
+    def get_area_code(country_site):
+        area_code = {
+            ARG: '51',
+            COL: '57',
+            MEX: '52',
+            BRA: '55'
+        }
+        return area_code.get(country_site)
+
+    @staticmethod
+    def get_country_code(country_site):
+        country_code = {
+            ARG: '11',
+            COL: '111',
+            MEX: '52',
+            BRA: '55'
+        }
+        return country_code.get(country_site)
+
+    @staticmethod
+    def get_phone_number(country_site):
+        phone_number = {
+            ARG: '45678765',
+            COL: '45678765',
+            MEX: '45678765',
+            BRA: '45678765'
+        }
+        return phone_number.get(country_site)
