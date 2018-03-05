@@ -25,7 +25,7 @@ class FlightTest(BaseTest):
                                                            self.adults, self.children, self.infants)
 
     def test_one(self):
-        """ Load test_checkout without additional parameters"""
+        """ Ab router redirection test handle dynamically whatever comes from router """
 
         add_cross_selling = True
 
@@ -36,7 +36,7 @@ class FlightTest(BaseTest):
         logger.info('Just for the wait...')
 
     def test_two(self):
-        """ Load test_checkout without additional parameters"""
+        """ Ab router redirection test handle dynamically whatever comes from router """
 
         add_cross_selling = True
 
@@ -47,7 +47,7 @@ class FlightTest(BaseTest):
         logger.info('Just for the wait...')
 
     def test_three(self):
-        """ Load test_checkout without additional parameters"""
+        """ Ab router redirection test handle dynamically whatever comes from router """
 
         add_cross_selling = True
 
@@ -59,7 +59,7 @@ class FlightTest(BaseTest):
         logger.info('Just for the wait...')
 
     def test_four(self):
-        """ Load test_checkout without additional parameters"""
+        """ Ab router redirection test handle dynamically whatever comes from router """
 
         add_cross_selling = True
 
