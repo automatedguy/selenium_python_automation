@@ -144,7 +144,7 @@ class Checkout(BasePage):
 
             if not billing_done:
                 billing_done = BillingSection(
-                    self.driver, self.country_site
+                    self.driver, self.country_site, self.input_definitions
                 ).populate_billing_info()
 
             if not contact_done:
@@ -356,11 +356,13 @@ class PassengerSection(Checkout):
 class BillingSection(Checkout):
     """ Billing Section """
 
-    def __init__(self, driver, country_site):
+    def __init__(self, driver, country_site, input_definitions):
         super(BillingSection, self).__init__(driver)
         super(BillingSection, self).__init__(country_site)
+        super(BillingSection, self).__init__(input_definitions)
         self.driver = driver
         self.country_site = country_site
+        self.input_definitions = input_definitions
         self.fiscal_type_options = None
 
     # Locators
@@ -399,21 +401,12 @@ class BillingSection(Checkout):
     __enable_billing_desc = BillingSectionLct.ENABLE_BILLING_DESC
 
     # Actions:
-    def set_fiscal_name(self, billing_fiscal_name):
-        self.logger.info(FILLING + self.__fiscal_name_desc + billing_fiscal_name)
-        self.driver.find_element(*self.__fiscal_name_lct).send_keys(billing_fiscal_name)
-
     def fill_fiscal_name(self, fiscal_name):
         self.fill_data(
-            *self.__fiscal_name_lct,
+            fiscal_name,
             self.__fiscal_name_desc,
-            fiscal_name
+            *self.__fiscal_name_lct
         )
-
-    def select_fiscal_type(self, options):
-        billing_fiscal_type = options[(randint(0, len(options) - 1))]['description']
-        self.logger.info(SELECTING + self.__fiscal_type_desc + billing_fiscal_type)
-        Select(self.driver.find_element(*self.__fiscal_type_lct)).select_by_visible_text(billing_fiscal_type)
 
     def get_fiscal_type_options(self):
         self.logger.info('Getting fiscal type available options from input definitions...')
@@ -424,41 +417,68 @@ class BillingSection(Checkout):
         self.get_fiscal_type_options()
         return self.fiscal_type_options[(randint(0, len(self.fiscal_type_options) - 1))]['description']
 
-    def select_fiscal_type_exp(self, fiscal_type):
-        self.select_data_visible(*self.__fiscal_type_lct, self.__fiscal_type_desc, fiscal_type)
+    def select_fiscal_type(self, fiscal_type):
+        self.select_data_visible(
+            fiscal_type,
+            self.__fiscal_type_desc,
+            *self.__fiscal_type_lct
+        )
 
-    def set_fiscal_document(self, billing_fiscal_document):
-        self.logger.info(FILLING + self.__fiscal_document_desc + billing_fiscal_document)
-        self.driver.find_element(*self.__fiscal_document_lct).send_keys(billing_fiscal_document)
+    def fill_fiscal_document(self, fiscal_document):
+        self.fill_data(
+            fiscal_document,
+            self.__fiscal_document_desc,
+            *self.__fiscal_document_lct
+        )
 
-    def set_address_street(self, billing_address_street):
-        self.logger.info(FILLING + self.__address_street_desc + billing_address_street)
-        self.driver.find_element(*self.__address_street_lct).send_keys(billing_address_street)
+    def fill_address_street(self, address_street):
+        self.fill_data(
+            address_street,
+            self.__address_street_desc,
+            *self.__address_street_lct
+        )
 
-    def set_address_number(self, billing_address_number):
-        self.logger.info(FILLING + self.__address_number_desc + billing_address_number)
-        self.driver.find_element(*self.__address_number_lct).send_keys(billing_address_number)
+    def fill_address_number(self, address_number):
+        self.fill_data(
+            address_number,
+            self.__address_number_desc,
+            *self.__address_number_lct
+        )
 
-    def set_address_floor(self, billing_address_floor):
-        self.logger.info(FILLING + self.__address_floor_desc + billing_address_floor)
-        self.driver.find_element(*self.__address_floor_lct).send_keys(billing_address_floor)
+    def fill_address_floor(self, address_floor):
+        self.fill_data(
+            address_floor,
+            self.__address_floor_desc,
+            *self.__address_floor_lct
+        )
 
-    def set_address_department(self, billing_address_department):
-        self.logger.info(FILLING + self.__address_department_desc + billing_address_department)
-        self.driver.find_element(*self.__address_department_lct).send_keys(billing_address_department)
+    def fill_address_department(self, address_department):
+        self.fill_data(
+            address_department,
+            self.__address_department_desc,
+            *self.__address_department_lct
+        )
 
-    def set_address_postal_code(self, billing_address_postal_code):
-        self.logger.info(FILLING + self.__address_postal_code_desc + billing_address_postal_code)
-        self.driver.find_element(*self.__address_postal_code_lct).send_keys(billing_address_postal_code)
+    def fill_address_postal_code(self, address_postal_code):
+        self.fill_data(
+            address_postal_code,
+            self.__address_postal_code_desc,
+            *self.__address_postal_code_lct
+        )
 
-    def set_address_state(self, options):
-        billing_address_state = options[randint(1, len(options) - 1)]['description']
-        self.logger.info(FILLING + self.__address_state_desc + billing_address_state)
-        self.driver.find_element(*self.__address_state_ltc).send_keys(billing_address_state)
+    def fill_address_state(self, address_state):
+        self.fill_data(
+            address_state,
+            self.__address_state_desc,
+            *self.__address_state_ltc
+        )
 
-    def set_address_city(self, billing_address_city):
-        self.logger.info(FILLING + self.__address_city_desc + billing_address_city)
-        self.driver.find_element(*self.__address_city_lct).send_keys(billing_address_city)
+    def fill_address_city(self, address_city):
+        self.fill_data(
+            address_city,
+            self.__address_city_desc,
+            *self.__address_city_lct
+        )
 
     def populate_billing_info(self):
         self.logger.info('Checking if Billing section is displayed')
@@ -469,46 +489,42 @@ class BillingSection(Checkout):
             self.print_separator()
 
             if self.input_definitions['billings'][0]['fiscal_name']['required']:
-                self.set_fiscal_name('Saraza')
                 self.fill_fiscal_name('Panqueca')
 
             if self.input_definitions['billings'][0]['fiscal_type']['required']:
-                options = self.input_definitions['billings'][0]['fiscal_type_document']['options']
-                self.select_fiscal_type(options)
-
-            if self.input_definitions['billings'][0]['fiscal_type']['required']:
-                self.select_fiscal_type_exp(self.get_rand_fiscal_type())
+                self.select_fiscal_type(self.get_rand_fiscal_type())
 
             if self.input_definitions['billings'][0]['fiscal_document']['required']:
-                self.set_fiscal_document('23281685589')
+                self.fill_fiscal_document('23281685589')
 
             if self.input_definitions['billings'][0]['address']['street']['required']:
-                self.set_address_street('Fake Street 123')
+                self.fill_address_street('Fake Street 123')
 
             if self.input_definitions['billings'][0]['address']['number']['required']:
-                self.set_address_number('12345')
+                self.fill_address_number('12345')
 
             try:
                 if not self.input_definitions['billings'][0]['address']['floor']['required']:
-                    self.set_address_floor('10')
+                    self.fill_address_floor('10')
             except Exception as no_floor:
                 self.logger.warning('Floor is not available [Exception]: ' + str(no_floor))
 
             try:
                 if not self.input_definitions['billings'][0]['address']['department']['required']:
-                    self.set_address_department('A')
+                    self.fill_address_department('A')
             except Exception as no_department:
                 self.logger.warning('Department is not available [Exception]: ' + str(no_department))
 
             if self.input_definitions['billings'][0]['address']['postal_code']['required']:
-                self.set_address_postal_code(Utils().get_postal_code(self.country_site))
+                self.fill_address_postal_code(Utils().get_postal_code(self.country_site))
 
             if self.input_definitions['billings'][0]['address']['states']['required']:
                 options = self.input_definitions['billings'][0]['address']['states']['options']
-                self.set_address_state(options)
+                billing_address_state = options[randint(1, len(options) - 1)]['description']
+                self.fill_address_state(billing_address_state)
 
             if self.input_definitions['billings'][0]['address']['city']['required']:
-                self.set_address_city('Buenos Aires')
+                self.fill_address_city('Buenos Aires')
 
             self.print_separator()
             return True
