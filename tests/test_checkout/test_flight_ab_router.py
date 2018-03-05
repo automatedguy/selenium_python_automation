@@ -3,7 +3,8 @@ from base.setup import *
 
 class FlightTest(BaseTest):
     # Test parameters
-    product_route = '?product=flights'
+    product = 'flights'
+    product_route = '?product=' + product
     origin = BaseTest.get_flight_origin()
     destination = 'MIA'
     departure_date = 50
@@ -67,5 +68,7 @@ class FlightTest(BaseTest):
                                                 self.country_language)
 
         checkout.populate_checkout_info(add_cross_selling)
+
+        checkout.save_input_definitions(self.product)
 
         logger.info('Just for the wait...')

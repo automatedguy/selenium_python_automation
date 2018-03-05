@@ -1,5 +1,6 @@
 # coding=utf-8
 import datetime
+import json
 import logging
 import string
 
@@ -112,6 +113,16 @@ class Checkout(BasePage):
                 self.channel
             )
         )
+
+    def save_input_definitions(self, product):
+        file_path = '/home/gabrielcespedes/projects/input_definitions/'
+        time_now = datetime.datetime.now()
+        time_stamp = time_now.strftime("%Y%m%d-%H%M%S")
+        file_name = time_stamp + '.json'
+        full_path = file_path + self.country_site + '/' + product + '/' + file_name
+        self.logger.info('Saving input definitions at: [' + full_path + ']')
+        with open(full_path, 'w') as outfile:
+            json.dump(self.input_definitions, outfile)
 
     def populate_checkout_info(self, add_cross_selling):
         """ This method will deal with the initial load """
