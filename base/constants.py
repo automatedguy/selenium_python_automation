@@ -42,9 +42,9 @@ TEARING_DOWN = 'Tearing down browser: '
 WAITING_FOR = 'Waiting for: '
 
 # ACTIONS
-CLICKING = 'Clicking'
-SELECTING = 'Selecting'
-FILLING = 'Filling'
+CLICKING = 'Clicking '
+SELECTING = 'Selecting '
+FILLING = 'Filling '
 
 # CHECKOUT
 
