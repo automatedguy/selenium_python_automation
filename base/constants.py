@@ -39,7 +39,7 @@ BRA = 'BRA'
 VALID_BROWSERS = 'Please select a valid Browser admitted are: '
 SETTING_UP = 'Setting up browser: '
 TEARING_DOWN = 'Tearing down browser: '
-WAITING_FOR_MSG = 'Waiting for: '
+WAITING_FOR = 'Waiting for: '
 
 # ACTIONS
 CLICKING = 'Clicking '

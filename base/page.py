@@ -15,42 +15,53 @@ from random import randint, choice
 from base.constants import *
 from services import Apikeys, InputDefinitions
 
-logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
-logger = logging.getLogger(__name__)
-
 
 class BasePage(object):
     """Base class to initialize the base page that will be called from all pages"""
 
     def __init__(self, driver):
         self.driver = driver
+        self.logger = logging.getLogger(__name__)
 
     def wait_for_element(self, locator, description):
-        logger.info('Waiting for: [' + description + ']')
+        self.logger.info(WAITING_FOR + description)
         element = WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located(locator)
         )
         return element
 
-    def fill_data(self, locator, description, text_to_send):
-        logger.info(FILLING + description + text_to_send)
-        self.driver.find_element(locator).send_keys(text_to_send)
+    def filling_data(self, description, input_data):
+        self.logger.info(
+            FILLING + '[' + description + '] : [' + input_data + ']'
+        )
+
+    def fill_data(self, locator, description, input_data):
+        self.filling_data(description, input_data)
+        self.driver.find_element(locator).send_keys(input_data)
         return
 
-    def fill_data_indexed(self, locator, description, index, text_to_send):
-        logger.info(FILLING + description + text_to_send)
-        self.driver.find_elements(locator)[index].send_keys(text_to_send)
+    def fill_data_indexed(self, locator, description, index, input_data):
+        self.filling_data(description, input_data)
+        self.driver.find_elements(locator)[index].send_keys(input_data)
         return
+
+    def selecting_data(self, description, input_data):
+        self.logger.info(
+            SELECTING + + '[' + description + '] : [' + input_data + ']'
+        )
 
     def select_data_visible(self, locator, description, option):
-        logger.info(SELECTING + description + option)
+        self.selecting_data(description + option)
         Select(self.driver.find_element(locator)).select_by_visible_text(option)
         return
 
     def select_data_visible_indexed(self, locator, description, index, option):
-        logger.info(SELECTING + description + option)
+        self.selecting_data(description + option)
         Select(self.driver.find_elements(locator)[index]).select_by_visible_text(option)
         return
+
+    def print_separator(self):
+        self.logger.info('****************************************************')
 
 
 # Checkout class and sections
@@ -150,11 +161,11 @@ class CrossSelling(Checkout):
     __add_transfer_desc = CrossSellingSectionLct.ADD_INSURANCE_DESC
 
     def click_add_insurance(self):
-        logger.info(CLICKING + self.__add_insurance_desc)
+        self.logger.info(CLICKING + self.__add_insurance_desc)
         try:
             self.driver.find_elements(*self.__add_insurance_lct)[0].click()
         except WebDriverException as insurance_except:
-            logger.warning("Trying to locate insurance radio button: [Exception]" + str(insurance_except))
+            self.logger.warning("Trying to locate insurance radio button: [Exception]" + str(insurance_except))
             self.driver.find_elements(*self.__add_insurance_lct)[0].click()
 
     def populate_cross_selling_info(self):
@@ -170,9 +181,10 @@ class PassengerSection(Checkout):
         super(PassengerSection, self).__init__(country_site)
         self.driver = driver
         self.country_site = country_site
+        self.document_type_options = None
 
-    __name_lct = PassengerSectionLct.NAME
-    __name_desc = PassengerSectionLct.NAME_DESC
+    __first_name_lct = PassengerSectionLct.FIRST_NAME
+    __first_name_desc = PassengerSectionLct.FIRST_NAME_DESC
 
     __last_name_lct = PassengerSectionLct.LAST_NAME
     __last_name_desc = PassengerSectionLct.LAST_NAME_DESC
@@ -199,88 +211,121 @@ class PassengerSection(Checkout):
     __nationality_desc = PassengerSectionLct.NATIONALITY_DESC
 
     # Actions
-    def set_name(self, passenger_index):
-        passenger_name = Utils().get_random_string(7, 10)
-        logger.info(FILLING + self.__name_desc + passenger_name)
-        self.driver.find_elements(*self.__name_lct)[passenger_index].send_keys(passenger_name)
+    def fill_first_name(self, index, first_name):
+        self.fill_data_indexed(
+            *self.__first_name_lct,
+            self.__first_name_desc,
+            index,
+            first_name
+        )
 
-    def set_last_name(self, passenger_index):
-        passenger_last_name = Utils().get_random_string(7, 10)
-        logger.info(FILLING + self.__last_name_desc + passenger_last_name)
-        self.driver.find_elements(*self.__last_name_lct)[passenger_index].send_keys(passenger_last_name)
+    def fill_last_name(self, index, last_name):
+        self.fill_data_indexed(
+            *self.__last_name_lct,
+            self.__last_name_desc,
+            index,
+            last_name
+        )
 
-    def set_document_type(self, passenger_index, document_type_options):
-        document_type_selected = document_type_options[(randint(0, len(document_type_options) - 1))]['description']
-        logger.info(SELECTING + self.__document_type_desc + document_type_selected)
-        Select(self.driver.find_elements(*self.__document_type_lct)[passenger_index]) \
-            .select_by_visible_text(document_type_selected)
+    def get_document_type_options(self, index):
+        self.document_type_options = (
+            self.input_definitions['passengers'][index]['document']['document_type']['options']
+        )
 
-    def set_document_number(self, passenger_index, passenger_document_number):
-        logger.info(FILLING + self.__document_number_desc + passenger_document_number)
-        self.driver.find_elements(*self.__document_number_lct)[passenger_index].send_keys(passenger_document_number)
+    def get_rand_document_type(self):
+        return (
+            self.document_type_options[(randint(0, len(self.document_type_options) - 1))]['description']
+        )
 
-    def select_birthday(self, passenger_index):
-        passenger_birthday = str(randint(1, 28))
-        logger.info(SELECTING + self.__birthday_desc + passenger_birthday)
-        Select(self.driver.find_elements(*self.__birthday_lct)[passenger_index]) \
-            .select_by_visible_text(passenger_birthday)
+    def select_document_type(self, index, document_type_selected):
+        self.select_data_visible_indexed(
+            *self.__document_type_lct,
+            self.__document_type_desc,
+            index,
+            document_type_selected
+        )
 
-    def select_birthmonth(self, passenger_index):
-        passenger_birthmonth = str(randint(1, 12))
-        logger.info(SELECTING + self.__birthmonth_desc + passenger_birthmonth)
-        Select(self.driver.find_elements(*self.__birthmonth_lct)[passenger_index]) \
-            .select_by_index(passenger_birthmonth)
+    def fill_document_number(self, index, document_number):
+        self.fill_data_indexed(
+            self.__document_number_lct,
+            self.__document_number_desc,
+            index,
+            document_number
+        )
 
-    def select_birthyear(self, passenger_index, passenger_age_range):
-        passenger_birthyear = Utils().get_current_year(Utils().get_age(passenger_age_range))
+    def select_birthday(self, index, birthday):
+        self.select_data_visible_indexed(
+            *self.__birthday_lct,
+            self.__birthday_desc,
+            index,
+            birthday
+        )
 
-        logger.info(SELECTING + self.__birthyear_desc + passenger_birthyear)
-        Select(self.driver.find_elements(*self.__birthyear_lct)[passenger_index]) \
-            .select_by_visible_text(passenger_birthyear)
+    def select_birthmonth(self, index, birthmonth):
+        self.select_data_visible_indexed(
+            *self.__birthmonth_lct,
+            self.__birthmonth_desc,
+            index,
+            birthmonth
+        )
 
-    def select_gender(self, passenger_index, passenger_gender):
-        logger.info(SELECTING + self.__gender_desc + passenger_gender)
-        Select(self.driver.find_elements(*self.__gender_lct)[passenger_index]) \
-            .select_by_visible_text(passenger_gender)
+    def select_birthyear(self, index, birthyear):
+        self.select_data_visible_indexed(
+            *self.__birthyear_lct,
+            self.__birthyear_desc,
+            index,
+            birthyear
+        )
 
-    def select_nationality(self, passenger_index, passenger_nationality):
-        logger.info(SELECTING + self.__nationality_desc + passenger_nationality)
-        Select(self.driver.find_elements(*self.__nationality_lct)[passenger_index]) \
-            .select_by_visible_text(passenger_nationality)
+    def select_gender(self, index, gender):
+        self.select_data_visible_indexed(
+            *self.__gender_lct,
+            self.__gender_desc,
+            index,
+            gender
+        )
+
+    def select_nationality(self, index, nationality):
+        self.select_data_visible_indexed(
+            *self.__nationality_lct,
+            self.__nationality_desc,
+            index,
+            nationality
+        )
 
     def populate_passengers_info(self, input_definitions):
 
-        self.wait_for_element(PassengerSectionLct.NAME, 'Passenger first name fields')
+        self.wait_for_element(PassengerSectionLct.FIRST_NAME, 'Passengers Section')
 
-        logger.info('Checking if Passengers section is displayed')
-        if self.driver.find_element(*self.__name_lct).is_displayed():
-            total_passengers = len(self.driver.find_elements(*self.__name_lct))
+        self.logger.info('Checking if Passengers section is displayed')
+        if self.driver.find_element(*self.__first_name_lct).is_displayed():
+            total_passengers = len(self.driver.find_elements(*self.__first_name_lct))
 
-            Utils().print_separator()
-            logger.info("Filling Passengers info - Total Passengers: " + str(total_passengers))
-            Utils().print_separator()
+            self.print_separator()
+            self.filling_data('Passengers info - Total Passengers' + str(total_passengers))
+            self.print_separator()
 
             for passenger in range(0, total_passengers):
-                logger.info('Filling Passenger N°: ' + str(passenger + 1))
+                self.filling_data('Passenger N°' + str(passenger + 1))
 
                 if input_definitions['passengers'][passenger]['first_name']['required']:
-                    self.set_name(passenger)
+                    self.fill_first_name(passenger, Utils().get_random_string(7, 10))
 
                 if input_definitions['passengers'][passenger]['last_name']['required']:
-                    self.set_last_name(passenger)
+                    self.fill_last_name(passenger, Utils().get_random_string(7, 10))
 
                 if input_definitions['passengers'][passenger]['document']['document_type']['required']:
-                    options = input_definitions['passengers'][passenger]['document']['document_type']['options']
-                    self.set_document_type(passenger, options)
+                    self.select_document_type(passenger, self.get_rand_document_type())
 
                 if input_definitions['passengers'][passenger]['document']['number']['required']:
-                    self.set_document_number(passenger, Utils().get_document_number(self.country_site))
+                    self.fill_document_number(passenger, Utils().get_document_number(self.country_site))
 
                 if input_definitions['passengers'][passenger]['birthday']['required']:
-                    self.select_birthday(passenger)
-                    self.select_birthmonth(passenger)
-                    age_range = input_definitions['passengers'][passenger]['description']
-                    self.select_birthyear(passenger, age_range)
+                    self.select_birthday(passenger, str(randint(1, 28)))
+                    self.select_birthmonth(passenger, str(randint(1, 12)))
+                    self.select_birthyear(passenger, Utils().get_current_year(
+                        Utils().get_age(input_definitions['passengers'][passenger]['description']))
+                    )
 
                 if input_definitions['passengers'][passenger]['gender']['required']:
                     self.select_gender(passenger, 'Masculino')
@@ -288,10 +333,10 @@ class PassengerSection(Checkout):
                 if input_definitions['passengers'][passenger]['nationality']['required']:
                     self.select_nationality(passenger, 'Argentina')
 
-                Utils().print_separator()
+                self.print_separator()
             return True
         else:
-            logger.info('Passengers section is not displayed.')
+            self.logger.info('Passengers section is not displayed.')
             return False
 
 
@@ -342,21 +387,25 @@ class BillingSection(Checkout):
 
     # Actions:
     def set_fiscal_name(self, billing_fiscal_name):
-        logger.info(FILLING + self.__fiscal_name_desc + billing_fiscal_name)
+        self.logger.info(FILLING + self.__fiscal_name_desc + billing_fiscal_name)
         self.driver.find_element(*self.__fiscal_name_lct).send_keys(billing_fiscal_name)
 
     def fill_fiscal_name(self, fiscal_name):
-        self.fill_data(*self.__fiscal_name_lct, self.__fiscal_name_desc, fiscal_name)
+        self.fill_data(
+            *self.__fiscal_name_lct,
+            self.__fiscal_name_desc,
+            fiscal_name
+        )
 
     def select_fiscal_type(self, options):
         billing_fiscal_type = options[(randint(0, len(options) - 1))]['description']
-        logger.info(SELECTING + self.__fiscal_type_desc + billing_fiscal_type)
+        self.logger.info(SELECTING + self.__fiscal_type_desc + billing_fiscal_type)
         Select(self.driver.find_element(*self.__fiscal_type_lct)).select_by_visible_text(billing_fiscal_type)
 
     def get_fiscal_type_options(self):
-        logger.info('Getting fiscal type available options from input definitions...')
+        self.logger.info('Getting fiscal type available options from input definitions...')
         self.fiscal_type_options = self.input_definitions['billings'][0]['fiscal_type_document']['options']
-        logger.info('Available options are:' + str(self.fiscal_type_options))
+        self.logger.info('Available options are:' + str(self.fiscal_type_options))
 
     def get_rand_fiscal_type(self):
         self.get_fiscal_type_options()
@@ -366,45 +415,45 @@ class BillingSection(Checkout):
         self.select_data_visible(*self.__fiscal_type_lct, self.__fiscal_type_desc, fiscal_type)
 
     def set_fiscal_document(self, billing_fiscal_document):
-        logger.info(FILLING + self.__fiscal_document_desc + billing_fiscal_document)
+        self.logger.info(FILLING + self.__fiscal_document_desc + billing_fiscal_document)
         self.driver.find_element(*self.__fiscal_document_lct).send_keys(billing_fiscal_document)
 
     def set_address_street(self, billing_address_street):
-        logger.info(FILLING + self.__address_street_desc + billing_address_street)
+        self.logger.info(FILLING + self.__address_street_desc + billing_address_street)
         self.driver.find_element(*self.__address_street_lct).send_keys(billing_address_street)
 
     def set_address_number(self, billing_address_number):
-        logger.info(FILLING + self.__address_number_desc + billing_address_number)
+        self.logger.info(FILLING + self.__address_number_desc + billing_address_number)
         self.driver.find_element(*self.__address_number_lct).send_keys(billing_address_number)
 
     def set_address_floor(self, billing_address_floor):
-        logger.info(FILLING + self.__address_floor_desc + billing_address_floor)
+        self.logger.info(FILLING + self.__address_floor_desc + billing_address_floor)
         self.driver.find_element(*self.__address_floor_lct).send_keys(billing_address_floor)
 
     def set_address_department(self, billing_address_department):
-        logger.info(FILLING + self.__address_department_desc + billing_address_department)
+        self.logger.info(FILLING + self.__address_department_desc + billing_address_department)
         self.driver.find_element(*self.__address_department_lct).send_keys(billing_address_department)
 
     def set_address_postal_code(self, billing_address_postal_code):
-        logger.info(FILLING + self.__address_postal_code_desc + billing_address_postal_code)
+        self.logger.info(FILLING + self.__address_postal_code_desc + billing_address_postal_code)
         self.driver.find_element(*self.__address_postal_code_lct).send_keys(billing_address_postal_code)
 
     def set_address_state(self, options):
         billing_address_state = options[randint(1, len(options) - 1)]['description']
-        logger.info(FILLING + self.__address_state_desc + billing_address_state)
+        self.logger.info(FILLING + self.__address_state_desc + billing_address_state)
         self.driver.find_element(*self.__address_state_ltc).send_keys(billing_address_state)
 
     def set_address_city(self, billing_address_city):
-        logger.info(FILLING + self.__address_city_desc + billing_address_city)
+        self.logger.info(FILLING + self.__address_city_desc + billing_address_city)
         self.driver.find_element(*self.__address_city_lct).send_keys(billing_address_city)
 
     def populate_billing_info(self, input_definitions):
-        logger.info('Checking if Billing section is displayed')
+        self.logger.info('Checking if Billing section is displayed')
 
         if self.driver.find_element(*self.__fiscal_name_lct).is_displayed():
 
-            logger.info("Populating Billing Info")
-            Utils().print_separator()
+            self.logger.info("Populating Billing Info")
+            self.print_separator()
 
             if input_definitions['billings'][0]['fiscal_name']['required']:
                 self.set_fiscal_name('Saraza')
@@ -430,13 +479,13 @@ class BillingSection(Checkout):
                 if not input_definitions['billings'][0]['address']['floor']['required']:
                     self.set_address_floor('10')
             except Exception as no_floor:
-                logger.warning('Floor is not available [Exception]: ' + str(no_floor))
+                self.logger.warning('Floor is not available [Exception]: ' + str(no_floor))
 
             try:
                 if not input_definitions['billings'][0]['address']['department']['required']:
                     self.set_address_department('A')
             except Exception as no_department:
-                logger.warning('Department is not available [Exception]: ' + str(no_department))
+                self.logger.warning('Department is not available [Exception]: ' + str(no_department))
 
             if input_definitions['billings'][0]['address']['postal_code']['required']:
                 self.set_address_postal_code(Utils().get_postal_code(self.country_site))
@@ -448,10 +497,10 @@ class BillingSection(Checkout):
             if input_definitions['billings'][0]['address']['city']['required']:
                 self.set_address_city('Buenos Aires')
 
-            Utils().print_separator()
+            self.print_separator()
             return True
         else:
-            logger.info('Billing section is not displayed.')
+            self.logger.info('Billing section is not displayed.')
             return False
 
 
@@ -481,38 +530,38 @@ class ContactSection(Checkout):
     __phone_number_desc = ContactSectionLct.PHONE_NUMBER_DESC
 
     def set_email(self, contact_email):
-        logger.info(FILLING + self.__email_desc + contact_email)
+        self.logger.info(FILLING + self.__email_desc + contact_email)
         self.driver.find_element(*self.__email_lct).send_keys(contact_email)
 
     def set_email_confirmation(self, contact_email_confirmation):
-        logger.info(FILLING + self.__email_confirmation_desc + contact_email_confirmation)
+        self.logger.info(FILLING + self.__email_confirmation_desc + contact_email_confirmation)
         self.driver.find_element(*self.__email_confirmation_lct).send_keys(contact_email_confirmation)
 
     def select_telephone_type(self, contact_telephone_type_options):
         contact_telephone_type = contact_telephone_type_options[randint(0, len(contact_telephone_type_options) - 1)][
             'description']
-        logger.info(FILLING + self.__telephone_type_desc + contact_telephone_type)
+        self.logger.info(FILLING + self.__telephone_type_desc + contact_telephone_type)
         self.driver.find_element(*self.__telephone_type_lct).send_keys(contact_telephone_type)
 
     def set_country_code(self, contact_country_code):
-        logger.info(FILLING + self.__country_code_desc + contact_country_code)
+        self.logger.info(FILLING + self.__country_code_desc + contact_country_code)
         country_code = self.driver.find_element(*self.__country_code_lct)
         country_code.clear()
         country_code.send_keys(contact_country_code)
 
     def set_area_code(self, contact_area_code):
-        logger.info(FILLING + self.__area_code_desc + contact_area_code)
+        self.logger.info(FILLING + self.__area_code_desc + contact_area_code)
         self.driver.find_element(*self.__area_code_lct).send_keys(contact_area_code)
 
     def set_phone_number(self, contact_phone_number):
-        logger.info(FILLING + self.__phone_number_desc + contact_phone_number)
+        self.logger.info(FILLING + self.__phone_number_desc + contact_phone_number)
         self.driver.find_element(*self.__phone_number_lct).send_keys(contact_phone_number)
 
     def populate_contact_info(self, input_definitions):
-        logger.info('Checking if contact section is displayed')
+        self.logger.info('Checking if contact section is displayed')
         if self.driver.find_element(*self.__email_lct).is_displayed():
-            logger.info("Populating Contact Info")
-            Utils().print_separator()
+            self.logger.info("Populating Contact Info")
+            self.print_separator()
 
             if input_definitions['contacts'][0]['email']['required']:
                 self.set_email('email@google.com')
@@ -530,10 +579,10 @@ class ContactSection(Checkout):
             if input_definitions['contacts'][0]['telephones'][0]['number']:
                 self.set_phone_number('43527685')
 
-            Utils().print_separator()
+            self.print_separator()
             return True
         else:
-            logger.info('Contact section is not displayed.')
+            self.logger.info('Contact section is not displayed.')
             return False
 
 
@@ -564,36 +613,36 @@ class EmergencyContactSection(Checkout):
 
     def set_first_name(self):
         emergency_contact_first_name = Utils().get_random_string(7, 10)
-        logger.info(FILLING + self.__first_name_desc + emergency_contact_first_name)
+        self.logger.info(FILLING + self.__first_name_desc + emergency_contact_first_name)
         self.driver.find_element(*self.__first_name_lct).send_keys(emergency_contact_first_name)
 
     def set_last_name(self):
         emergency_contact_last_name = Utils().get_random_string(7, 10)
-        logger.info(FILLING + self.__last_name_desc + emergency_contact_last_name)
+        self.logger.info(FILLING + self.__last_name_desc + emergency_contact_last_name)
         self.driver.find_element(*self.__last_name_lct).send_keys(emergency_contact_last_name)
 
     def select_telephone_type(self, options):
         telephone_type = options[randint(0, len(options) - 1)]['description']
-        logger.info(SELECTING + self.__telephone_type_desc + telephone_type)
+        self.logger.info(SELECTING + self.__telephone_type_desc + telephone_type)
         Select(self.driver.find_element(*self.__telephone_type_lct)).select_by_visible_text(telephone_type)
 
     def set_country_code(self, country_code):
-        logger.info(FILLING + self.__country_code_desc + country_code)
+        self.logger.info(FILLING + self.__country_code_desc + country_code)
         self.driver.find_element(*self.__country_code_lct).send_keys(country_code)
 
     def set_area_code(self, area_code):
-        logger.info(FILLING + self.__area_code_desc + area_code)
+        self.logger.info(FILLING + self.__area_code_desc + area_code)
         self.driver.find_element(*self.__area_code_lct).send_keys(area_code)
 
     def set_phone_number(self, phone_number):
-        logger.info(FILLING + self.__phone_number_desc + phone_number)
+        self.logger.info(FILLING + self.__phone_number_desc + phone_number)
         self.driver.find_element(*self.__phone_number_lct).send_keys(phone_number)
 
     def populate_emergency_contact(self, input_definitions):
-        logger.info('Checking if emergency contact section is displayed')
+        self.logger.info('Checking if emergency contact section is displayed')
         if self.driver.find_element(*self.__first_name_lct).is_displayed():
-            logger.info("Populating Emergency Contact Info")
-            Utils().print_separator()
+            self.logger.info("Populating Emergency Contact Info")
+            self.print_separator()
 
             if input_definitions['emergency_contacts'][0]['first_name']['required']:
                 self.set_first_name()
@@ -614,10 +663,10 @@ class EmergencyContactSection(Checkout):
             if input_definitions['emergency_contacts'][0]['telephone']['number']['required']:
                 self.set_phone_number('77777777')
 
-            Utils().print_separator()
+            self.print_separator()
             return True
         else:
-            logger.info('Emergency Contact section is not displayed.')
+            self.logger.info('Emergency Contact section is not displayed.')
             return False
         return True
 
@@ -676,16 +725,12 @@ class LoginModal(BasePage):
         self.driver = driver
 
     def click_close_login_modal(self):
-        logger.info(CLICKING + LoginModalLct.CLOSE_BUTTON_DESC)
+        self.logger.info(CLICKING + LoginModalLct.CLOSE_BUTTON_DESC)
         self.driver.find_element(*LoginModalLct.CLOSE_BUTTON).click()
 
 
 class Utils:
     """ Utils class: all static methods for general pourposes """
-
-    @staticmethod
-    def print_separator():
-        logger.info('****************************************************')
 
     @staticmethod
     def get_current_year(remove_years):
