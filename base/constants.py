@@ -66,3 +66,8 @@ PASSENGERS_NOT_DISPLAYED = 'Passengers section is not displayed.'
 CHECKING_BILLING_SECTION_DISPLAYED = 'Checking if Billing section is displayed'
 POPULATING_BILLING_SECTION = 'Populating Billing Info'
 BILLING_SECTION_NOT_DISPLAYED = 'Billing section is not displayed.'
+
+CHECKING_EMERGENCY_CONTACTS_DISPLAYED = 'Checking if emergency contact section is displayed'
+POPULATING_EMERGENCY_CONTACT_INFO = 'Populating Emergency Contact Info'
+EMERGENCY_CONTACT_NOT_DISPLAYED = 'Emergency Contact section is not displayed.'
+

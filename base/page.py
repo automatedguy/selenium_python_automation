@@ -705,6 +705,7 @@ class EmergencyContactSection(Checkout):
         super(EmergencyContactSection, self).__init__(driver)
         self.driver = driver
         self.input_definitions = input_definitions
+        self.telephone_type_options = None
 
     __first_name_lct = EmergencyContactSection.FIRST_NAME
     __first_name_desc = EmergencyContactSection.FIRST_NAME_DESC
@@ -725,18 +726,28 @@ class EmergencyContactSection(Checkout):
     __phone_number_desc = EmergencyContactSection.PHONE_NUMBER_DESC
 
     def fill_first_name(self, first_name):
-        self.fill_data(
-            first_name,
-            self.__first_name_desc,
-            *self.__first_name_lct
-        )
+        if self.input_definitions['emergency_contacts'][0]['first_name']['required']:
+            self.fill_data(
+                first_name,
+                self.__first_name_desc,
+                *self.__first_name_lct
+            )
 
     def fill_last_name(self, last_name):
-        self.fill_data(
-            last_name,
-            self.__last_name_desc,
-            *self.__last_name_lct
-        )
+        if self.input_definitions['emergency_contacts'][0]['last_name']['required']:
+            self.fill_data(
+                last_name,
+                self.__last_name_desc,
+                *self.__last_name_lct
+            )
+
+    def get_telephone_type_options(self):
+        self.telephone_type_options = self.input_definitions['emergency_contacts'][0]['telephone']['telephone_type'][
+            'options']
+
+    def get_rand_telephone_type(self):
+        self.get_telephone_type_options()
+        return self.telephone_type_options[randint(0, len(self.telephone_type_options) - 1)]['description']
 
     def select_telephone_type(self, telephone_type):
         self.select_data_visible(
@@ -746,57 +757,45 @@ class EmergencyContactSection(Checkout):
         )
 
     def fill_country_code(self, country_code):
-        self.fill_data(
-            country_code,
-            self.__country_code_desc,
-            *self.__country_code_lct
-        )
+        if self.input_definitions['emergency_contacts'][0]['telephone']['country_code']['required']:
+            self.fill_data(
+                country_code,
+                self.__country_code_desc,
+                *self.__country_code_lct
+            )
 
     def fill_area_code(self, area_code):
-        self.fill_data(
-            area_code,
-            self.__area_code_desc,
-            *self.__area_code_lct
-        )
+        if self.input_definitions['emergency_contacts'][0]['telephone']['area_code']['required']:
+            self.fill_data(
+                area_code,
+                self.__area_code_desc,
+                *self.__area_code_lct
+            )
 
     def fill_phone_number(self, phone_number):
-        self.fill_data(
-            phone_number,
-            self.__phone_number_desc,
-            *self.__phone_number_lct
-        )
+        if self.input_definitions['emergency_contacts'][0]['telephone']['number']['required']:
+            self.fill_data(
+                phone_number,
+                self.__phone_number_desc,
+                *self.__phone_number_lct
+            )
 
     def populate_emergency_contact(self):
-        self.logger.info('Checking if emergency contact section is displayed')
+        self.print_section_tittle(CHECKING_EMERGENCY_CONTACTS_DISPLAYED)
+
         if self.driver.find_element(*self.__first_name_lct).is_displayed():
-            self.logger.info("Populating Emergency Contact Info")
-            self.print_separator()
+            self.print_section_tittle(POPULATING_EMERGENCY_CONTACT_INFO)
 
-            if self.input_definitions['emergency_contacts'][0]['first_name']['required']:
-                self.fill_first_name(Utils().get_random_string(7, 10))
-
-            if self.input_definitions['emergency_contacts'][0]['last_name']['required']:
-                self.fill_last_name(Utils().get_random_string(7, 10))
-
-            telephone_type_options = self.input_definitions['emergency_contacts'][0]['telephone']['telephone_type'][
-                'options']
-            telephone_type = telephone_type_options[randint(0, len(telephone_type_options) - 1)]['description']
-
-            self.select_telephone_type(telephone_type)
-
-            if self.input_definitions['emergency_contacts'][0]['telephone']['country_code']['required']:
-                self.fill_country_code('54')
-
-            if self.input_definitions['emergency_contacts'][0]['telephone']['area_code']['required']:
-                self.fill_area_code('11')
-
-            if self.input_definitions['emergency_contacts'][0]['telephone']['number']['required']:
-                self.fill_phone_number('77777777')
-
+            self.fill_first_name(Utils().get_random_string(7, 10))
+            self.fill_last_name(Utils().get_random_string(7, 10))
+            self.select_telephone_type(self.get_rand_telephone_type())
+            self.fill_country_code(Utils().get_country_code(self.country_site))
+            self.fill_area_code(Utils().get_area_code(self.country_site))
+            self.fill_phone_number(Utils().get_phone_number(self.country_site))
             self.print_separator()
             return True
         else:
-            self.logger.info('Emergency Contact section is not displayed.')
+            self.logger.info(EMERGENCY_CONTACT_NOT_DISPLAYED)
             return False
         return True
 
