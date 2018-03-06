@@ -617,18 +617,20 @@ class ContactSection(Checkout):
     __phone_number_desc = ContactSectionLct.PHONE_NUMBER_DESC
 
     def fill_email(self, email):
-        self.fill_data(
-            email,
-            self.__email_desc,
-            *self.__email_lct
-        )
+        if self.input_definitions['contacts'][0]['email']['required']:
+            self.fill_data(
+                email,
+                self.__email_desc,
+                *self.__email_lct
+            )
 
     def fill_email_confirmation(self, email_confirmation):
-        self.fill_data(
-            email_confirmation,
-            self.__email_confirmation_desc,
-            *self.__email_confirmation_lct
-        )
+        if self.input_definitions['contacts'][0]['email']['required']:
+            self.fill_data(
+                email_confirmation,
+                self.__email_confirmation_desc,
+                *self.__email_confirmation_lct
+            )
 
     def get_telephone_type_options(self):
         self.telephone_type_options = \
@@ -646,55 +648,49 @@ class ContactSection(Checkout):
         )
 
     def fill_country_code(self, country_code):
-        self.clear_input(
-            self.__country_code_desc,
-            *self.__country_code_lct
-        )
-        self.fill_data(
-            country_code,
-            self.__country_code_desc,
-            *self.__country_code_lct
-        )
+        if self.input_definitions['contacts'][0]['telephones'][0]['country_code']:
+            self.clear_input(
+                self.__country_code_desc,
+                *self.__country_code_lct
+            )
+            self.fill_data(
+                country_code,
+                self.__country_code_desc,
+                *self.__country_code_lct
+            )
 
     def fill_area_code(self, area_code):
-        self.fill_data(
-            area_code,
-            self.__area_code_desc,
-            *self.__area_code_lct
-        )
+        if self.input_definitions['contacts'][0]['telephones'][0]['area_code']:
+            self.fill_data(
+                area_code,
+                self.__area_code_desc,
+                *self.__area_code_lct
+            )
 
     def fill_phone_number(self, phone_number):
-        self.fill_data(
-            phone_number,
-            self.__phone_number_desc,
-            *self.__phone_number_lct
-        )
+        if self.input_definitions['contacts'][0]['telephones'][0]['number']:
+            self.fill_data(
+                phone_number,
+                self.__phone_number_desc,
+                *self.__phone_number_lct
+            )
 
     def populate_contact_info(self):
-        self.logger.info('Checking if contact section is displayed')
+        self.print_section_tittle(CHECKING_CONTACTS_DISPLAYED)
+
         if self.driver.find_element(*self.__email_lct).is_displayed():
-            self.logger.info("Populating Contact Info")
-            self.print_separator()
+            self.print_section_tittle(POPULATING_CONTACT_INFO)
 
-            if self.input_definitions['contacts'][0]['email']['required']:
-                self.fill_email('email@google.com')
-                self.fill_email_confirmation('email@google.com')
-
+            self.fill_email('email@google.com')
+            self.fill_email_confirmation('email@google.com')
             self.select_telephone_type(self.get_rand_telephone_type())
-
-            if self.input_definitions['contacts'][0]['telephones'][0]['country_code']:
-                self.fill_country_code(Utils().get_country_code(self.country_site))
-
-            if self.input_definitions['contacts'][0]['telephones'][0]['area_code']:
-                self.fill_area_code(Utils().get_area_code(self.country_site))
-
-            if self.input_definitions['contacts'][0]['telephones'][0]['number']:
-                self.fill_phone_number(Utils().get_phone_number(self.country_site))
-
+            self.fill_country_code(Utils().get_country_code(self.country_site))
+            self.fill_area_code(Utils().get_area_code(self.country_site))
+            self.fill_phone_number(Utils().get_phone_number(self.country_site))
             self.print_separator()
             return True
         else:
-            self.logger.info('Contact section is not displayed.')
+            self.logger.info(CONTACT_NOT_DISPLAYED)
             return False
 
 
