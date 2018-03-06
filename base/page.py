@@ -146,14 +146,14 @@ class Checkout(BasePage):
         self.set_input_definitions()
 
         filled = dict.fromkeys(["passenger_done",
-                               "billing_done",
-                               "contact_done",
-                               "cross_selling_done",
-                               "emergency_contact_done"], False)
+                                "billing_done",
+                                "contact_done",
+                                "cross_selling_done",
+                                "emergency_contact_done"], False)
 
         if not add_cross_selling:
             filled.update(dict.fromkeys(["cross_selling_done",
-                                        "emergency_contact_done"], True))
+                                         "emergency_contact_done"], True))
 
         while not filled.get("passenger_done") or not filled.get("billing_done") or \
                 not filled.get("contact_done") or not filled.get("cross_selling_done"):
@@ -381,7 +381,7 @@ class PassengerSection(Checkout):
     def populate_passengers_info(self):
 
         self.wait_for_element(PassengerSectionLct.FIRST_NAME, PASSENGERS_SECTION)
-        self.logger.info(CHECKING_PASSENGERS_DISPLAYED)
+        self.print_section_tittle(CHECKING_PASSENGERS_DISPLAYED)
 
         if self.driver.find_element(*self.__first_name_lct).is_displayed():
             total_passengers = len(self.driver.find_elements(*self.__first_name_lct))
@@ -416,6 +416,7 @@ class BillingSection(Checkout):
         self.country_site = country_site
         self.input_definitions = input_definitions
         self.fiscal_type_options = None
+        self.states_options = None
 
     # Locators
 
@@ -454,11 +455,12 @@ class BillingSection(Checkout):
 
     # Actions:
     def fill_fiscal_name(self, fiscal_name):
-        self.fill_data(
-            fiscal_name,
-            self.__fiscal_name_desc,
-            *self.__fiscal_name_lct
-        )
+        if self.input_definitions['billings'][0]['fiscal_name']['required']:
+            self.fill_data(
+                fiscal_name,
+                self.__fiscal_name_desc,
+                *self.__fiscal_name_lct
+            )
 
     def get_fiscal_type_options(self):
         self.logger.info('Getting fiscal type available options from input definitions...')
@@ -470,124 +472,117 @@ class BillingSection(Checkout):
         return self.fiscal_type_options[(randint(0, len(self.fiscal_type_options) - 1))]['description']
 
     def select_fiscal_type(self, fiscal_type):
-        self.select_data_visible(
-            fiscal_type,
-            self.__fiscal_type_desc,
-            *self.__fiscal_type_lct
-        )
+        if self.input_definitions['billings'][0]['fiscal_type']['required']:
+            self.select_data_visible(
+                fiscal_type,
+                self.__fiscal_type_desc,
+                *self.__fiscal_type_lct
+            )
 
     def fill_fiscal_document(self, fiscal_document):
-        self.fill_data(
-            fiscal_document,
-            self.__fiscal_document_desc,
-            *self.__fiscal_document_lct
-        )
+        if self.input_definitions['billings'][0]['fiscal_document']['required']:
+            self.fill_data(
+                fiscal_document,
+                self.__fiscal_document_desc,
+                *self.__fiscal_document_lct
+            )
 
     def fill_address_street(self, address_street):
-        self.fill_data(
-            address_street,
-            self.__address_street_desc,
-            *self.__address_street_lct
-        )
+        if self.input_definitions['billings'][0]['address']['street']['required']:
+            self.fill_data(
+                address_street,
+                self.__address_street_desc,
+                *self.__address_street_lct
+            )
 
     def fill_address_number(self, address_number):
-        self.fill_data(
-            address_number,
-            self.__address_number_desc,
-            *self.__address_number_lct
-        )
+        try:
+            if self.input_definitions['billings'][0]['address']['number']['required']:
+                self.fill_data(
+                    address_number,
+                    self.__address_number_desc,
+                    *self.__address_number_lct
+                )
+        except Exception as no_address_number:
+            self.logger.warning('Address number is not available [Exception]: ' + str(no_address_number))
 
     def fill_address_floor(self, address_floor):
-        self.fill_data(
-            address_floor,
-            self.__address_floor_desc,
-            *self.__address_floor_lct
-        )
+        try:
+            if not self.input_definitions['billings'][0]['address']['floor']['required']:
+                self.fill_data(
+                    address_floor,
+                    self.__address_floor_desc,
+                    *self.__address_floor_lct
+                )
+        except Exception as no_floor:
+            self.logger.warning('Floor is not available [Exception]: ' + str(no_floor))
 
     def fill_address_department(self, address_department):
-        self.fill_data(
-            address_department,
-            self.__address_department_desc,
-            *self.__address_department_lct
-        )
+        try:
+            if not self.input_definitions['billings'][0]['address']['department']['required']:
+                self.fill_data(
+                    address_department,
+                    self.__address_department_desc,
+                    *self.__address_department_lct
+                )
+        except Exception as no_department:
+            self.logger.warning('Department is not available [Exception]: ' + str(no_department))
 
     def fill_address_postal_code(self, address_postal_code):
-        self.fill_data(
-            address_postal_code,
-            self.__address_postal_code_desc,
-            *self.__address_postal_code_lct
-        )
+        try:
+            if self.input_definitions['billings'][0]['address']['postal_code']['required']:
+                self.fill_data(
+                    address_postal_code,
+                    self.__address_postal_code_desc,
+                    *self.__address_postal_code_lct
+                )
+        except Exception as no_postal_code:
+            self.logger.warning('Postal code is not available [Exception]: ' + str(no_postal_code))
+
+    def get_states_options(self):
+        self.states_options = self.input_definitions['billings'][0]['address']['states']['options']
+
+    def get_rand_state(self):
+        self.get_states_options()
+        return self.states_options[randint(1, len(self.states_options) - 1)]['description']
 
     def fill_address_state(self, address_state):
-        self.fill_data(
-            address_state,
-            self.__address_state_desc,
-            *self.__address_state_ltc
-        )
+        if self.input_definitions['billings'][0]['address']['states']['required']:
+            self.fill_data(
+                address_state,
+                self.__address_state_desc,
+                *self.__address_state_ltc
+            )
 
     def fill_address_city(self, address_city):
-        self.fill_data(
-            address_city,
-            self.__address_city_desc,
-            *self.__address_city_lct
-        )
+        if self.input_definitions['billings'][0]['address']['city']['required']:
+            self.fill_data(
+                address_city,
+                self.__address_city_desc,
+                *self.__address_city_lct
+            )
 
     def populate_billing_info(self):
-        self.logger.info('Checking if Billing section is displayed')
+        self.print_section_tittle(CHECKING_BILLING_SECTION_DISPLAYED)
 
         if self.driver.find_element(*self.__fiscal_name_lct).is_displayed():
 
-            self.logger.info("Populating Billing Info")
-            self.print_separator()
+            self.print_section_tittle(POPULATING_BILLING_SECTION)
 
-            if self.input_definitions['billings'][0]['fiscal_name']['required']:
-                self.fill_fiscal_name('Panqueca')
-
-            if self.input_definitions['billings'][0]['fiscal_type']['required']:
-                self.select_fiscal_type(self.get_rand_fiscal_type())
-
-            if self.input_definitions['billings'][0]['fiscal_document']['required']:
-                self.fill_fiscal_document(Utils.get_fiscal_document(self.country_site))
-
-            if self.input_definitions['billings'][0]['address']['street']['required']:
-                self.fill_address_street('Fake Street 123')
-
-            try:
-                if self.input_definitions['billings'][0]['address']['number']['required']:
-                    self.fill_address_number('12345')
-            except Exception as no_address_number:
-                self.logger.warning('Address number is not available [Exception]: ' + str(no_address_number))
-
-            try:
-                if not self.input_definitions['billings'][0]['address']['floor']['required']:
-                    self.fill_address_floor('10')
-            except Exception as no_floor:
-                self.logger.warning('Floor is not available [Exception]: ' + str(no_floor))
-
-            try:
-                if not self.input_definitions['billings'][0]['address']['department']['required']:
-                    self.fill_address_department('A')
-            except Exception as no_department:
-                self.logger.warning('Department is not available [Exception]: ' + str(no_department))
-
-            try:
-                if self.input_definitions['billings'][0]['address']['postal_code']['required']:
-                    self.fill_address_postal_code(Utils().get_postal_code(self.country_site))
-            except Exception as no_postal_code:
-                self.logger.warning('Postal code is not available [Exception]: ' + str(no_postal_code))
-
-            if self.input_definitions['billings'][0]['address']['states']['required']:
-                options = self.input_definitions['billings'][0]['address']['states']['options']
-                billing_address_state = options[randint(1, len(options) - 1)]['description']
-                self.fill_address_state(billing_address_state)
-
-            if self.input_definitions['billings'][0]['address']['city']['required']:
-                self.fill_address_city(Utils().get_country_city(self.country_site))
-
+            self.fill_fiscal_name('Panqueca')
+            self.select_fiscal_type(self.get_rand_fiscal_type())
+            self.fill_fiscal_document(Utils.get_fiscal_document(self.country_site))
+            self.fill_address_street('Fake Street 123')
+            self.fill_address_number('12345')
+            self.fill_address_floor('10')
+            self.fill_address_department('A')
+            self.fill_address_postal_code(Utils().get_postal_code(self.country_site))
+            self.fill_address_state(self.get_rand_state())
+            self.fill_address_city(Utils().get_country_city(self.country_site))
             self.print_separator()
             return True
         else:
-            self.logger.info('Billing section is not displayed.')
+            self.logger.info(BILLING_SECTION_NOT_DISPLAYED)
             return False
 
 

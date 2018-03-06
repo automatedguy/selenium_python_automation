@@ -62,3 +62,7 @@ PASSENGERS_INFO = 'Passengers info - Total Passengers'
 PASSENGERS_SECTION = 'Passengers Section'
 CHECKING_PASSENGERS_DISPLAYED = 'Checking if Passengers section is displayed'
 PASSENGERS_NOT_DISPLAYED = 'Passengers section is not displayed.'
+
+CHECKING_BILLING_SECTION_DISPLAYED = 'Checking if Billing section is displayed'
+POPULATING_BILLING_SECTION = 'Populating Billing Info'
+BILLING_SECTION_NOT_DISPLAYED = 'Billing section is not displayed.'
