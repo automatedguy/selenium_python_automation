@@ -28,67 +28,107 @@ class FlightTest(BaseTest):
 
     def test_no_parameter(self):
         """ Load test_checkout without additional parameters"""
+
         checkout_parameter = ''
+        cross_selling = True
 
-        add_cross_selling = True
+        checkout = self.open_checkout(
+            self.cart_id,
+            checkout_parameter,
+            self.product_route,
+            self.channel,
+            self.api_host,
+            self.country_site,
+            self.country_language
+        )
 
-        checkout = self.open_checkout(self.cart_id, checkout_parameter, self.product_route,
-                                      self.channel, self.api_host, self.country_site, self.country_language)
+        checkout.populate_sections(cross_selling)
 
-        checkout.populate_checkout_sections(add_cross_selling)
-
+        pass
         logger.info('Just for the wait...')
 
     def test_sc_enabled(self):
         """ Load test_checkout with &sc=1 """
         checkout_parameter = SC_ENABLED
 
-        add_cross_selling = False
+        cross_selling = False
 
-        checkout = self.open_checkout(self.cart_id, checkout_parameter, self.product_route,
-                                      self.channel, self.api_host, self.country_site, self.country_language)
+        checkout = self.open_checkout(
+            self.cart_id,
+            checkout_parameter,
+            self.product_route,
+            self.channel,
+            self.api_host,
+            self.country_site,
+            self.country_language
+        )
 
-        checkout.populate_checkout_sections(add_cross_selling)
+        checkout.populate_sections(cross_selling)
 
+        pass
         logger.info('Just for the wait...')
 
     def test_stc_enabled(self):
         """ Load test_checkout with &stc=1 """
         checkout_parameter = SCT_ENABLED
 
-        add_cross_selling = True
+        cross_selling = True
 
-        checkout = self.open_checkout(self.cart_id, checkout_parameter, self.product_route,
-                                      self.channel, self.api_host, self.country_site, self.country_language)
+        checkout = self.open_checkout(
+            self.cart_id,
+            checkout_parameter,
+            self.product_route,
+            self.channel,
+            self.api_host,
+            self.country_site,
+            self.country_language
+        )
 
-        checkout.populate_checkout_sections(add_cross_selling)
+        checkout.populate_sections(cross_selling)
 
+        pass
         logger.info('Just for the wait...')
 
     def test_sw_cpd(self):
         """ Load test_checkout with &sw=cpd """
         checkout_parameter = SW_CPD
 
-        add_cross_selling = False
+        cross_selling = False
 
-        checkout = self.open_checkout(self.cart_id, checkout_parameter, self.product_route,
-                                      self.channel, self.api_host, self.country_site, self.country_language)
+        checkout = self.open_checkout(
+            self.cart_id,
+            checkout_parameter,
+            self.product_route,
+            self.channel,
+            self.api_host,
+            self.country_site,
+            self.country_language
+        )
 
-        checkout.populate_checkout_sections(add_cross_selling)
+        checkout.populate_sections(cross_selling)
 
+        pass
         logger.info('Just for the wait...')
 
     def test_sw_cpds(self):
         """ Load test_checkout with &sw=cpds """
         checkout_parameter = SW_CPDS
 
-        add_cross_selling = True
+        cross_selling = True
 
-        checkout = self.open_checkout(self.cart_id, checkout_parameter, self.product_route,
-                                      self.channel, self.api_host, self.country_site, self.country_language)
+        checkout = self.open_checkout(
+            self.cart_id,
+            checkout_parameter,
+            self.product_route,
+            self.channel,
+            self.api_host,
+            self.country_site,
+            self.country_language
+        )
 
-        checkout.populate_checkout_sections(add_cross_selling)
+        checkout.populate_sections(cross_selling)
 
+        pass
         logger.info('Just for the wait...')
 
 

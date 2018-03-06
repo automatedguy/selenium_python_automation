@@ -140,47 +140,47 @@ class Checkout(BasePage):
         with open(full_path, 'w') as outfile:
             json.dump(self.input_definitions, outfile)
 
-    def populate_checkout_sections(self, add_cross_selling):
+    def populate_sections(self, add_cross_selling):
         """ This method will deal with the initial load """
 
         self.set_input_definitions()
 
-        flags = dict.fromkeys(["passenger_done",
+        filled = dict.fromkeys(["passenger_done",
                                "billing_done",
                                "contact_done",
                                "cross_selling_done",
                                "emergency_contact_done"], False)
 
         if not add_cross_selling:
-            flags.update(dict.fromkeys(["cross_selling_done",
+            filled.update(dict.fromkeys(["cross_selling_done",
                                         "emergency_contact_done"], True))
 
-        while not flags.get("passenger_done") or not flags.get("billing_done") or \
-                not flags.get("contact_done") or not flags.get("cross_selling_done"):
+        while not filled.get("passenger_done") or not filled.get("billing_done") or \
+                not filled.get("contact_done") or not filled.get("cross_selling_done"):
 
-            if not flags.get("cross_selling_done"):
-                flags.update(dict.fromkeys(["cross_selling_done"], CrossSelling(
+            if not filled.get("cross_selling_done"):
+                filled.update(dict.fromkeys(["cross_selling_done"], CrossSelling(
                     self.driver
                 ).populate_cross_selling_info()))
                 self.set_input_definitions()
 
-            if not flags.get("passenger_done"):
-                flags.update(dict.fromkeys(["passenger_done"], PassengerSection(
+            if not filled.get("passenger_done"):
+                filled.update(dict.fromkeys(["passenger_done"], PassengerSection(
                     self.driver, self.country_site, self.input_definitions
                 ).populate_passengers_info()))
 
-            if not flags.get("emergency_contact_done"):
-                flags.update(dict.fromkeys(["emergency_contact_done"], EmergencyContactSection(
+            if not filled.get("emergency_contact_done"):
+                filled.update(dict.fromkeys(["emergency_contact_done"], EmergencyContactSection(
                     self.driver, self.input_definitions
                 ).populate_emergency_contact()))
 
-            if not flags.get("billing_done"):
-                flags.update(dict.fromkeys(["billing_done"], BillingSection(
+            if not filled.get("billing_done"):
+                filled.update(dict.fromkeys(["billing_done"], BillingSection(
                     self.driver, self.country_site, self.input_definitions
                 ).populate_billing_info()))
 
-            if not flags.get("contact_done"):
-                flags.update(dict.fromkeys(["contact_done"], ContactSection(
+            if not filled.get("contact_done"):
+                filled.update(dict.fromkeys(["contact_done"], ContactSection(
                     self.driver, self.input_definitions, self.country_site
                 ).populate_contact_info()))
 
@@ -927,7 +927,7 @@ class Utils:
     @staticmethod
     def get_fiscal_document(country_site):
         fiscal_document = {
-            ARG: '28549400',
+            ARG: '23281685589',
             COL: '800999333',
             MEX: '28549400',
             BRA: '12345678900'

@@ -28,46 +28,67 @@ class FlightTest(BaseTest):
     def test_one(self):
         """ Ab router redirection test handle dynamically whatever comes from router """
 
-        add_cross_selling = True
+        cross_selling = True
 
-        checkout = self.open_checkout_ab_router(self.ab_router_url, self.channel, self.api_host, self.country_site, self.country_language)
+        checkout = self.open_checkout_ab_router(
+            self.ab_router_url,
+            self.channel,
+            self.api_host,
+            self.country_site,
+            self.country_language
+        )
 
-        checkout.populate_checkout_sections(add_cross_selling)
+        checkout.populate_sections(cross_selling)
 
         logger.info('Just for the wait...')
 
     def test_two(self):
         """ Ab router redirection test handle dynamically whatever comes from router """
 
-        add_cross_selling = True
+        cross_selling = True
 
-        checkout = self.open_checkout_ab_router(self.ab_router_url, self.channel, self.api_host, self.country_site, self.country_language)
+        checkout = self.open_checkout_ab_router(
+            self.ab_router_url,
+            self.channel,
+            self.api_host,
+            self.country_site,
+            self.country_language
+        )
 
-        checkout.populate_checkout_sections(add_cross_selling)
+        checkout.populate_sections(cross_selling)
 
         logger.info('Just for the wait...')
 
     def test_three(self):
         """ Ab router redirection test handle dynamically whatever comes from router """
 
-        add_cross_selling = True
+        cross_selling = True
 
-        checkout = self.open_checkout_ab_router(self.ab_router_url, self.channel, self.api_host, self.country_site,
-                                                self.country_language)
+        checkout = self.open_checkout_ab_router(
+            self.ab_router_url,
+            self.channel,
+            self.api_host,
+            self.country_site,
+            self.country_language
+        )
 
-        checkout.populate_checkout_sections(add_cross_selling)
+        checkout.populate_sections(cross_selling)
 
         logger.info('Just for the wait...')
 
     def test_four(self):
         """ Ab router redirection test handle dynamically whatever comes from router """
 
-        add_cross_selling = False
+        cross_selling = False
 
-        checkout = self.open_checkout_ab_router(self.ab_router_url, self.channel, self.api_host, self.country_site,
-                                                self.country_language)
-
-        checkout.populate_checkout_sections(add_cross_selling)
+        checkout = self.open_checkout_ab_router(
+            self.ab_router_url,
+            self.channel,
+            self.api_host,
+            self.country_site,
+            self.country_language
+        )
+        checkout.populate_sections(cross_selling)
 
         checkout.save_input_definitions(self.product)
 
