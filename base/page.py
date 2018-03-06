@@ -140,7 +140,7 @@ class Checkout(BasePage):
         with open(full_path, 'w') as outfile:
             json.dump(self.input_definitions, outfile)
 
-    def populate_sections(self, add_cross_selling):
+    def populate_sections(self, cross_selling):
         """ This method will deal with the initial load """
 
         self.set_input_definitions()
@@ -151,7 +151,7 @@ class Checkout(BasePage):
                                 "cross_selling_done",
                                 "emergency_contact_done"], False)
 
-        if not add_cross_selling:
+        if not cross_selling:
             filled.update(dict.fromkeys(["cross_selling_done",
                                          "emergency_contact_done"], True))
 
