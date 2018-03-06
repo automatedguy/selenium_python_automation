@@ -36,6 +36,11 @@ class BasePage(object):
             CLEARING + '[' + description + ']'
         )
 
+    def print_section_tittle(self, tittle):
+        self.print_separator()
+        self.logger.info(tittle)
+        self.print_separator()
+
     def filling_data(self, description, input_data):
         self.logger.info(
             FILLING + '[' + description + '] : [' + input_data + ']'
@@ -244,21 +249,27 @@ class PassengerSection(Checkout):
     __nationality_desc = PassengerSectionLct.NATIONALITY_DESC
 
     # Actions
-    def fill_first_name(self, index, first_name):
-        self.fill_data_indexed(
-            index,
-            first_name,
-            self.__first_name_desc,
-            *self.__first_name_lct
-        )
+    def fill_first_name(self, index, first_name=RND):
+        if self.input_definitions['passengers'][index]['first_name']['required']:
+            if first_name is RND:
+                first_name = Utils().get_random_string(7, 10)
+            self.fill_data_indexed(
+                index,
+                first_name,
+                self.__first_name_desc,
+                *self.__first_name_lct
+            )
 
-    def fill_last_name(self, index, last_name):
-        self.fill_data_indexed(
-            index,
-            last_name,
-            self.__last_name_desc,
-            *self.__last_name_lct
-        )
+    def fill_last_name(self, index, last_name=RND):
+        if self.input_definitions['passengers'][index]['last_name']['required']:
+            if last_name is RND:
+                last_name = Utils().get_random_string(7, 10)
+            self.fill_data_indexed(
+                index,
+                last_name,
+                self.__last_name_desc,
+                *self.__last_name_lct
+            )
 
     def get_document_type_options(self, index):
         self.document_type_options = (
@@ -271,21 +282,27 @@ class PassengerSection(Checkout):
             self.document_type_options[(randint(0, len(self.document_type_options) - 1))]['description']
         )
 
-    def select_document_type(self, index, document_type_selected):
-        self.select_data_visible_indexed(
-            index,
-            document_type_selected,
-            self.__document_type_desc,
-            *self.__document_type_lct
-        )
+    def select_document_type(self, index, document_type_selected=RND):
+        if self.input_definitions['passengers'][index]['document']['document_type']['required']:
+            if document_type_selected is RND:
+                document_type_selected = self.get_rand_document_type(index)
+            self.select_data_visible_indexed(
+                index,
+                document_type_selected,
+                self.__document_type_desc,
+                *self.__document_type_lct
+            )
 
-    def fill_document_number(self, index, document_number):
-        self.fill_data_indexed(
-            index,
-            document_number,
-            self.__document_number_desc,
-            *self.__document_number_lct,
-        )
+    def fill_document_number(self, index, document_number=None):
+        if self.input_definitions['passengers'][index]['document']['number']['required']:
+            if document_number is None:
+                document_number = Utils().get_document_number(self.country_site)
+            self.fill_data_indexed(
+                index,
+                document_number,
+                self.__document_number_desc,
+                *self.__document_number_lct,
+            )
 
     def select_birthday(self, index, birthday):
         self.select_data_visible_indexed(
@@ -311,6 +328,14 @@ class PassengerSection(Checkout):
             *self.__birthyear_lct
         )
 
+    def select_birth_date(self, index):
+        if self.input_definitions['passengers'][index]['birthday']['required']:
+            self.select_birthday(index, str(randint(1, 28)))
+            self.select_birthmonth(index, str(randint(1, 12)))
+            self.select_birthyear(index, Utils().get_current_year(
+                Utils().get_age(self.input_definitions['passengers'][index]['description']))
+                                  )
+
     def get_gender_options(self, index):
         self.gender_options = (
             self.input_definitions['passengers'][index]['gender']['options']
@@ -322,66 +347,52 @@ class PassengerSection(Checkout):
             self.gender_options[(randint(0, len(self.document_type_options) - 1))]['description']
         )
 
-    def select_gender(self, index, gender):
-        self.select_data_visible_indexed(
-            index,
-            gender,
-            self.__gender_desc,
-            *self.__gender_lct
-        )
+    def select_gender(self, index, gender=RND):
+        if self.input_definitions['passengers'][index]['gender']['required']:
+            if gender is RND:
+                gender = self.get_rand_gender(index)
+            self.select_data_visible_indexed(
+                index,
+                gender,
+                self.__gender_desc,
+                *self.__gender_lct
+            )
 
-    def select_nationality(self, index, nationality):
-        self.select_data_visible_indexed(
-            index,
-            nationality,
-            self.__nationality_desc,
-            *self.__nationality_lct
-        )
+    def select_nationality(self, index, nationality=None):
+        if self.input_definitions['passengers'][index]['nationality']['required']:
+            if nationality is None:
+                nationality = Utils().get_nationality(self.country_site)
+            self.select_data_visible_indexed(
+                index,
+                nationality,
+                self.__nationality_desc,
+                *self.__nationality_lct
+            )
 
     def populate_passengers_info(self):
 
-        self.wait_for_element(PassengerSectionLct.FIRST_NAME, 'Passengers Section')
+        self.wait_for_element(PassengerSectionLct.FIRST_NAME, PASSENGERS_SECTION)
+        self.logger.info(CHECKING_PASSENGERS_DISPLAYED)
 
-        self.logger.info('Checking if Passengers section is displayed')
         if self.driver.find_element(*self.__first_name_lct).is_displayed():
             total_passengers = len(self.driver.find_elements(*self.__first_name_lct))
-
-            self.print_separator()
-            self.filling_data('Passengers info - Total Passengers', str(total_passengers))
-            self.print_separator()
+            self.print_section_tittle(PASSENGERS_INFO + ' ' + str(total_passengers))
 
             for passenger in range(0, total_passengers):
-                self.filling_data('Passenger N°', str(passenger + 1))
+                self.filling_data(PASSENGER_NUM, str(passenger + 1))
 
-                if self.input_definitions['passengers'][passenger]['first_name']['required']:
-                    self.fill_first_name(passenger, Utils().get_random_string(7, 10))
-
-                if self.input_definitions['passengers'][passenger]['last_name']['required']:
-                    self.fill_last_name(passenger, Utils().get_random_string(7, 10))
-
-                if self.input_definitions['passengers'][passenger]['document']['document_type']['required']:
-                    self.select_document_type(passenger, self.get_rand_document_type(passenger))
-
-                if self.input_definitions['passengers'][passenger]['document']['number']['required']:
-                    self.fill_document_number(passenger, Utils().get_document_number(self.country_site))
-
-                if self.input_definitions['passengers'][passenger]['birthday']['required']:
-                    self.select_birthday(passenger, str(randint(1, 28)))
-                    self.select_birthmonth(passenger, str(randint(1, 12)))
-                    self.select_birthyear(passenger, Utils().get_current_year(
-                        Utils().get_age(self.input_definitions['passengers'][passenger]['description']))
-                    )
-
-                if self.input_definitions['passengers'][passenger]['gender']['required']:
-                    self.select_gender(passenger, self.get_rand_gender(passenger))
-
-                if self.input_definitions['passengers'][passenger]['nationality']['required']:
-                    self.select_nationality(passenger, Utils().get_nationality(self.country_site))
-
+                self.fill_first_name(passenger)
+                self.fill_last_name(passenger)
+                self.select_document_type(passenger)
+                self.fill_document_number(passenger)
+                self.select_birth_date(passenger)
+                self.select_gender(passenger)
+                self.select_nationality(passenger)
                 self.print_separator()
             return True
+
         else:
-            self.logger.info('Passengers section is not displayed.')
+            self.logger.info(PASSENGERS_NOT_DISPLAYED)
             return False
 
 
