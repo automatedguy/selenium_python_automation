@@ -74,3 +74,5 @@ EMERGENCY_CONTACT_NOT_DISPLAYED = 'Emergency Contact section is not displayed'
 CHECKING_CONTACTS_DISPLAYED = 'Checking if contact section is displayed'
 POPULATING_CONTACT_INFO = 'Populating Contact Info'
 CONTACT_NOT_DISPLAYED = 'Contact section is not displayed'
+
+ERR_NO_AVAILABILITY = 'No availability error [Exception] '

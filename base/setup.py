@@ -195,8 +195,7 @@ class BaseTest(unittest.TestCase):
         logger.info('Getting flight origin for ' + COUNTRY + ' :[' + flight_origin.get(COUNTRY) + ']')
         return flight_origin.get(COUNTRY)
 
-    @staticmethod
-    def get_flight_cart_id(origin, destination, departure_date, return_date, site, language, adults, children, infants):
+    def get_flight_cart_id(self, origin, destination, departure_date, return_date, site, language, adults, children, infants):
         apikeys = Apikeys()
         channel_apikey = apikeys.get_apikey(BaseTest.get_channel())
 
@@ -205,7 +204,12 @@ class BaseTest(unittest.TestCase):
                                            adults, children, infants)
 
         product_id = flights_clusters.get_flight_id(channel_apikey)
-        logger.info('Flight ID: [' + product_id + ']')
+        try:
+            logger.info('Flight ID: [' + product_id + ']')
+        except TypeError as no_availability:
+            logger.error(ERR_NO_AVAILABILITY + str(no_availability))
+            self.tearDown()
+            self.fail()
 
         cart = Cart(BaseTest.get_api_host(), site, language)
         cart_id = cart.get_cart_id(channel_apikey, product_id)
@@ -231,4 +235,4 @@ class BaseTest(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
+    unittest.main(failfast=True)

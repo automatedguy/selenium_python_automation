@@ -87,13 +87,16 @@ class FlightsClusters:
                                     + '&children=' + children \
                                     + '&infants=' + infants
 
-        logger.info('Flight Cluster URl: [' + self.flights_clusters_url + ']')
+        logger.info('Flight Cluster URL: [' + self.flights_clusters_url + ']')
 
     def get_flight_id(self, apikey):
         raw_flights_clusters = requests.get(self.flights_clusters_url, headers={'X-Apikey': apikey})
         json_flights_clusters = json.loads(raw_flights_clusters.text)
-        return str(json_flights_clusters['clusters'][0]['segments'][0]['choices'][0]['id']) \
-               + '*' + str(json_flights_clusters['clusters'][0]['segments'][1]['choices'][0]['id'])
+        try:
+            return str(json_flights_clusters['clusters'][0]['segments'][0]['choices'][0]['id']) \
+                + '*' + str(json_flights_clusters['clusters'][0]['segments'][1]['choices'][0]['id'])
+        except IndexError as no_availability:
+            logger.error(ERR_NO_AVAILABILITY + str(no_availability))
 
 
 class InputDefinitions:

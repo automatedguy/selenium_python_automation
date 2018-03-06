@@ -166,17 +166,17 @@ class Checkout(BasePage):
 
             if not filled.get("passenger_done"):
                 filled.update(dict.fromkeys(["passenger_done"], PassengerSection(
-                    self.driver, self.country_site, self.input_definitions
+                    self.driver, self.input_definitions, self.country_site
                 ).populate_passengers_info()))
 
             if not filled.get("emergency_contact_done"):
                 filled.update(dict.fromkeys(["emergency_contact_done"], EmergencyContactSection(
-                    self.driver, self.input_definitions
+                    self.driver, self.input_definitions, self.country_site
                 ).populate_emergency_contact()))
 
             if not filled.get("billing_done"):
                 filled.update(dict.fromkeys(["billing_done"], BillingSection(
-                    self.driver, self.country_site, self.input_definitions
+                    self.driver, self.input_definitions, self.country_site
                 ).populate_billing_info()))
 
             if not filled.get("contact_done"):
@@ -220,15 +220,15 @@ class CrossSelling(Checkout):
 class PassengerSection(Checkout):
     """"Passenger Section"""
 
-    def __init__(self, driver, country_site, input_definitions):
+    def __init__(self, driver, input_definitions, country_site):
         super(PassengerSection, self).__init__(driver)
-        super(PassengerSection, self).__init__(country_site)
         super(PassengerSection, self).__init__(input_definitions)
+        super(PassengerSection, self).__init__(country_site)
         self.driver = driver
+        self.input_definitions = input_definitions
         self.country_site = country_site
         self.document_type_options = None
         self.gender_options = None
-        self.input_definitions = input_definitions
 
     __first_name_lct = PassengerSectionLct.FIRST_NAME
     __first_name_desc = PassengerSectionLct.FIRST_NAME_DESC
@@ -408,13 +408,13 @@ class PassengerSection(Checkout):
 class BillingSection(Checkout):
     """ Billing Section """
 
-    def __init__(self, driver, country_site, input_definitions):
+    def __init__(self, driver, input_definitions, country_site):
         super(BillingSection, self).__init__(driver)
-        super(BillingSection, self).__init__(country_site)
         super(BillingSection, self).__init__(input_definitions)
+        super(BillingSection, self).__init__(country_site)
         self.driver = driver
-        self.country_site = country_site
         self.input_definitions = input_definitions
+        self.country_site = country_site
         self.fiscal_type_options = None
         self.states_options = None
 
@@ -595,8 +595,8 @@ class ContactSection(Checkout):
         super(ContactSection, self).__init__(country_site)
         self.driver = driver
         self.input_definitions = input_definitions
-        self.telephone_type_options = None
         self.country_site = country_site
+        self.telephone_type_options = None
 
     __email_lct = ContactSectionLct.EMAIL
     __email_desc = ContactSectionLct.EMAIL_DESC
@@ -697,10 +697,13 @@ class ContactSection(Checkout):
 class EmergencyContactSection(Checkout):
     """ Emergency Contact Section """
 
-    def __init__(self, driver, input_definitions):
+    def __init__(self, driver, input_definitions, country_site):
         super(EmergencyContactSection, self).__init__(driver)
+        super(EmergencyContactSection, self).__init__(input_definitions)
+        super(EmergencyContactSection, self).__init__(country_site)
         self.driver = driver
         self.input_definitions = input_definitions
+        self.country_site = country_site
         self.telephone_type_options = None
 
     __first_name_lct = EmergencyContactSection.FIRST_NAME
