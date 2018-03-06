@@ -36,7 +36,7 @@ class BasePage(object):
             CLEARING + '[' + description + ']'
         )
 
-    def print_section_tittle(self, tittle):
+    def print_tittle(self, tittle):
         self.print_separator()
         self.logger.info(tittle)
         self.print_separator()
@@ -381,11 +381,11 @@ class PassengerSection(Checkout):
     def populate_passengers_info(self):
 
         self.wait_for_element(PassengerSectionLct.FIRST_NAME, PASSENGERS_SECTION)
-        self.print_section_tittle(CHECKING_PASSENGERS_DISPLAYED)
+        self.print_tittle(CHECKING_PASSENGERS_DISPLAYED)
 
         if self.driver.find_element(*self.__first_name_lct).is_displayed():
             total_passengers = len(self.driver.find_elements(*self.__first_name_lct))
-            self.print_section_tittle(PASSENGERS_INFO + ' ' + str(total_passengers))
+            self.print_tittle(PASSENGERS_INFO + ' ' + str(total_passengers))
 
             for passenger in range(0, total_passengers):
                 self.filling_data(PASSENGER_NUM, str(passenger + 1))
@@ -563,11 +563,11 @@ class BillingSection(Checkout):
             )
 
     def populate_billing_info(self):
-        self.print_section_tittle(CHECKING_BILLING_SECTION_DISPLAYED)
+        self.print_tittle(CHECKING_BILLING_SECTION_DISPLAYED)
 
         if self.driver.find_element(*self.__fiscal_name_lct).is_displayed():
 
-            self.print_section_tittle(POPULATING_BILLING_SECTION)
+            self.print_tittle(POPULATING_BILLING_SECTION)
 
             self.fill_fiscal_name('Panqueca')
             self.select_fiscal_type(self.get_rand_fiscal_type())
@@ -676,10 +676,10 @@ class ContactSection(Checkout):
             )
 
     def populate_contact_info(self):
-        self.print_section_tittle(CHECKING_CONTACTS_DISPLAYED)
+        self.print_tittle(CHECKING_CONTACTS_DISPLAYED)
 
         if self.driver.find_element(*self.__email_lct).is_displayed():
-            self.print_section_tittle(POPULATING_CONTACT_INFO)
+            self.print_tittle(POPULATING_CONTACT_INFO)
 
             self.fill_email('email@google.com')
             self.fill_email_confirmation('email@google.com')
@@ -780,10 +780,10 @@ class EmergencyContactSection(Checkout):
             )
 
     def populate_emergency_contact(self):
-        self.print_section_tittle(CHECKING_EMERGENCY_CONTACTS_DISPLAYED)
+        self.print_tittle(CHECKING_EMERGENCY_CONTACTS_DISPLAYED)
 
         if self.driver.find_element(*self.__first_name_lct).is_displayed():
-            self.print_section_tittle(POPULATING_EMERGENCY_CONTACT_INFO)
+            self.print_tittle(POPULATING_EMERGENCY_CONTACT_INFO)
 
             self.fill_first_name(Utils().get_random_string(7, 10))
             self.fill_last_name(Utils().get_random_string(7, 10))
