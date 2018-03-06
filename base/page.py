@@ -65,7 +65,7 @@ class BasePage(object):
             SELECTING + '[' + description + '] : [' + option + ']'
         )
 
-    def selected_data(self, description, option):
+    def display_selected_data(self, description, option):
         self.logger.info(
             SELECTED + '[' + description + '] : [' + option + ']'
         )
@@ -84,8 +84,15 @@ class BasePage(object):
         self.selecting_data(description, option)
         selection = Select(self.driver.find_elements(*locator)[index])
         selection.select_by_index(option)
-        self.selected_data(description, selection.first_selected_option.text)
+        self.display_selected_data(description, selection.first_selected_option.text)
         return
+
+    def clicking(self, description):
+        self.logger.info(CLICKING + description)
+
+    def click_button(self, description, *locator):
+        self.clicking(description)
+        self.driver.find_element(*locator).click()
 
     def print_separator(self):
         self.logger.info('****************************************************')
@@ -106,6 +113,9 @@ class Checkout(BasePage):
         self.country_site = country_site
         self.country_language = country_language
         self.input_definitions = None
+
+    __next_button_lct = CheckoutPageLct.NEXT_BUTTON
+    __next_button_desc = CheckoutPageLct.NEXT_BUTTON_DESC
 
     def set_input_definitions(self):
         self.input_definitions = InputDefinitions(
@@ -177,8 +187,10 @@ class Checkout(BasePage):
                     self.driver, self.input_definitions, self.country_site
                 ).populate_contact_info()
 
-            # TODO: do something decent with this line below i.e define next button :)
-            self.driver.find_element(By.CSS_SELECTOR, '.am-wizard-footer button.button-next').click()
+            self.click_button(
+                self.__next_button_desc,
+                self.__next_button_lct
+            )
 
 
 class CrossSelling(Checkout):

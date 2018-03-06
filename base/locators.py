@@ -3,6 +3,11 @@
 from selenium.webdriver.common.by import By
 
 
+class CheckoutPageLct(object):
+    NEXT_BUTTON = (By.CSS_SELECTOR, '.am-wizard-footer button.button-next')
+    NEXT_BUTTON_DESC = 'Next button'
+
+
 class LoginModalLct(object):
 
     CLOSE_BUTTON = (By.CSS_SELECTOR, '#section .header-modal span')
