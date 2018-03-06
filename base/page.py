@@ -140,53 +140,49 @@ class Checkout(BasePage):
         with open(full_path, 'w') as outfile:
             json.dump(self.input_definitions, outfile)
 
-    def populate_checkout_info(self, add_cross_selling):
+    def populate_checkout_sections(self, add_cross_selling):
         """ This method will deal with the initial load """
 
-        # Get the input definitions for the first time
         self.set_input_definitions()
 
-        # Come on!! Get this from the input definitions!!
-        # and that will be better.
-        passenger_done = False
-        billing_done = False
-        contact_done = False
-        cross_selling_done = False
-        emergency_contact_done = False
+        flags = dict.fromkeys(["passenger_done",
+                               "billing_done",
+                               "contact_done",
+                               "cross_selling_done",
+                               "emergency_contact_done"], False)
 
         if not add_cross_selling:
-            cross_selling_done = True
-            emergency_contact_done = True
+            flags.update(dict.fromkeys(["cross_selling_done",
+                                        "emergency_contact_done"], True))
 
-        # Populate the different sections iterating and trying
-        while not passenger_done or not billing_done or not contact_done or not cross_selling_done:
+        while not flags.get("passenger_done") or not flags.get("billing_done") or \
+                not flags.get("contact_done") or not flags.get("cross_selling_done"):
 
-            if not cross_selling_done:
-                cross_selling_done = CrossSelling(
+            if not flags.get("cross_selling_done"):
+                flags.update(dict.fromkeys(["cross_selling_done"], CrossSelling(
                     self.driver
-                ).populate_cross_selling_info()
-
+                ).populate_cross_selling_info()))
                 self.set_input_definitions()
 
-            if not passenger_done:
-                passenger_done = PassengerSection(
+            if not flags.get("passenger_done"):
+                flags.update(dict.fromkeys(["passenger_done"], PassengerSection(
                     self.driver, self.country_site, self.input_definitions
-                ).populate_passengers_info()
+                ).populate_passengers_info()))
 
-            if not emergency_contact_done:
-                emergency_contact_done = EmergencyContactSection(
+            if not flags.get("emergency_contact_done"):
+                flags.update(dict.fromkeys(["emergency_contact_done"], EmergencyContactSection(
                     self.driver, self.input_definitions
-                ).populate_emergency_contact()
+                ).populate_emergency_contact()))
 
-            if not billing_done:
-                billing_done = BillingSection(
+            if not flags.get("billing_done"):
+                flags.update(dict.fromkeys(["billing_done"], BillingSection(
                     self.driver, self.country_site, self.input_definitions
-                ).populate_billing_info()
+                ).populate_billing_info()))
 
-            if not contact_done:
-                contact_done = ContactSection(
+            if not flags.get("contact_done"):
+                flags.update(dict.fromkeys(["contact_done"], ContactSection(
                     self.driver, self.input_definitions, self.country_site
-                ).populate_contact_info()
+                ).populate_contact_info()))
 
             self.click_button(
                 self.__next_button_desc,
@@ -322,7 +318,7 @@ class PassengerSection(Checkout):
             index,
             birthday,
             self.__birthday_desc,
-            * self.__birthday_lct
+            *self.__birthday_lct
         )
 
     def select_birthmonth(self, index, birthmonth):
@@ -908,7 +904,6 @@ class Utils:
             'NIT': '12345678900',
             '': '',
             '': ''
-
 
         }
         document_number.get(country_site, 'Invalid country' + country_site)

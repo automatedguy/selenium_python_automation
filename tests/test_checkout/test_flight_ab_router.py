@@ -32,7 +32,7 @@ class FlightTest(BaseTest):
 
         checkout = self.open_checkout_ab_router(self.ab_router_url, self.channel, self.api_host, self.country_site, self.country_language)
 
-        checkout.populate_checkout_info(add_cross_selling)
+        checkout.populate_checkout_sections(add_cross_selling)
 
         logger.info('Just for the wait...')
 
@@ -43,7 +43,7 @@ class FlightTest(BaseTest):
 
         checkout = self.open_checkout_ab_router(self.ab_router_url, self.channel, self.api_host, self.country_site, self.country_language)
 
-        checkout.populate_checkout_info(add_cross_selling)
+        checkout.populate_checkout_sections(add_cross_selling)
 
         logger.info('Just for the wait...')
 
@@ -55,7 +55,7 @@ class FlightTest(BaseTest):
         checkout = self.open_checkout_ab_router(self.ab_router_url, self.channel, self.api_host, self.country_site,
                                                 self.country_language)
 
-        checkout.populate_checkout_info(add_cross_selling)
+        checkout.populate_checkout_sections(add_cross_selling)
 
         logger.info('Just for the wait...')
 
@@ -67,7 +67,7 @@ class FlightTest(BaseTest):
         checkout = self.open_checkout_ab_router(self.ab_router_url, self.channel, self.api_host, self.country_site,
                                                 self.country_language)
 
-        checkout.populate_checkout_info(add_cross_selling)
+        checkout.populate_checkout_sections(add_cross_selling)
 
         checkout.save_input_definitions(self.product)
 
