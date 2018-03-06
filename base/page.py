@@ -87,12 +87,13 @@ class BasePage(object):
         self.display_selected_data(description, selection.first_selected_option.text)
         return
 
-    def clicking(self, description):
-        self.logger.info(CLICKING + description)
+    def clicking(self, description, button_text=None):
+        self.logger.info(CLICKING + description + ' ' + button_text)
 
     def click_button(self, description, *locator):
-        self.clicking(description)
-        self.driver.find_element(*locator).click()
+        button = self.driver.find_element(*locator)
+        self.clicking(description, button.text)
+        button.click()
 
     def print_separator(self):
         self.logger.info('****************************************************')
@@ -189,7 +190,7 @@ class Checkout(BasePage):
 
             self.click_button(
                 self.__next_button_desc,
-                self.__next_button_lct
+                *self.__next_button_lct
             )
 
 
