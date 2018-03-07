@@ -26,6 +26,7 @@ class BaseTest(unittest.TestCase):
     base_url = BASE_URL
     browser = BROWSER
     country = COUNTRY
+    full_base_url = None
 
     logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
     logger = logging.getLogger(__name__)
@@ -69,7 +70,7 @@ class BaseTest(unittest.TestCase):
         choose_browser.get(self.browser, self.set_nothing)()
 
         self.driver.maximize_window()
-        self.base_url = self.base_url + self.get_country_domain()
+        self.full_base_url = self.base_url + self.get_country_domain()
 
     def tearDown(self):
         self.logger.info(TEARING_DOWN + BROWSER)
