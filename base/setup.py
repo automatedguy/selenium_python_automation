@@ -42,33 +42,36 @@ class BaseTest(unittest.TestCase):
 
             cls.setUp = setUpOverride
 
-    def setUp(self):
-        pass
+    def set_chrome(self):
+        if 'jenkins' in socket.gethostname() or FORCE_HEADLESS:
+            logger.info('Setting headless mode')
+            chrome_options = Options()
+            chrome_options.add_argument("--headless")
+            chrome_options.add_argument("--window-size=1920x1080")
+            # chrome_options.add_argument('--disable-gpu')  # Last I checked this was necessary.
+            self.driver = webdriver.Chrome(PATH("../resources/chromedriver"), chrome_options=chrome_options)
+        else:
+            self.driver = webdriver.Chrome(PATH("../resources/chromedriver"))
 
+    def set_firefox(self):
+        self.driver = webdriver.Firefox()
+
+    def set_nothing(self):
+        self.fail(VALID_BROWSERS + CHROME + ' - ' + FIREFOX)
+
+    def setUp(self):
         logger.info(SETTING_UP + self.browser)
 
-        if self.browser == CHROME:
-            if 'jenkins' in socket.gethostname() or FORCE_HEADLESS:
-                logger.info('Setting headless mode')
-                chrome_options = Options()
-                chrome_options.add_argument("--headless")
-                chrome_options.add_argument("--window-size=1920x1080")
-                # chrome_options.add_argument('--disable-gpu')  # Last I checked this was necessary.
-                self.driver = webdriver.Chrome(PATH("../resources/chromedriver"), chrome_options=chrome_options)
-            else:
-                self.driver = webdriver.Chrome(PATH("../resources/chromedriver"))
+        set_browser = {
+            CHROME: self.set_chrome(),
+            FIREFOX: self.set_firefox()
+        }
 
-        elif self.browser == FIREFOX:
-            self.driver = webdriver.Firefox()
-
-        else:
-            logger(VALID_BROWSERS + CHROME + ' - ' + FIREFOX)
+        self.driver = set_browser.get(self.browser, self.set_nothing())
         self.driver.maximize_window()
         self.base_url = self.base_url + self.get_country_domain()
 
     def tearDown(self):
-        pass
-
         logger.info(TEARING_DOWN + BROWSER)
         self.driver.quit()
 
