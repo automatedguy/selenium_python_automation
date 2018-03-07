@@ -58,16 +58,18 @@ class BaseTest(unittest.TestCase):
 
     def set_nothing(self):
         self.fail(VALID_BROWSERS + CHROME + ' - ' + FIREFOX)
+        return self.browser
 
-    def setUp(self):
+    def start_browser(self):
         self.logger.info(SETTING_UP + self.browser)
-
-        set_browser = {
+        browser = {
             CHROME: self.set_chrome(),
             FIREFOX: self.set_firefox()
         }
+        return browser.get(self.browser, 'Invalid Browser' + self.set_nothing())
 
-        set_browser.get(self.browser, self.set_nothing())
+    def setUp(self):
+        self.start_browser()
         self.driver.maximize_window()
         self.base_url = self.base_url + self.get_country_domain()
 

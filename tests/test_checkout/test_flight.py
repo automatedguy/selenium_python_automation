@@ -8,8 +8,6 @@ class FlightTest(BaseTest):
 
     # Test parameters
     product_route = '?product=flights'
-    origin = BaseTest.get_flight_origin()
-    destination = 'MIA'
     departure_date = 50
     return_date = departure_date + 20
     adults = '1'
@@ -17,6 +15,9 @@ class FlightTest(BaseTest):
     infants = '1'
 
     def setUp(self):
+        self.origin = self.get_flight_origin()
+        self.destination = 'MIA'
+
         self.cart_id = Cart(
             self.get_api_host(),
             self.get_channel(),
