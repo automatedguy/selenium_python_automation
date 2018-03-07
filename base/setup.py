@@ -15,9 +15,6 @@ PATH = lambda p: os.path.abspath(
     os.path.join(os.path.dirname(__file__), p)
 )
 
-logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
-logger = logging.getLogger(__name__)
-
 # Test parameters
 BASE_URL = ST_ALMUNDO_COM
 BROWSER = CHROME
@@ -29,6 +26,9 @@ class BaseTest(unittest.TestCase):
     base_url = BASE_URL
     browser = BROWSER
     country = COUNTRY
+
+    logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
+    logger = logging.getLogger(__name__)
 
     @classmethod
     def setUpClass(cls):
@@ -67,7 +67,7 @@ class BaseTest(unittest.TestCase):
             FIREFOX: self.set_firefox()
         }
 
-        self.driver = set_browser.get(self.browser, self.set_nothing())
+        set_browser.get(self.browser, self.set_nothing())
         self.driver.maximize_window()
         self.base_url = self.base_url + self.get_country_domain()
 
@@ -77,13 +77,10 @@ class BaseTest(unittest.TestCase):
 
     def open_checkout(self, cart_id, checkout_parameter, product_route,
                       channel, api_host, country_site, country_language):
-
         self.domain_url = self.base_url
         checkout_route = 'checkout/'
         checkout_url = self.domain_url + checkout_route + cart_id + product_route + checkout_parameter
-
         logger.info('Opening checkout URL: [' + checkout_url + ']')
-
         self.driver.get(checkout_url)
 
         from base.page import Checkout
@@ -92,60 +89,53 @@ class BaseTest(unittest.TestCase):
     def open_checkout_ab_router(self, ab_router_url, channel, api_host, country_site, country_language):
         ab_checkout_url = 'https://' + ab_router_url
         logger.info('Opening AB checkout URL: [' + ab_checkout_url + ']')
-
         self.driver.get(ab_checkout_url)
-
-        cart_id = ab_checkout_url[(ab_checkout_url.index('checkout/')+len('checkout/')):ab_checkout_url.index('?')]
+        cart_id = ab_checkout_url[(ab_checkout_url.index('checkout/') + len('checkout/')):ab_checkout_url.index('?')]
 
         from base.page import Checkout
         return Checkout(self.driver, cart_id, channel, api_host, country_site, country_language)
 
-    @staticmethod
-    def get_country_domain():
+    def get_country_domain(self):
         country_domain = {
             ARGENTINA: '.ar/',
             COLOMBIA: '.co/',
             MEXICO: '.mx/',
             BRASIL: '.br/'
         }
-        logger.info('Getting country domain: [' + country_domain.get(COUNTRY) + ']')
-        return country_domain.get(COUNTRY, 'Invalid Country' + COUNTRY)
+        logger.info('Getting country domain: [' + country_domain.get(self.country) + ']')
+        return country_domain.get(self.country, 'Invalid Country' + self.country)
 
-    @staticmethod
-    def get_country_site():
+    def get_country_site(self):
         country_site = {
             ARGENTINA: 'ARG',
             COLOMBIA: 'COL',
             MEXICO: 'MEX',
             BRASIL: 'BRA'
         }
-        logger.info('Getting country site: [' + country_site.get(COUNTRY) + ']')
-        return country_site.get(COUNTRY, 'Invalid Country' + COUNTRY)
+        logger.info('Getting country site: [' + country_site.get(self.country) + ']')
+        return country_site.get(self.country, 'Invalid Country' + self.country)
 
-    @staticmethod
-    def get_country_currency():
+    def get_country_currency(self):
         country_currency = {
             ARGENTINA: 'ARS',
             COLOMBIA: 'COL',
             MEXICO: 'MXN',
             BRASIL: 'BRS'
         }
-        logger.info('Getting country currency: [' + country_currency.get(COUNTRY) + ']')
-        return country_currency.get(COUNTRY, 'Invalid Country' + COUNTRY)
+        logger.info('Getting country currency: [' + country_currency.get(self.country) + ']')
+        return country_currency.get(self.country, 'Invalid Country' + self.country)
 
-    @staticmethod
-    def get_country_language():
+    def get_country_language(self):
         country_language = {
             ARGENTINA: 'es',
             COLOMBIA: 'es',
             MEXICO: 'es',
             BRASIL: 'pt'
         }
-        logger.info('Getting country language: [' + country_language.get(COUNTRY) + ']')
-        return country_language.get(COUNTRY, 'Invalid Country' + COUNTRY)
+        logger.info('Getting country language: [' + country_language.get(self.country) + ']')
+        return country_language.get(self.country, 'Invalid Country' + self.country)
 
-    @staticmethod
-    def get_channel():
+    def get_channel(self):
         channel = {
             ALMUNDO_COM: 'almundo-web',
             ST_ALMUNDO_COM: 'almundo-web',
@@ -159,11 +149,10 @@ class BaseTest(unittest.TestCase):
             RET_ST_ALMUNDO_COM: 'retail',
             RET_DV_ALMUNDO_COM: 'retail'
         }
-        logger.info('Getting channel name: [' + channel.get(BASE_URL) + ']')
-        return channel.get(BASE_URL, 'Invalid URL')
+        logger.info('Getting channel name: [' + channel.get(self.base_url) + ']')
+        return channel.get(self.base_url, 'Invalid URL')
 
-    @staticmethod
-    def get_api_host():
+    def get_api_host(self):
         api_host = {
             ALMUNDO_COM: API_ALMUNDO_COM,
             ST_ALMUNDO_COM: APIST_ALMUNDO_COM,
@@ -176,10 +165,9 @@ class BaseTest(unittest.TestCase):
             RET_ALMUNDO_COM: API_ALMUNDO_COM,
             RET_ST_ALMUNDO_COM: APIST_ALMUNDO_COM,
             RET_DV_ALMUNDO_COM: APIDV_ALMUNDO_COM,
-
         }
-        logger.info('Getting API host: [' + api_host.get(BASE_URL) + ']')
-        return api_host.get(BASE_URL, 'Invalid URL' + BASE_URL)
+        logger.info('Getting API host: [' + api_host.get(self.base_url) + ']')
+        return api_host.get(self.base_url, 'Invalid URL' + self.base_url)
 
     @staticmethod
     def get_date(add_days):
@@ -187,54 +175,41 @@ class BaseTest(unittest.TestCase):
         new_time = time_now + datetime.timedelta(add_days)
         return new_time.strftime("%Y-%m-%d")
 
-    @staticmethod
-    def get_flight_origin():
+    def get_flight_origin(self):
         flight_origin = {
             ARGENTINA: 'BUE',
             COLOMBIA: 'BOG',
             MEXICO: 'MEX',
             BRASIL: 'SAO'
         }
-        logger.info('Getting flight origin for ' + COUNTRY + ' :[' + flight_origin.get(COUNTRY) + ']')
-        return flight_origin.get(COUNTRY)
+        logger.info('Getting flight origin for ' + COUNTRY + ' :[' + flight_origin.get(self.country) + ']')
+        return flight_origin.get(self.country)
 
-    def get_flight_cart_id(self, origin, destination, departure_date, return_date, site, language, adults, children, infants):
-        apikeys = Apikeys()
-        channel_apikey = apikeys.get_apikey(BaseTest.get_channel())
+    def get_flight_ab_router_url(self, origin, destination,
+                                 departure_date, return_date,
+                                 site, language,
+                                 adults, children, infants):
 
-        flights_clusters = FlightsClusters(BaseTest.get_api_host(), origin, destination, departure_date, return_date,
-                                           site, language,
-                                           adults, children, infants)
+        channel_apikey = Apikeys().get_apikey(self.get_channel())
 
-        product_id = flights_clusters.get_flight_id(channel_apikey)
+        product_id = FlightsClusters(
+            self.get_api_host(),
+            origin, destination,
+            departure_date, return_date,
+            site, language,
+            adults, children, infants
+        ).get_flight_id(channel_apikey)
+
         try:
-            logger.info('Flight ID: [' + product_id + ']')
+            self.logger.info('Flight ID: [' + product_id + ']')
         except TypeError as no_availability:
-            logger.error(ERR_NO_AVAILABILITY + str(no_availability))
+            self.logger.error(ERR_NO_AVAILABILITY + str(no_availability))
             self.tearDown()
             self.fail()
 
-        cart = Cart(BaseTest.get_api_host(), site, language)
-        cart_id = cart.get_cart_id(channel_apikey, product_id)
-
-        return cart_id
-
-    @staticmethod
-    def get_flight_ab_router_url(origin, destination, departure_date, return_date, site, language, adults, children, infants):
-        apikeys = Apikeys()
-        channel_apikey = apikeys.get_apikey(BaseTest.get_channel())
-
-        flights_clusters = FlightsClusters(BaseTest.get_api_host(), origin, destination, departure_date, return_date,
-                                           site, language,
-                                           adults, children, infants)
-
-        product_id = flights_clusters.get_flight_id(channel_apikey)
-        logger.info('Flight ID: [' + product_id + ']')
-
-        ab_router = AbRouterUrl(BASE_URL + BaseTest.get_country_domain(), site, language)
-        ab_router_url = ab_router.get_ab_router_cart_id(channel_apikey, product_id)
-
-        return ab_router_url
+        return AbRouterUrl(self.base_url + self.get_country_domain(),
+                           site, language
+                           ).get_ab_router_cart_id(channel_apikey, product_id)
 
 
 if __name__ == "__main__":

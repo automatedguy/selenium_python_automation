@@ -15,16 +15,11 @@ class FlightTest(BaseTest):
     infants = '1'
 
     def setUp(self):
-
-        self.api_host = self.get_api_host()
-        self.channel = self.get_channel()
-        self.country_site = self.get_country_site()
-        self.country_language = self.get_country_language()
-
-        self.cart_id = self.get_flight_cart_id(self.origin, self.destination,
-                                               self.get_date(self.departure_date), self.get_date(self.return_date),
-                                               self.country_site, self.country_language,
-                                               self.adults, self.children, self.infants)
+        self.cart_id = self.get_flight_cart_id(
+            self.origin, self.destination,
+            self.get_date(self.departure_date), self.get_date(self.return_date),
+            self.adults, self.children, self.infants
+        )
 
     def test_no_parameter(self):
         """ Load test_checkout without additional parameters"""
@@ -36,10 +31,10 @@ class FlightTest(BaseTest):
             self.cart_id,
             checkout_parameter,
             self.product_route,
-            self.channel,
-            self.api_host,
-            self.country_site,
-            self.country_language
+            self.get_channel(),
+            self.get_api_host(),
+            self.get_country_site(),
+            self.get_country_language()
         )
 
         checkout.populate_sections(cross_selling)

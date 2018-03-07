@@ -5,25 +5,26 @@ import requests
 
 from base.constants import *
 
-logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
-logger = logging.getLogger(__name__)
+
+class ApiService(object):
+    logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
+    logger = logging.getLogger(__name__)
 
 
-class Apikeys:
+class Apikeys(ApiService):
     def __init__(self):
         raw_channels_info = requests.get(ABS_ALMUNDO_IT)
         self.json_channels_info = json.loads(raw_channels_info.text)
 
     def get_apikey(self, channel_name):
-        # logger.info('Looking for apikey corresponding to Site: [' + BASE_URL + ']')
         for channel in self.json_channels_info:
             if channel['name'] == channel_name:
-                logger.info('Apikey for [' + channel_name + '] found [' + channel['value'] + ']')
+                self.logger.info('Apikey for [' + channel_name + '] found [' + channel['value'] + ']')
                 break
         return channel['value']
 
 
-class Autocomplete:
+class Autocomplete(ApiService):
     def __init__(self, place, entity_type):
         self.autocomplete_url = APIST_ALMUNDO_COM \
                                 + '/api/autocomplete/suggestions/es?' \
@@ -35,12 +36,12 @@ class Autocomplete:
         json_autocomplete_suggestions = json.loads(raw_autocomplete_suggestions.text)
         for entities in json_autocomplete_suggestions['suggestions'][0]['entities']:
             if location_name in entities['label']:
-                logger.info('Location Found:' + entities['label'])
+                self.logger.info('Location Found:' + entities['label'])
                 break
         return entities['id']
 
 
-class HotelsAvailabilities:
+class HotelsAvailabilities(ApiService):
     def __init__(self, entity_id, entity_type, checkin, checkout, room, language, site):
         self.hotel_availabilities_url = APIST_ALMUNDO_COM \
                                         + '/api/hotels/v2/availabilities?' \
@@ -58,7 +59,7 @@ class HotelsAvailabilities:
         return json_hotels_availabilities['availabilities'][0]['id']
 
 
-class HotelsDetails:
+class HotelsDetails(ApiService):
     def __init__(self, hotel_id, checkin, checkout, room, language, site):
         self.hotels_details_url = APIST_ALMUNDO_COM \
                                   + '/api/hotels/v2/detail?' \
@@ -75,7 +76,7 @@ class HotelsDetails:
         return json_hotel_details
 
 
-class FlightsClusters:
+class FlightsClusters(ApiService):
     def __init__(self, api_host, origin, destination, departure_date, return_date, site, language, adults, children, infants):
         self.flights_clusters_url = api_host \
                                     + '/api/flights/clusters?' \
@@ -87,7 +88,7 @@ class FlightsClusters:
                                     + '&children=' + children \
                                     + '&infants=' + infants
 
-        logger.info('Flight Cluster URL: [' + self.flights_clusters_url + ']')
+        self.logger.info('Flight Cluster URL: [' + self.flights_clusters_url + ']')
 
     def get_flight_id(self, apikey):
         raw_flights_clusters = requests.get(self.flights_clusters_url, headers={'X-Apikey': apikey})
@@ -96,10 +97,10 @@ class FlightsClusters:
             return str(json_flights_clusters['clusters'][0]['segments'][0]['choices'][0]['id']) \
                 + '*' + str(json_flights_clusters['clusters'][0]['segments'][1]['choices'][0]['id'])
         except IndexError as no_availability:
-            logger.error(ERR_NO_AVAILABILITY + str(no_availability))
+            self.logger.error(ERR_NO_AVAILABILITY + str(no_availability))
 
 
-class InputDefinitions:
+class InputDefinitions(ApiService):
     def __init__(self, input_def_host, cart_id, country, language):
         self.input_def_url = input_def_host \
                              + '/api/v3/cart/' + cart_id \
@@ -108,20 +109,27 @@ class InputDefinitions:
         self.json_input_definitions = None
 
     def get_input_definitions(self, apikey):
-        logger.info('Getting input definitions...')
+        self.logger.info('Getting input definitions...')
         raw_input_definitions = requests.get(self.input_def_url, headers={'X-Apikey': apikey, 'Version': 'v3'})
         self.json_input_definitions = json.loads(raw_input_definitions.text)
-        logger.info("Input definitions retrieved!" + str(self.json_input_definitions))
+        self.logger.info("Input definitions retrieved!" + str(self.json_input_definitions))
         return self.json_input_definitions
 
 
-class Cart:
-    def __init__(self, api_host, site, language):
-        self.book_url = api_host \
+class Cart(ApiService):
+    def __init__(self, api_host, channel, site, language):
+        self.channel = channel
+        self.api_host = api_host
+        self.site = site
+        self.language = language
+        self.book_url = None
+
+    def set_book_utl(self):
+        self.book_url = self.api_host \
                         + '/api/v3/cart/' \
-                        + '?site=' + site \
-                        + '&language=' + language
-        logger.info('Cart Book URL: [' + self.book_url + ']')
+                        + '?site=' + self.site \
+                        + '&language=' + self.language
+        self.logger.info('Cart Book URL: [' + self.book_url + ']')
 
     def get_cart_id(self, apikey, flight_id):
         data = {"products": [{"type": "FLIGHT", "id": flight_id}]}
@@ -129,14 +137,35 @@ class Cart:
         json_cart_book_id = json.loads(raw_cart_book_id.text)
         return json_cart_book_id['cart_id']
 
+    def get_flight_cart_id(self, origin, destination,
+                           departure_date, return_date,
+                           adults, children, infants):
 
-class AbRouterUrl:
+        channel_apikey = Apikeys().get_apikey(self.channel)
+
+        product_id = FlightsClusters(
+            self.api_host,
+            origin, destination,
+            departure_date, return_date,
+            self.site, self.language,
+            adults, children, infants
+        ).get_flight_id(channel_apikey)
+
+        try:
+            self.logger.info('Flight ID: [' + product_id + ']')
+        except TypeError as no_availability:
+            self.logger.error(ERR_NO_AVAILABILITY + str(no_availability))
+            return None
+        return self.get_cart_id(channel_apikey, product_id)
+
+
+class AbRouterUrl(ApiService):
     def __init__(self, api_host, site, language):
         self.book_url = api_host \
                         + 'chkabrouter/cart' \
                         + '?site=' + site \
                         + '&language=' + language
-        logger.info('Ab Router Book URL: [' + self.book_url + ']')
+        self.logger.info('Ab Router Book URL: [' + self.book_url + ']')
 
     def get_ab_router_cart_id(self, apikey, flight_id):
         data = {"products": [{"type": "FLIGHT", "id": flight_id}]}
