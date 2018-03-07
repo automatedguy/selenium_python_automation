@@ -14,7 +14,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from random import randint, choice
 
 from base.constants import *
-from services import Apikeys, InputDefinitions
+from services import InputDefinitions
 
 
 class BasePage(object):
@@ -105,11 +105,11 @@ class BasePage(object):
 class Checkout(BasePage):
     """Checkout Page class"""
 
-    def __init__(self, driver, cart_id='', channel='', api_host='', country_site='', country_language=''):
+    def __init__(self, driver, cart_id='', apikey='', api_host='', country_site='', country_language=''):
         super(Checkout, self).__init__(driver)
         self.driver = driver
         self.cart_id = cart_id
-        self.channel = channel
+        self.apikey = apikey
         self.api_host = api_host
         self.country_site = country_site
         self.country_language = country_language
@@ -124,11 +124,7 @@ class Checkout(BasePage):
             self.cart_id,
             self.country_site,
             self.country_language
-        ).get_input_definitions(
-            Apikeys().get_apikey(
-                self.channel
-            )
-        )
+        ).get_input_definitions(self.apikey)
 
     def save_input_definitions(self, product):
         file_path = '/home/gabrielcespedes/projects/input_definitions/'

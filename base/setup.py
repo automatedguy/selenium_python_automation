@@ -185,32 +185,5 @@ class BaseTest(unittest.TestCase):
         self.logger.info('Getting flight origin for ' + COUNTRY + ' :[' + flight_origin.get(self.country) + ']')
         return flight_origin.get(self.country)
 
-    def get_flight_ab_router_url(self, origin, destination,
-                                 departure_date, return_date,
-                                 site, language,
-                                 adults, children, infants):
-
-        channel_apikey = Apikeys().get_apikey(self.get_channel())
-
-        product_id = FlightsClusters(
-            self.get_api_host(),
-            origin, destination,
-            departure_date, return_date,
-            site, language,
-            adults, children, infants
-        ).get_flight_id(channel_apikey)
-
-        try:
-            self.logger.info('Flight ID: [' + product_id + ']')
-        except TypeError as no_availability:
-            self.logger.error(ERR_NO_AVAILABILITY + str(no_availability))
-            self.tearDown()
-            self.fail()
-
-        return AbRouterUrl(self.base_url + self.get_country_domain(),
-                           site, language
-                           ).get_ab_router_cart_id(channel_apikey, product_id)
-
-
 if __name__ == "__main__":
     unittest.main(failfast=True)
