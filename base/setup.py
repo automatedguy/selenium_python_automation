@@ -44,7 +44,7 @@ class BaseTest(unittest.TestCase):
 
     def set_chrome(self):
         if 'jenkins' in socket.gethostname() or FORCE_HEADLESS:
-            logger.info('Setting headless mode')
+            self.logger.info('Setting headless mode')
             chrome_options = Options()
             chrome_options.add_argument("--headless")
             chrome_options.add_argument("--window-size=1920x1080")
@@ -60,7 +60,7 @@ class BaseTest(unittest.TestCase):
         self.fail(VALID_BROWSERS + CHROME + ' - ' + FIREFOX)
 
     def setUp(self):
-        logger.info(SETTING_UP + self.browser)
+        self.logger.info(SETTING_UP + self.browser)
 
         set_browser = {
             CHROME: self.set_chrome(),
@@ -72,7 +72,7 @@ class BaseTest(unittest.TestCase):
         self.base_url = self.base_url + self.get_country_domain()
 
     def tearDown(self):
-        logger.info(TEARING_DOWN + BROWSER)
+        self.logger.info(TEARING_DOWN + BROWSER)
         self.driver.quit()
 
     def open_checkout(self, cart_id, checkout_parameter, product_route,
@@ -80,7 +80,7 @@ class BaseTest(unittest.TestCase):
         self.domain_url = self.base_url
         checkout_route = 'checkout/'
         checkout_url = self.domain_url + checkout_route + cart_id + product_route + checkout_parameter
-        logger.info('Opening checkout URL: [' + checkout_url + ']')
+        self.logger.info('Opening checkout URL: [' + checkout_url + ']')
         self.driver.get(checkout_url)
 
         from base.page import Checkout
@@ -88,7 +88,7 @@ class BaseTest(unittest.TestCase):
 
     def open_checkout_ab_router(self, ab_router_url, channel, api_host, country_site, country_language):
         ab_checkout_url = 'https://' + ab_router_url
-        logger.info('Opening AB checkout URL: [' + ab_checkout_url + ']')
+        self.logger.info('Opening AB checkout URL: [' + ab_checkout_url + ']')
         self.driver.get(ab_checkout_url)
         cart_id = ab_checkout_url[(ab_checkout_url.index('checkout/') + len('checkout/')):ab_checkout_url.index('?')]
 
@@ -102,7 +102,7 @@ class BaseTest(unittest.TestCase):
             MEXICO: '.mx/',
             BRASIL: '.br/'
         }
-        logger.info('Getting country domain: [' + country_domain.get(self.country) + ']')
+        self.logger.info('Getting country domain: [' + country_domain.get(self.country) + ']')
         return country_domain.get(self.country, 'Invalid Country' + self.country)
 
     def get_country_site(self):
@@ -112,7 +112,7 @@ class BaseTest(unittest.TestCase):
             MEXICO: 'MEX',
             BRASIL: 'BRA'
         }
-        logger.info('Getting country site: [' + country_site.get(self.country) + ']')
+        self.logger.info('Getting country site: [' + country_site.get(self.country) + ']')
         return country_site.get(self.country, 'Invalid Country' + self.country)
 
     def get_country_currency(self):
@@ -122,7 +122,7 @@ class BaseTest(unittest.TestCase):
             MEXICO: 'MXN',
             BRASIL: 'BRS'
         }
-        logger.info('Getting country currency: [' + country_currency.get(self.country) + ']')
+        self.logger.info('Getting country currency: [' + country_currency.get(self.country) + ']')
         return country_currency.get(self.country, 'Invalid Country' + self.country)
 
     def get_country_language(self):
@@ -132,7 +132,7 @@ class BaseTest(unittest.TestCase):
             MEXICO: 'es',
             BRASIL: 'pt'
         }
-        logger.info('Getting country language: [' + country_language.get(self.country) + ']')
+        self.logger.info('Getting country language: [' + country_language.get(self.country) + ']')
         return country_language.get(self.country, 'Invalid Country' + self.country)
 
     def get_channel(self):
@@ -149,7 +149,7 @@ class BaseTest(unittest.TestCase):
             RET_ST_ALMUNDO_COM: 'retail',
             RET_DV_ALMUNDO_COM: 'retail'
         }
-        logger.info('Getting channel name: [' + channel.get(self.base_url) + ']')
+        self.logger.info('Getting channel name: [' + channel.get(self.base_url) + ']')
         return channel.get(self.base_url, 'Invalid URL')
 
     def get_api_host(self):
@@ -166,7 +166,7 @@ class BaseTest(unittest.TestCase):
             RET_ST_ALMUNDO_COM: APIST_ALMUNDO_COM,
             RET_DV_ALMUNDO_COM: APIDV_ALMUNDO_COM,
         }
-        logger.info('Getting API host: [' + api_host.get(self.base_url) + ']')
+        self.logger.info('Getting API host: [' + api_host.get(self.base_url) + ']')
         return api_host.get(self.base_url, 'Invalid URL' + self.base_url)
 
     @staticmethod
@@ -182,7 +182,7 @@ class BaseTest(unittest.TestCase):
             MEXICO: 'MEX',
             BRASIL: 'SAO'
         }
-        logger.info('Getting flight origin for ' + COUNTRY + ' :[' + flight_origin.get(self.country) + ']')
+        self.logger.info('Getting flight origin for ' + COUNTRY + ' :[' + flight_origin.get(self.country) + ']')
         return flight_origin.get(self.country)
 
     def get_flight_ab_router_url(self, origin, destination,

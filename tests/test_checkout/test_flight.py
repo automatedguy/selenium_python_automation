@@ -1,5 +1,7 @@
 
-from base.setup import *
+from base.setup import BaseTest, unittest
+from base.constants import *
+from base.services import Cart
 
 
 class FlightTest(BaseTest):
@@ -15,7 +17,12 @@ class FlightTest(BaseTest):
     infants = '1'
 
     def setUp(self):
-        self.cart_id = self.get_flight_cart_id(
+        self.cart_id = Cart(
+            self.get_api_host(),
+            self.get_channel(),
+            self.get_country_site(),
+            self.get_country_language()
+        ).get_flight_cart_id(
             self.origin, self.destination,
             self.get_date(self.departure_date), self.get_date(self.return_date),
             self.adults, self.children, self.infants
@@ -40,7 +47,7 @@ class FlightTest(BaseTest):
         checkout.populate_sections(cross_selling)
 
         pass
-        logger.info('Just for the wait...')
+        self.logger.info('Just for the wait...')
 
     def test_sc_enabled(self):
         """ Load test_checkout with &sc=1 """
@@ -52,16 +59,16 @@ class FlightTest(BaseTest):
             self.cart_id,
             checkout_parameter,
             self.product_route,
-            self.channel,
-            self.api_host,
-            self.country_site,
-            self.country_language
+            self.get_channel(),
+            self.get_api_host(),
+            self.get_country_site(),
+            self.get_country_language()
         )
 
         checkout.populate_sections(cross_selling)
 
         pass
-        logger.info('Just for the wait...')
+        self.logger.info('Just for the wait...')
 
     def test_stc_enabled(self):
         """ Load test_checkout with &stc=1 """
@@ -73,16 +80,16 @@ class FlightTest(BaseTest):
             self.cart_id,
             checkout_parameter,
             self.product_route,
-            self.channel,
-            self.api_host,
-            self.country_site,
-            self.country_language
+            self.get_channel(),
+            self.get_api_host(),
+            self.get_country_site(),
+            self.get_country_language()
         )
 
         checkout.populate_sections(cross_selling)
 
         pass
-        logger.info('Just for the wait...')
+        self.logger.info('Just for the wait...')
 
     def test_sw_cpd(self):
         """ Load test_checkout with &sw=cpd """
@@ -94,16 +101,16 @@ class FlightTest(BaseTest):
             self.cart_id,
             checkout_parameter,
             self.product_route,
-            self.channel,
-            self.api_host,
-            self.country_site,
-            self.country_language
+            self.get_channel(),
+            self.get_api_host(),
+            self.get_country_site(),
+            self.get_country_language()
         )
 
         checkout.populate_sections(cross_selling)
 
         pass
-        logger.info('Just for the wait...')
+        self.logger.info('Just for the wait...')
 
     def test_sw_cpds(self):
         """ Load test_checkout with &sw=cpds """
@@ -115,16 +122,16 @@ class FlightTest(BaseTest):
             self.cart_id,
             checkout_parameter,
             self.product_route,
-            self.channel,
-            self.api_host,
-            self.country_site,
-            self.country_language
+            self.get_channel(),
+            self.get_api_host(),
+            self.get_country_site(),
+            self.get_country_language()
         )
 
         checkout.populate_sections(cross_selling)
 
         pass
-        logger.info('Just for the wait...')
+        self.logger.info('Just for the wait...')
 
 
 if __name__ == '__main__':
