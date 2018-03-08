@@ -158,14 +158,15 @@ class Cart(ApiService):
 
 
 class AbRouterUrl(ApiService):
-    def __init__(self, api_host, country_domain, channel, site, language):
+    def __init__(self, base_url, api_host, country_domain, channel, site, language):
+        self.base_url = base_url
         self.channel = channel
         self.api_host = api_host
         self.country_domain = country_domain
         self.site = site
         self.language = language
 
-        self.book_url = self.api_host \
+        self.book_url = self.base_url \
             + self.country_domain \
             + 'chkabrouter/cart/' \
             + '?site=' + self.site \

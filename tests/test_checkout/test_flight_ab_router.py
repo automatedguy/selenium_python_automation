@@ -23,6 +23,7 @@ class FlightTest(BaseTest):
         self.country_language = self.get_country_language()
 
         self.ab_router_url = AbRouterUrl(
+            self.base_url,
             self.api_host,
             self.country_domain,
             self.channel,
