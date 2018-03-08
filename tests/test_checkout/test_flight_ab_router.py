@@ -19,10 +19,12 @@ class FlightTest(BaseTest):
         self.api_host = self.get_api_host()
         self.channel = self.get_channel()
         self.country_site = self.get_country_site()
+        self.country_domain = self.get_country_domain()
         self.country_language = self.get_country_language()
 
         self.ab_router_url = AbRouterUrl(
             self.api_host,
+            self.country_domain,
             self.channel,
             self.country_site,
             self.country_language

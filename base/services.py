@@ -77,7 +77,8 @@ class HotelsDetails(ApiService):
 
 
 class FlightsClusters(ApiService):
-    def __init__(self, api_host, origin, destination, departure_date, return_date, site, language, adults, children, infants):
+    def __init__(self, api_host, origin, destination, departure_date, return_date, site, language, adults, children,
+                 infants):
         self.flights_clusters_url = api_host \
                                     + '/api/flights/clusters?' \
                                     + 'from=' + origin + ',' + destination + '&to=' + destination + ',' + origin \
@@ -95,7 +96,7 @@ class FlightsClusters(ApiService):
         json_flights_clusters = json.loads(raw_flights_clusters.text)
         try:
             return str(json_flights_clusters['clusters'][0]['segments'][0]['choices'][0]['id']) \
-                + '*' + str(json_flights_clusters['clusters'][0]['segments'][1]['choices'][0]['id'])
+                   + '*' + str(json_flights_clusters['clusters'][0]['segments'][1]['choices'][0]['id'])
         except IndexError as no_availability:
             self.logger.error(ERR_NO_AVAILABILITY + str(no_availability))
 
@@ -157,16 +158,19 @@ class Cart(ApiService):
 
 
 class AbRouterUrl(ApiService):
-    def __init__(self, api_host, channel, site, language):
+    def __init__(self, api_host, country_domain, channel, site, language):
         self.channel = channel
         self.api_host = api_host
+        self.country_domain = country_domain
         self.site = site
         self.language = language
 
         self.book_url = self.api_host \
-                        + 'chkabrouter/cart' \
-                        + '?site=' + self.site \
-                        + '&language=' + self.language
+            + self.country_domain \
+            + 'chkabrouter/cart/' \
+            + '?site=' + self.site \
+            + '&language=' + self.language
+
         self.logger.info('Ab Router Book URL: [' + self.book_url + ']')
 
     def get_ab_router_cart_id(self, apikey, flight_id):
@@ -196,7 +200,6 @@ class AbRouterUrl(ApiService):
             self.logger.error(ERR_NO_AVAILABILITY + str(no_availability))
 
         return self.get_ab_router_cart_id(channel_apikey, product_id)
-
 
 # HOTEL THINGS
 # autocomplete = Autocomplete('MIA', 'CITY')
