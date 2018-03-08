@@ -16,6 +16,8 @@ class FlightTest(BaseTest):
         self.origin = self.get_flight_origin()
         self.destination = 'MIA'
 
+        self.api_key = Apikeys().get_apikey(self.get_channel())
+
         self.api_host = self.get_api_host()
         self.channel = self.get_channel()
         self.country_site = self.get_country_site()
@@ -44,7 +46,7 @@ class FlightTest(BaseTest):
 
         checkout = self.open_checkout_ab_router(
             self.ab_router_url,
-            self.channel,
+            self.api_key,
             self.api_host,
             self.country_site,
             self.country_language
@@ -61,7 +63,7 @@ class FlightTest(BaseTest):
 
         checkout = self.open_checkout_ab_router(
             self.ab_router_url,
-            self.channel,
+            self.api_key,
             self.api_host,
             self.country_site,
             self.country_language
@@ -78,7 +80,7 @@ class FlightTest(BaseTest):
 
         checkout = self.open_checkout_ab_router(
             self.ab_router_url,
-            self.channel,
+            self.api_key,
             self.api_host,
             self.country_site,
             self.country_language
@@ -95,7 +97,7 @@ class FlightTest(BaseTest):
 
         checkout = self.open_checkout_ab_router(
             self.ab_router_url,
-            self.channel,
+            self.api_key,
             self.api_host,
             self.country_site,
             self.country_language
