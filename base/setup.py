@@ -77,7 +77,7 @@ class BaseTest(unittest.TestCase):
         self.driver.quit()
 
     def open_checkout(self, cart_id, checkout_parameter, product_route,
-                      channel, api_host, country_site, country_language):
+                      apikey, api_host, country_site, country_language):
         self.domain_url = self.full_base_url
         checkout_route = 'checkout/'
         checkout_url = self.domain_url + checkout_route + cart_id + product_route + checkout_parameter
@@ -85,7 +85,7 @@ class BaseTest(unittest.TestCase):
         self.driver.get(checkout_url)
 
         from base.page import Checkout
-        return Checkout(self.driver, cart_id, channel, api_host, country_site, country_language)
+        return Checkout(self.driver, cart_id, apikey, api_host, country_site, country_language)
 
     def open_checkout_ab_router(self, ab_router_url, channel, api_host, country_site, country_language):
         ab_checkout_url = 'https://' + ab_router_url

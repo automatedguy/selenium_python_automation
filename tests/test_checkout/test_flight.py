@@ -1,7 +1,7 @@
 
 from base.setup import BaseTest, unittest
 from base.constants import *
-from base.services import Cart
+from base.services import Cart, Apikeys
 
 
 class FlightTest(BaseTest):
@@ -17,6 +17,8 @@ class FlightTest(BaseTest):
     def setUp(self):
         self.origin = self.get_flight_origin()
         self.destination = 'MIA'
+
+        self.api_key = Apikeys().get_apikey(self.get_channel())
 
         self.cart_id = Cart(
             self.get_api_host(),
@@ -39,7 +41,7 @@ class FlightTest(BaseTest):
             self.cart_id,
             checkout_parameter,
             self.product_route,
-            self.get_channel(),
+            self.api_key,
             self.get_api_host(),
             self.get_country_site(),
             self.get_country_language()
