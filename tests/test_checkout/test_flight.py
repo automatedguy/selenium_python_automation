@@ -62,7 +62,7 @@ class FlightTest(BaseTest):
             self.cart_id,
             checkout_parameter,
             self.product_route,
-            self.get_channel(),
+            self.api_key,
             self.get_api_host(),
             self.get_country_site(),
             self.get_country_language()
@@ -83,7 +83,7 @@ class FlightTest(BaseTest):
             self.cart_id,
             checkout_parameter,
             self.product_route,
-            self.get_channel(),
+            self.api_key,
             self.get_api_host(),
             self.get_country_site(),
             self.get_country_language()
@@ -104,7 +104,7 @@ class FlightTest(BaseTest):
             self.cart_id,
             checkout_parameter,
             self.product_route,
-            self.get_channel(),
+            self.api_key,
             self.get_api_host(),
             self.get_country_site(),
             self.get_country_language()
@@ -125,7 +125,7 @@ class FlightTest(BaseTest):
             self.cart_id,
             checkout_parameter,
             self.product_route,
-            self.get_channel(),
+            self.api_key,
             self.get_api_host(),
             self.get_country_site(),
             self.get_country_language()
