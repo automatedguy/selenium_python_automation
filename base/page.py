@@ -151,8 +151,7 @@ class Checkout(BasePage):
             filled.update(dict.fromkeys(["cross_selling_done",
                                          "emergency_contact_done"], True))
 
-        while not filled.get("passenger_done") or not filled.get("billing_done") or \
-                not filled.get("contact_done") or not filled.get("cross_selling_done"):
+        while not all(filled.values()):
 
             if not filled.get("cross_selling_done"):
                 filled.update(dict.fromkeys(["cross_selling_done"], CrossSelling(
@@ -676,9 +675,10 @@ class ContactSection(Checkout):
 
         if self.driver.find_element(*self.__email_lct).is_displayed():
             self.print_tittle(POPULATING_CONTACT_INFO)
+            email = Utils().get_random_string(7, 8) + '@toogle.com'
 
-            self.fill_email('email@google.com')
-            self.fill_email_confirmation('email@google.com')
+            self.fill_email(email)
+            self.fill_email_confirmation(email)
             self.select_telephone_type(self.get_rand_telephone_type())
             self.fill_country_code(Utils().get_country_code(self.country_site))
             self.fill_area_code(Utils().get_area_code(self.country_site))

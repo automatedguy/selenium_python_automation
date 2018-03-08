@@ -18,7 +18,7 @@ PATH = lambda p: os.path.abspath(
 # Test parameters
 BASE_URL = ST_ALMUNDO_COM
 BROWSER = CHROME
-COUNTRY = ARGENTINA
+COUNTRY = BRASIL
 FORCE_HEADLESS = False
 
 

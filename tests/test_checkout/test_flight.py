@@ -35,7 +35,7 @@ class FlightTest(BaseTest):
         """ Load test_checkout without additional parameters"""
 
         checkout_parameter = ''
-        cross_selling = True
+        cross_selling = False
 
         checkout = self.open_checkout(
             self.cart_id,
@@ -49,7 +49,6 @@ class FlightTest(BaseTest):
 
         checkout.populate_sections(cross_selling)
 
-        pass
         self.logger.info('Just for the wait...')
 
     def test_sc_enabled(self):
