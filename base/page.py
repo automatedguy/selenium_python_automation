@@ -835,6 +835,12 @@ class AgentSection(Checkout):
         self.driver = driver
 
 
+class ThanksPage(Checkout):
+    def __init__(self, driver):
+        super(ThanksPage, self).__init__(driver)
+        self.driver = driver
+
+
 # Home page and sections
 
 class Home(BasePage):
