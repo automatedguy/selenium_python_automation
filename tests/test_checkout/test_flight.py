@@ -135,6 +135,26 @@ class FlightTest(BaseTest):
         pass
         self.logger.info('Just for the wait...')
 
+    def test_scp_enabled(self):
+        """ Load test_checkout with &sw=cpd """
+        checkout_parameter = SCP_ENABLED
+
+        cross_selling = False
+
+        checkout = self.open_checkout(
+            self.cart_id,
+            checkout_parameter,
+            self.product_route,
+            self.api_key,
+            self.get_api_host(),
+            self.get_country_site(),
+            self.get_country_language()
+        )
+
+        checkout.populate_sections(cross_selling)
+
+        self.logger.info('Just for the wait...')
+
 
 if __name__ == '__main__':
     suite = unittest.TestLoader().loadTestsFromTestCase(FlightTest)

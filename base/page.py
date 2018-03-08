@@ -702,23 +702,23 @@ class EmergencyContactSection(Checkout):
         self.country_site = country_site
         self.telephone_type_options = None
 
-    __first_name_lct = EmergencyContactSection.FIRST_NAME
-    __first_name_desc = EmergencyContactSection.FIRST_NAME_DESC
+    __first_name_lct = EmergencyContactSectionLct.FIRST_NAME
+    __first_name_desc = EmergencyContactSectionLct.FIRST_NAME_DESC
 
-    __last_name_lct = EmergencyContactSection.LAST_NAME
-    __last_name_desc = EmergencyContactSection.LAST_NAME_DESC
+    __last_name_lct = EmergencyContactSectionLct.LAST_NAME
+    __last_name_desc = EmergencyContactSectionLct.LAST_NAME_DESC
 
-    __telephone_type_lct = EmergencyContactSection.TELEPHONE_TYPE
-    __telephone_type_desc = EmergencyContactSection.TELEPHONE_TYPE_DESC
+    __telephone_type_lct = EmergencyContactSectionLct.TELEPHONE_TYPE
+    __telephone_type_desc = EmergencyContactSectionLct.TELEPHONE_TYPE_DESC
 
-    __country_code_lct = EmergencyContactSection.COUNTRY_CODE
-    __country_code_desc = EmergencyContactSection.COUNTRY_CODE_DESC
+    __country_code_lct = EmergencyContactSectionLct.COUNTRY_CODE
+    __country_code_desc = EmergencyContactSectionLct.COUNTRY_CODE_DESC
 
-    __area_code_lct = EmergencyContactSection.AREA_CODE
-    __area_code_desc = EmergencyContactSection.AREA_CODE_DESC
+    __area_code_lct = EmergencyContactSectionLct.AREA_CODE
+    __area_code_desc = EmergencyContactSectionLct.AREA_CODE_DESC
 
-    __phone_number_lct = EmergencyContactSection.PHONE_NUMBER
-    __phone_number_desc = EmergencyContactSection.PHONE_NUMBER_DESC
+    __phone_number_lct = EmergencyContactSectionLct.PHONE_NUMBER
+    __phone_number_desc = EmergencyContactSectionLct.PHONE_NUMBER_DESC
 
     def fill_first_name(self, first_name):
         if self.input_definitions['emergency_contacts'][0]['first_name']['required']:

@@ -109,7 +109,7 @@ class ContactSectionLct(object):
     PHONE_NUMBER_DESC = 'Phone number'
 
 
-class EmergencyContactSection(object):
+class EmergencyContactSectionLct(object):
     FIRST_NAME = (By.CSS_SELECTOR, 'emergency-contact-form #first_name')
     FIRST_NAME_DESC = 'Name/s'
 
@@ -127,3 +127,20 @@ class EmergencyContactSection(object):
 
     PHONE_NUMBER = (By.CSS_SELECTOR, 'emergency-contact-form #number')
     PHONE_NUMBER_DESC = 'Phone number'
+
+
+class PaymentSectionGridLct(object):
+    """PaymentSectionGridLct Class"""
+
+
+class PaymentSectionComboLct(object):
+    """PaymentSectionComboLct Class"""
+
+
+class PaymentSectionTwoCardsLct(object):
+    """PaymentSectionTwoCards Class"""
+
+
+class PaymentSectionRetailCardLct(object):
+    """PaymentSectionRetailCardLct Class"""
+
