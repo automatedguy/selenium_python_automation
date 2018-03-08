@@ -78,7 +78,7 @@ class BaseTest(unittest.TestCase):
 
     def open_checkout(self, cart_id, checkout_parameter, product_route,
                       channel, api_host, country_site, country_language):
-        self.domain_url = self.base_url
+        self.domain_url = self.full_base_url
         checkout_route = 'checkout/'
         checkout_url = self.domain_url + checkout_route + cart_id + product_route + checkout_parameter
         self.logger.info('Opening checkout URL: [' + checkout_url + ']')

@@ -122,9 +122,6 @@ class Cart(ApiService):
         self.api_host = api_host
         self.site = site
         self.language = language
-        self.book_url = None
-
-    def set_book_utl(self):
         self.book_url = self.api_host \
                         + '/api/v3/cart/' \
                         + '?site=' + self.site \
