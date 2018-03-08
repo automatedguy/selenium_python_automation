@@ -14,7 +14,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from random import randint, choice
 
 from base.constants import *
-from services import InputDefinitions
+from base.services import InputDefinitions
 
 
 class BasePage(object):
