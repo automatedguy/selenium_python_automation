@@ -155,15 +155,35 @@ class Cart(ApiService):
             return None
         return self.get_cart_id(channel_apikey, product_id)
 
+
+class AbRouterUrl(ApiService):
+    def __init__(self, api_host, channel, site, language):
+        self.channel = channel
+        self.api_host = api_host
+        self.site = site
+        self.language = language
+
+        self.book_url = self.api_host \
+                        + 'chkabrouter/cart' \
+                        + '?site=' + self.site \
+                        + '&language=' + self.language
+        self.logger.info('Ab Router Book URL: [' + self.book_url + ']')
+
+    def get_ab_router_cart_id(self, apikey, flight_id):
+        data = {"products": [{"type": "FLIGHT", "id": flight_id}]}
+        raw_cart_book_id = requests.post(self.book_url, headers={'X-Apikey': apikey}, json=data)
+        json_cart_book_id = json.loads(raw_cart_book_id.text)
+        return json_cart_book_id['urlToRedirect']
+
     def get_flight_ab_router_url(self, origin, destination,
                                  departure_date, return_date,
                                  site, language,
                                  adults, children, infants):
 
-        channel_apikey = Apikeys().get_apikey(self.get_channel())
+        channel_apikey = Apikeys().get_apikey(self.channel)
 
         product_id = FlightsClusters(
-            self.get_api_host(),
+            self.api_host,
             origin, destination,
             departure_date, return_date,
             site, language,
@@ -174,27 +194,8 @@ class Cart(ApiService):
             self.logger.info('Flight ID: [' + product_id + ']')
         except TypeError as no_availability:
             self.logger.error(ERR_NO_AVAILABILITY + str(no_availability))
-            self.tearDown()
-            self.fail()
 
-        return AbRouterUrl(self.base_url + self.get_country_domain(),
-                           site, language
-                           ).get_ab_router_cart_id(channel_apikey, product_id)
-
-
-class AbRouterUrl(ApiService):
-    def __init__(self, api_host, site, language):
-        self.book_url = api_host \
-                        + 'chkabrouter/cart' \
-                        + '?site=' + site \
-                        + '&language=' + language
-        self.logger.info('Ab Router Book URL: [' + self.book_url + ']')
-
-    def get_ab_router_cart_id(self, apikey, flight_id):
-        data = {"products": [{"type": "FLIGHT", "id": flight_id}]}
-        raw_cart_book_id = requests.post(self.book_url, headers={'X-Apikey': apikey}, json=data)
-        json_cart_book_id = json.loads(raw_cart_book_id.text)
-        return json_cart_book_id['urlToRedirect']
+        return self.get_ab_router_cart_id(channel_apikey, product_id)
 
 
 # HOTEL THINGS
